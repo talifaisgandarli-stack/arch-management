@@ -1,0 +1,571 @@
+<title>The Operating System for Architecture Firms — Field Report</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* ============ TOKENS ============ */
+  :root{
+    --paper:#E9EDF1; --surface:#F6F8FB; --surface-2:#EFF3F7;
+    --ink:#16202B; --ink-2:#465A6C; --ink-3:#7C90A2;
+    --line:#C7D2DC; --line-strong:#9DAEBC;
+    --grid:rgba(31,78,121,.07);
+    --blue:#1F4E79; --blue-bright:#3E7CB1; --blue-deep:#12324F;
+    --red:#BC402A; --red-soft:#d8674f;
+    --amber:#9A6B12; --green:#3C7355;
+    /* sequential blue ramp, light→dark */
+    --s1:#D2DEEC; --s2:#A6C0DA; --s3:#7AA1C6; --s4:#4E82B2; --s5:#2A5E8E; --s6:#173A5B;
+    --shadow:0 1px 0 rgba(22,32,43,.04), 0 6px 22px -12px rgba(22,32,43,.22);
+    --maxw:1120px;
+    --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Helvetica Neue","Inter",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0C141D; --surface:#111C27; --surface-2:#16232F;
+      --ink:#E7EEF4; --ink-2:#A9BCCB; --ink-3:#6E8598;
+      --line:#26384A; --line-strong:#3A5064;
+      --grid:rgba(123,178,223,.08);
+      --blue:#5B9BD5; --blue-bright:#7FB2DF; --blue-deep:#8FC0E8;
+      --red:#E4735C; --red-soft:#ef8a75;
+      --amber:#D6A64A; --green:#68A585;
+      --s1:#1B2C3D; --s2:#284560; --s3:#356084; --s4:#437CA8; --s5:#5B9BD5; --s6:#8FC0E8;
+      --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#E9EDF1; --surface:#F6F8FB; --surface-2:#EFF3F7;
+    --ink:#16202B; --ink-2:#465A6C; --ink-3:#7C90A2;
+    --line:#C7D2DC; --line-strong:#9DAEBC; --grid:rgba(31,78,121,.07);
+    --blue:#1F4E79; --blue-bright:#3E7CB1; --blue-deep:#12324F;
+    --red:#BC402A; --red-soft:#d8674f; --amber:#9A6B12; --green:#3C7355;
+    --s1:#D2DEEC; --s2:#A6C0DA; --s3:#7AA1C6; --s4:#4E82B2; --s5:#2A5E8E; --s6:#173A5B;
+    --shadow:0 1px 0 rgba(22,32,43,.04), 0 6px 22px -12px rgba(22,32,43,.22);
+  }
+  :root[data-theme="dark"]{
+    --paper:#0C141D; --surface:#111C27; --surface-2:#16232F;
+    --ink:#E7EEF4; --ink-2:#A9BCCB; --ink-3:#6E8598;
+    --line:#26384A; --line-strong:#3A5064; --grid:rgba(123,178,223,.08);
+    --blue:#5B9BD5; --blue-bright:#7FB2DF; --blue-deep:#8FC0E8;
+    --red:#E4735C; --red-soft:#ef8a75; --amber:#D6A64A; --green:#68A585;
+    --s1:#1B2C3D; --s2:#284560; --s3:#356084; --s4:#437CA8; --s5:#5B9BD5; --s6:#8FC0E8;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 30px -14px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-size:17px; line-height:1.6;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size:28px 28px; background-position:-1px -1px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 24px}
+  ::selection{background:var(--blue); color:#fff}
+
+  /* ============ TYPE ============ */
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink-3)}
+  h1,h2,h3{font-family:var(--sans); font-weight:800; line-height:1.05; text-wrap:balance; letter-spacing:-.01em}
+  h2{font-size:clamp(26px,4vw,40px); margin:0}
+  h3{font-size:20px; margin:0}
+  .lead{font-size:clamp(19px,2.4vw,23px); line-height:1.5; color:var(--ink-2)}
+  p{margin:0 0 1em}
+  a{color:var(--blue-bright); text-decoration:underline; text-underline-offset:2px; text-decoration-thickness:1px}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* ============ TITLE BLOCK (drawing-set header) ============ */
+  .titleblock{border:1.5px solid var(--line-strong); background:var(--surface); box-shadow:var(--shadow)}
+  .tb-strip{display:grid; grid-template-columns:auto 1fr auto; gap:0; border-bottom:1px solid var(--line)}
+  .tb-strip>div{padding:10px 16px}
+  .tb-strip .sheetno{font-family:var(--mono); font-weight:700; font-size:13px; letter-spacing:.1em; color:var(--blue); border-right:1px solid var(--line); white-space:nowrap}
+  .tb-strip .sheettitle{font-family:var(--mono); font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2); align-self:center}
+  .tb-strip .sheetmeta{font-family:var(--mono); font-size:11px; color:var(--ink-3); border-left:1px solid var(--line); text-align:right; white-space:nowrap; align-self:center}
+  @media (max-width:640px){ .tb-strip .sheetmeta{display:none} }
+
+  /* ============ HERO ============ */
+  header.hero{padding:64px 0 40px; position:relative}
+  .stamp{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--red); border:1px solid var(--red); padding:5px 10px; border-radius:2px; transform:rotate(-1.2deg)}
+  .hero h1{font-size:clamp(38px,7vw,76px); margin:22px 0 0; letter-spacing:-.025em}
+  .hero h1 .u{color:var(--blue)}
+  .hero .sub{max-width:60ch; margin-top:20px}
+  .hero .meta{display:flex; flex-wrap:wrap; gap:8px 22px; margin-top:26px; font-family:var(--mono); font-size:12px; color:var(--ink-3)}
+  .hero .meta b{color:var(--ink-2); font-weight:600}
+
+  /* thesis callout */
+  .thesis{margin-top:40px; border-left:3px solid var(--red); padding:6px 0 6px 22px}
+  .thesis .lead{color:var(--ink)}
+  .thesis b{color:var(--blue); font-weight:700}
+
+  /* ============ SECTION SCAFFOLD ============ */
+  section.sheet{padding:56px 0}
+  .sheet-head{display:flex; align-items:baseline; gap:16px; margin-bottom:8px}
+  .sheet-head .no{font-family:var(--mono); font-size:12px; color:var(--red); letter-spacing:.1em; font-weight:700}
+  .sheet-intro{max-width:64ch; color:var(--ink-2); margin:14px 0 30px}
+
+  /* ============ CARDS / GRID ============ */
+  .grid{display:grid; gap:18px}
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:22px; box-shadow:var(--shadow)}
+  .card .cap{font-family:var(--mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); margin-bottom:14px; display:flex; justify-content:space-between; gap:10px}
+  .card .cap .tag{color:var(--blue)}
+
+  /* stat tiles */
+  .stat{font-family:var(--sans); font-weight:800; line-height:1; letter-spacing:-.02em; color:var(--ink); font-variant-numeric:tabular-nums}
+  .stat.big{font-size:clamp(44px,7vw,72px)}
+  .stat .unit{font-size:.4em; color:var(--ink-3); font-weight:700; letter-spacing:0}
+  .stat.red{color:var(--red)}
+  .stat.blue{color:var(--blue)}
+  .statlabel{font-family:var(--mono); font-size:12px; color:var(--ink-2); margin-top:10px; line-height:1.45}
+  .src{font-family:var(--mono); font-size:10.5px; color:var(--ink-3); margin-top:12px}
+  .src a{color:var(--ink-3)}
+
+  /* ============ BAR CHART (magnitude) ============ */
+  .bars{display:flex; flex-direction:column; gap:12px; margin-top:4px}
+  .bar-row{display:grid; grid-template-columns:1fr; gap:5px}
+  .bar-row .rl{display:flex; justify-content:space-between; align-items:baseline; font-family:var(--mono); font-size:12px}
+  .bar-row .rl .name{color:var(--ink-2)}
+  .bar-row .rl .val{color:var(--ink); font-weight:700; font-variant-numeric:tabular-nums}
+  .track{height:14px; background:var(--surface-2); border-radius:7px; overflow:hidden; position:relative; border:1px solid var(--line)}
+  .fill{height:100%; border-radius:7px 4px 4px 7px; position:relative}
+
+  /* segmented single-track (time budget) */
+  .seg{display:flex; height:40px; border-radius:6px; overflow:hidden; border:1px solid var(--line); background:var(--surface-2)}
+  .seg > span{display:flex; align-items:center; justify-content:center; color:#fff; font-family:var(--mono); font-size:12px; font-weight:600; position:relative; border-right:2px solid var(--surface)}
+  .seg > span:last-child{border-right:0}
+  .seglegend{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:14px; font-family:var(--mono); font-size:12px; color:var(--ink-2)}
+  .seglegend .k{display:inline-flex; align-items:center; gap:7px}
+  .swatch{width:11px; height:11px; border-radius:2px; flex:none; display:inline-block; border:1px solid rgba(0,0,0,.12)}
+
+  /* donut */
+  .donut-wrap{display:flex; gap:22px; align-items:center; flex-wrap:wrap}
+  .donut{flex:none}
+  .donut-legend{display:flex; flex-direction:column; gap:10px; font-family:var(--mono); font-size:13px; min-width:180px}
+  .donut-legend .k{display:flex; align-items:center; gap:9px; color:var(--ink-2)}
+  .donut-legend .k b{color:var(--ink); font-weight:700; margin-left:auto; font-variant-numeric:tabular-nums}
+
+  /* ============ HEATMAP TABLE (opportunity matrix) ============ */
+  .table-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:6px; box-shadow:var(--shadow)}
+  table.matrix{border-collapse:collapse; width:100%; min-width:760px; background:var(--surface); font-family:var(--mono); font-size:12.5px}
+  table.matrix th, table.matrix td{padding:9px 8px; text-align:center; border-bottom:1px solid var(--line)}
+  table.matrix thead th{position:sticky; top:0; background:var(--surface); color:var(--ink-3); font-weight:600; font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; border-bottom:1.5px solid var(--line-strong); z-index:1}
+  table.matrix td.name{text-align:left; font-family:var(--sans); font-weight:700; font-size:13px; color:var(--ink); white-space:nowrap}
+  table.matrix td.name small{display:block; font-family:var(--mono); font-weight:400; font-size:10.5px; color:var(--ink-3); white-space:normal; max-width:240px; margin-top:2px}
+  .cell{color:#fff; border-radius:3px; padding:4px 0; font-weight:700; font-variant-numeric:tabular-nums; min-width:26px; display:inline-block; width:30px}
+  td.score{font-family:var(--sans); font-weight:800; font-size:15px; color:var(--blue)}
+  table.matrix tbody tr:hover{background:var(--surface-2)}
+
+  /* ============ PATTERN GRID ============ */
+  .pat{display:grid; grid-template-columns:auto 1fr; gap:2px 16px; align-items:start}
+  .pat .pk{font-family:var(--mono); font-size:12px; color:var(--red); font-weight:700; padding-top:2px}
+  .pat .pv{color:var(--ink-2); font-size:15px; padding-bottom:14px; border-bottom:1px dashed var(--line)}
+  .pat .pv b{color:var(--ink); font-weight:700}
+
+  /* ============ SEQUENCE / BUILD ORDER ============ */
+  .seqrail{display:grid; gap:14px}
+  .seqstep{display:grid; grid-template-columns:44px 1fr; gap:16px; align-items:start; background:var(--surface); border:1px solid var(--line); border-radius:6px; padding:16px 18px; box-shadow:var(--shadow); position:relative}
+  .seqstep .n{width:44px; height:44px; border-radius:50%; display:grid; place-items:center; font-family:var(--mono); font-weight:700; color:#fff; background:var(--blue)}
+  .seqstep h3{font-size:17px}
+  .seqstep p{margin:6px 0 0; font-size:14.5px; color:var(--ink-2)}
+  .seqstep .roi{display:inline-block; margin-top:8px; font-family:var(--mono); font-size:11px; color:var(--green); border:1px solid var(--green); border-radius:20px; padding:2px 9px}
+
+  /* quote */
+  .quote{font-family:var(--serif); font-style:italic; font-size:clamp(20px,3vw,27px); line-height:1.4; color:var(--ink); border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:26px 0; margin:8px 0}
+  .quote .who{display:block; font-style:normal; font-family:var(--mono); font-size:12px; color:var(--ink-3); margin-top:14px; letter-spacing:.04em}
+
+  /* footer */
+  footer{padding:48px 0 70px; border-top:1.5px solid var(--line-strong); margin-top:40px}
+  .foot-grid{display:grid; grid-template-columns:1fr auto; gap:24px; align-items:end; font-family:var(--mono); font-size:12px; color:var(--ink-3)}
+  .disclaimer{font-family:var(--mono); font-size:11.5px; color:var(--ink-3); background:var(--surface-2); border:1px dashed var(--line); border-radius:6px; padding:14px 16px; line-height:1.6; margin-top:20px}
+
+  /* theme toggle */
+  .toggle{position:fixed; top:14px; right:14px; z-index:20; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:7px 13px; cursor:pointer; box-shadow:var(--shadow)}
+  .toggle:hover{border-color:var(--line-strong)}
+  .toggle:focus-visible{outline:2px solid var(--blue-bright); outline-offset:2px}
+
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:1fr 1fr 1fr}
+  .cols-4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:820px){ .cols-2,.cols-3,.cols-4{grid-template-columns:1fr} .cols-4.keep2{grid-template-columns:1fr 1fr} }
+
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .6s ease, transform .6s ease}
+  .reveal.in{opacity:1; transform:none}
+  @media (prefers-reduced-motion:reduce){ .reveal{opacity:1; transform:none; transition:none} }
+</style>
+
+<button class="toggle" id="tgl" aria-label="Toggle light or dark theme">◐ Theme</button>
+
+<div class="wrap">
+
+  <!-- ===================== HERO / COVER SHEET ===================== -->
+  <header class="hero">
+    <span class="stamp">● Field Report — Discovery</span>
+    <h1>The operating system for<br><span class="u">architecture &amp; interior design</span> firms.</h1>
+    <p class="lead sub">Where the work of running a design practice actually breaks — mapped from practitioner forums, review sites, industry studies and legal filings, so the category-defining product gets built instead of one more task manager.</p>
+
+    <div class="meta">
+      <span><b>Scope</b> · firms 2–200 people</span>
+      <span><b>Sectors</b> · residential · commercial · hospitality · office</span>
+      <span><b>Evidence</b> · ~150 searches · 180 cited sources</span>
+      <span><b>Sheets</b> · A-01 → A-07</span>
+    </div>
+
+    <div class="thesis">
+      <p class="lead">The same root failure recurs in every phase: <b>there is no durable, shared source of truth for the current file, the current decision, and the current status.</b> So architects and designers spend most of their time hunting for information and re-litigating settled questions — instead of designing.</p>
+    </div>
+  </header>
+
+  <!-- ===================== A-01 THE TIME TAX ===================== -->
+  <section class="sheet" id="s1">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-01</div>
+        <div class="sheettitle">The Time Tax · where the week goes</div>
+        <div class="sheetmeta">FMI / PlanGrid · n≈600</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">01</span><h2>Only two-thirds of the day is the actual job.</h2></div>
+        <p class="sheet-intro">Across ~600 industry leaders, professionals spend <b>65% of time on optimal work</b>. The other <b>35% — roughly 14 hours every week</b> — is searching for information, resolving conflicts, and redoing work. This is the largest recoverable line item in the industry, and it's simply accepted as "the work."</p>
+
+        <!-- time budget segmented bar -->
+        <div style="margin:6px 0 4px">
+          <div class="seg" id="segbar" role="img" aria-label="A 40-hour week: 26 hours optimal work, then 5.5 hours searching, 4.7 hours conflict resolution, 3.9 hours rework.">
+            <span style="width:65%; background:var(--s5)">65% · optimal work</span>
+            <span style="width:13.75%; background:var(--red)" title="5.5 hrs/wk">14%</span>
+            <span style="width:11.75%; background:var(--red-soft)" title="4.7 hrs/wk">12%</span>
+            <span style="width:9.75%; background:#c98f7f" title="3.9 hrs/wk">10%</span>
+          </div>
+          <div class="seglegend">
+            <span class="k"><i class="swatch" style="background:var(--s5)"></i> Optimal work · 26 hrs</span>
+            <span class="k"><i class="swatch" style="background:var(--red)"></i> Searching for project data · 5.5 hrs</span>
+            <span class="k"><i class="swatch" style="background:var(--red-soft)"></i> Conflict resolution · 4.7 hrs</span>
+            <span class="k"><i class="swatch" style="background:#c98f7f"></i> Mistakes &amp; rework · 3.9 hrs</span>
+          </div>
+          <div class="src">Source: FMI/PlanGrid, <a href="https://www.autodesk.com/blogs/construction/construction-disconnected-fmi-report/">Construction Disconnected</a></div>
+        </div>
+
+        <div class="grid cols-3" style="margin-top:26px">
+          <div class="card">
+            <div class="cap"><span>Annual US labor waste</span><span class="tag">MACRO</span></div>
+            <div class="stat big red">$177<span class="unit">.5B</span></div>
+            <div class="statlabel">wasted per year; $31.3B of it is rework from bad data &amp; miscommunication.</div>
+          </div>
+          <div class="card">
+            <div class="cap"><span>Rework from poor data</span><span class="tag">CAUSE</span></div>
+            <div class="stat big blue">48<span class="unit">%</span></div>
+            <div class="statlabel">of <em>all</em> US construction rework traces to poor data and miscommunication.</div>
+          </div>
+          <div class="card">
+            <div class="cap"><span>Info management load</span><span class="tag">PER PA</span></div>
+            <div class="stat big">20–30<span class="unit">hrs/wk</span></div>
+            <div class="statlabel">a project architect spends managing information instead of making decisions — per project.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-02 THE RFI MACHINE ===================== -->
+  <section class="sheet" id="s2">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-02</div>
+        <div class="sheettitle">The RFI Machine · questions that cost money</div>
+        <div class="sheetmeta">Navigant · 1,362 projects</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">02</span><h2>Every project runs a $860,000 question queue.</h2></div>
+        <p class="sheet-intro">The landmark Navigant study of 1,362 projects put a price on the Request-For-Information: about <b>$1,080 to review and respond to each one</b>, ~<b>796 per project</b>, ~<b>$860K per project</b> — and more than one in five never gets an official answer. The delay lives in the "double hop" to specialist consultants, which no email thread tracks.</p>
+
+        <div class="grid cols-2" style="margin-bottom:18px">
+          <div class="card">
+            <div class="cap"><span>Cost per project, RFIs alone</span><span class="tag">×796</span></div>
+            <div class="stat big blue">$859<span class="unit">,680</span></div>
+            <div class="statlabel"><span class="mono">$1,080 avg per RFI &nbsp;×&nbsp; 796 RFIs</span> — dwarfing any per-seat SaaS price.</div>
+            <div class="src">Source: <a href="https://blog.newmill.com/requests-for-information-costs-guide/">Navigant Construction Forum</a></div>
+          </div>
+          <div class="card">
+            <div class="cap"><span>Fate of every RFI</span><span class="tag">STATUS</span></div>
+            <div class="donut-wrap">
+              <svg class="donut" width="150" height="150" viewBox="0 0 42 42" role="img" aria-label="More than 20% of RFIs never receive an official answer.">
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--surface-2)" stroke-width="6"></circle>
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--s5)" stroke-width="6" stroke-dasharray="80 20" stroke-dashoffset="25"></circle>
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--red)" stroke-width="6" stroke-dasharray="20 80" stroke-dashoffset="-55"></circle>
+                <text x="21" y="20.5" text-anchor="middle" font-size="7" font-weight="800" style="fill:var(--red); font-family:var(--sans)">20%+</text>
+                <text x="21" y="27" text-anchor="middle" font-size="2.7" style="fill:var(--ink-3); font-family:var(--mono)">UNANSWERED</text>
+              </svg>
+              <div class="donut-legend">
+                <span class="k"><i class="swatch" style="background:var(--s5)"></i> Answered <b>&lt;80%</b></span>
+                <span class="k"><i class="swatch" style="background:var(--red)"></i> No official reply <b>&gt;20%</b></span>
+                <span class="k" style="color:var(--ink-3); margin-top:6px">Median turnaround <b style="color:var(--ink)">9.7 days</b></span>
+                <span class="k" style="color:var(--ink-3)">Effort each <b style="color:var(--ink)">~8 hrs</b></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote">
+          "If they have to spend 30 minutes figuring out what you're even asking about, your RFI goes to the bottom of the pile."
+          <span class="who">— practitioner, on the consultant "double hop" · Procore library</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-03 WHERE REWORK COMES FROM ===================== -->
+  <section class="sheet" id="s3">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-03</div>
+        <div class="sheettitle">Rework · who actually causes it</div>
+        <div class="sheetmeta">CII · 9-project study</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">03</span><h2>Rework is a design problem wearing a construction costume.</h2></div>
+        <p class="sheet-intro">Direct field rework runs ~<b>5% of total project cost</b> (2–20%). But when the Construction Industry Institute traced the deviations behind it, <b>design errors, omissions and changes drove 79% of the cost</b> — not the trades. And firms under-report their own rework by ~300%, so most don't even know the number.</p>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="cap"><span>Share of deviation cost</span><span class="tag">ROOT</span></div>
+            <div class="donut-wrap">
+              <svg class="donut" width="150" height="150" viewBox="0 0 42 42" role="img" aria-label="Design deviations 79 percent, construction 17 percent, other 4 percent of rework cost.">
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--surface-2)" stroke-width="6"></circle>
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--red)" stroke-width="6" stroke-dasharray="79 21" stroke-dashoffset="25"></circle>
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--s4)" stroke-width="6" stroke-dasharray="17 83" stroke-dashoffset="-54"></circle>
+                <circle cx="21" cy="21" r="15.915" fill="none" style="stroke:var(--s2)" stroke-width="6" stroke-dasharray="4 96" stroke-dashoffset="-71"></circle>
+                <text x="21" y="20.5" text-anchor="middle" font-size="8" font-weight="800" style="fill:var(--red); font-family:var(--sans)">79%</text>
+                <text x="21" y="27" text-anchor="middle" font-size="2.7" style="fill:var(--ink-3); font-family:var(--mono)">DESIGN</text>
+              </svg>
+              <div class="donut-legend">
+                <span class="k"><i class="swatch" style="background:var(--red)"></i> Design errors/omissions/changes <b>79%</b></span>
+                <span class="k"><i class="swatch" style="background:var(--s4)"></i> Construction deviations <b>17%</b></span>
+                <span class="k"><i class="swatch" style="background:var(--s2)"></i> Other <b>4%</b></span>
+              </div>
+            </div>
+            <div class="src">Source: <a href="https://www.construction-institute.org/costs-of-quality-deviations-in-design-and-construction">CII, Costs of Quality Deviations</a></div>
+          </div>
+
+          <div class="grid" style="gap:18px">
+            <div class="card">
+              <div class="cap"><span>Field rework, share of project cost</span></div>
+              <div class="bars">
+                <div class="bar-row">
+                  <div class="rl"><span class="name">Typical (CII)</span><span class="val">~5%</span></div>
+                  <div class="track"><div class="fill" style="width:25%; background:var(--s5)"></div></div>
+                </div>
+                <div class="bar-row">
+                  <div class="rl"><span class="name">Range across studies</span><span class="val">2–20%</span></div>
+                  <div class="track"><div class="fill" style="width:100%; background:linear-gradient(90deg,var(--s2),var(--s6))"></div></div>
+                </div>
+                <div class="bar-row">
+                  <div class="rl"><span class="name">Under-reporting factor</span><span class="val">~300%</span></div>
+                  <div class="track"><div class="fill" style="width:75%; background:var(--red)"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="cap"><span>Change orders, share of build $</span><span class="tag">LEAK</span></div>
+              <div style="display:flex; gap:26px; flex-wrap:wrap; align-items:flex-end">
+                <div><div class="stat" style="font-size:40px">8–14<span class="unit">%</span></div><div class="statlabel">new build</div></div>
+                <div><div class="stat" style="font-size:40px; color:var(--red)">25–30<span class="unit">%</span></div><div class="statlabel">renovation</div></div>
+                <div><div class="stat" style="font-size:40px; color:var(--blue)">3–5<span class="unit">%</span></div><div class="statlabel">A/E errors &amp; omissions</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-04 THE MARKET ===================== -->
+  <section class="sheet" id="s4">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-04</div>
+        <div class="sheettitle">The Market · fragmented, thin-margined, underserved</div>
+        <div class="sheetmeta">AIA · IBISWorld · RIBA</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">04</span><h2>A huge base of tiny firms on thin margins.</h2></div>
+        <p class="sheet-intro">~19,000 US architecture firms and 100,000+ interior design firms — but three-quarters of architecture practices have fewer than ten people, and they run on 10–12% margins while a principal bills less than half their time. They already pay $47–$199/seat for tools they route around.</p>
+
+        <div class="grid cols-4 keep2" style="margin-bottom:20px">
+          <div class="card"><div class="cap"><span>US arch firms</span></div><div class="stat" style="font-size:38px">~19k</div><div class="statlabel">75% under 10 people</div></div>
+          <div class="card"><div class="cap"><span>US ID firms</span></div><div class="stat" style="font-size:38px">100k<span class="unit">+</span></div><div class="statlabel">$26.5B market</div></div>
+          <div class="card"><div class="cap"><span>Avg margin</span></div><div class="stat" style="font-size:38px">10–12<span class="unit">%</span></div><div class="statlabel">little room for waste</div></div>
+          <div class="card"><div class="cap"><span>Principal billable</span></div><div class="stat" style="font-size:38px; color:var(--red)">46<span class="unit">%</span></div><div class="statlabel">rest is admin/BD/coord</div></div>
+        </div>
+
+        <div class="card">
+          <div class="cap"><span>US architecture firms by size</span><span class="tag">75% ARE &lt; 10 PEOPLE</span></div>
+          <div class="bars">
+            <div class="bar-row"><div class="rl"><span class="name">Sole practitioner</span><span class="val">28%</span></div><div class="track"><div class="fill" style="width:56%; background:var(--s6)"></div></div></div>
+            <div class="bar-row"><div class="rl"><span class="name">2–4 employees</span><span class="val">32%</span></div><div class="track"><div class="fill" style="width:64%; background:var(--s5)"></div></div></div>
+            <div class="bar-row"><div class="rl"><span class="name">5–9 employees</span><span class="val">15%</span></div><div class="track"><div class="fill" style="width:30%; background:var(--s4)"></div></div></div>
+            <div class="bar-row"><div class="rl"><span class="name">10+ employees</span><span class="val">25%</span></div><div class="track"><div class="fill" style="width:50%; background:var(--s3)"></div></div></div>
+          </div>
+          <div class="src">Source: <a href="https://www.aia.org/aia-architect/article/latest-insights-2024-firm-survey-report">AIA 2024 Firm Survey</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-05 WHY TOOLS FAIL ===================== -->
+  <section class="sheet" id="s5">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-05</div>
+        <div class="sheettitle">Why Existing Software Fails · 14 tools reviewed</div>
+        <div class="sheetmeta">Capterra · G2 · TrustRadius</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">05</span><h2>Built for accountants, abandoned by designers.</h2></div>
+        <p class="sheet-intro">The same complaints recur across Monograph, Newforma, Deltek, Procore, BQE, Studio Designer, Houzz Pro, Mydoma and the generic PM tools. These are the patterns that appear across <em>multiple</em> products — each one a wedge.</p>
+
+        <div class="grid cols-2">
+          <div class="card">
+            <div class="cap"><span>Failure patterns across tools</span><span class="tag">RECURRING</span></div>
+            <div class="pat">
+              <span class="pk">A</span><span class="pv"><b>"Built for accountants, not designers."</b> Deltek, BQE, Procore — designers are reluctant secondary users. The biggest wedge.</span>
+              <span class="pk">B</span><span class="pv"><b>Clunky, near-useless mobile &amp; field apps.</b> Monograph "nearly useless"; ArchiSnapper iOS; ACC Build.</span>
+              <span class="pk">C</span><span class="pv"><b>Opaque, small-firm-hostile pricing.</b> "I don't need a 45-minute demo to find out what it costs."</span>
+              <span class="pk">D</span><span class="pv"><b>Invoicing breaks.</b> Monograph billing "fundamentally broken"; BQE, Newforma.</span>
+              <span class="pk">E</span><span class="pv"><b>Lock-in &amp; dark patterns.</b> Mydoma has no data export; Houzz Pro faces a class action over auto-renew billing.</span>
+            </div>
+          </div>
+          <div class="grid" style="gap:18px">
+            <div class="card">
+              <div class="cap"><span>The adoption wall</span><span class="tag">#1 FAILURE MODE</span></div>
+              <div class="stat big red">47<span class="unit">%</span></div>
+              <div class="statlabel">of A&amp;E firms cite <b>poor adoption</b> of their business tools as a major challenge. If the team won't update it, nothing else matters.</div>
+            </div>
+            <div class="quote" style="border:0; padding:14px 0 0; margin:0; font-size:20px">
+              "Slack is where context goes to die."
+              <span class="who">— and WhatsApp: 30 minutes scrolling vs. 30 seconds in a real system</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-06 OPPORTUNITY MATRIX ===================== -->
+  <section class="sheet" id="s6">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-06</div>
+        <div class="sheettitle">Opportunity Matrix · scored 1–10</div>
+        <div class="sheetmeta">Analyst scoring</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">06</span><h2>The top five share one gene.</h2></div>
+        <p class="sheet-intro">Each opportunity scored on severity, dissatisfaction, willingness-to-pay, AI leverage and defensibility. The leaders all do the same thing: they turn <b>ephemeral, channel-scattered information</b> — a decision, a version, a status — into a <b>durable, bound, queryable record</b>. Darker cell = higher score.</p>
+
+        <div class="table-scroll">
+          <table class="matrix">
+            <thead>
+              <tr><th style="text-align:left">Opportunity</th><th>Sev</th><th>Dissat</th><th>WTP</th><th>AI</th><th>Moat</th><th>Score</th></tr>
+            </thead>
+            <tbody id="matrixbody"><!-- filled by JS --></tbody>
+          </table>
+        </div>
+        <div class="src" style="margin-top:12px">Composite score weights severity, dissatisfaction, willingness-to-pay and defensibility. Full 9-dimension matrix in the report.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== A-07 THE BUILD ORDER ===================== -->
+  <section class="sheet" id="s7">
+    <div class="titleblock">
+      <div class="tb-strip">
+        <div class="sheetno">SHEET&nbsp;A-07</div>
+        <div class="sheettitle">The Build Order · one OS, not fourteen tools</div>
+        <div class="sheetmeta">Strategy</div>
+      </div>
+      <div style="padding:26px 22px">
+        <div class="sheet-head"><span class="no">07</span><h2>Sequence the wedge into a monopoly.</h2></div>
+        <p class="sheet-intro">Don't build "Asana for architects." Build the system of record for <b>decisions, versions and status</b> — then monetize the quantified leaks. Each layer references the one beneath it; the accumulated record is the moat.</p>
+
+        <div class="seqrail">
+          <div class="seqstep"><div class="n">1</div><div><h3>Decision &amp; version ledger</h3><p>Bind every approval, change and RFI answer to the exact artifact version, across email / chat / meeting / site. The substrate everything else references — and the firm's portable institutional memory.</p></div></div>
+          <div class="seqstep"><div class="n">2</div><div><h3>Change-order + FF&amp;E capture</h3><p>Turn informal requests into billable change orders; put spec ↔ budget ↔ PO ↔ delivery on one live record. <span class="roi">Self-funding ROI in month one</span></p></div></div>
+          <div class="seqstep"><div class="n">3</div><div><h3>RFI engine + client approval layer</h3><p>An RFI/submittal state machine with consultant SLAs, and a versioned client-approval surface that spreads virally from firm to client.</p></div></div>
+          <div class="seqstep"><div class="n">4</div><div><h3>Vendor-data &amp; estimation network</h3><p>Real lead-time outcomes per vendor and estimate-from-actuals — the compounding data moats no competitor can copy.</p></div></div>
+        </div>
+
+        <div class="quote" style="margin-top:34px">
+          The result is not fourteen tools. It is one operating system whose defensibility is the accumulated, bound, queryable record of how a firm designs, decides, coordinates and buys. <b style="font-style:normal; color:var(--blue)">That record is the monopoly.</b>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <div style="font-family:var(--sans); font-weight:800; font-size:18px; color:var(--ink); letter-spacing:-.01em">Field Report · Architecture &amp; Interior Design Firm Operations</div>
+        <div style="margin-top:6px">13-part deep-research report · 109 pain points · 53 jobs-to-be-done · 10 startup bets</div>
+      </div>
+      <div style="text-align:right">DRAWN 2026-07 · REV A<br>SHEETS A-01 → A-07</div>
+    </div>
+    <div class="disclaimer">
+      <b style="color:var(--ink-2)">On the evidence.</b> Hard statistics (Navigant, FMI/PlanGrid, CII, AIA, RIBA, IBISWorld) are corroborated across independent sources and reliable. Forum &amp; review quotes are search-surfaced — accurate in substance, each carrying a source URL, but worth re-verifying before publishing as direct attributions. Severity and opportunity scores are analyst estimates calibrated to the evidence.
+    </div>
+  </footer>
+</div>
+
+<script>
+(function(){
+  // ---- theme toggle ----
+  var root=document.documentElement, btn=document.getElementById('tgl');
+  function cur(){ var t=root.getAttribute('data-theme'); if(t) return t;
+    return matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'; }
+  btn.addEventListener('click',function(){
+    var next=cur()==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+  });
+
+  // ---- opportunity matrix ----
+  // [name, subtitle, sev, dissat, wtp, ai, moat, score]
+  var rows=[
+    ["Decision & approval ledger","bind every decision to the exact artifact version",9,9,8,8,9,8.6],
+    ["Version-truth layer","system-enforced “current file”; kills final_v3",9,9,7,6,8,8.1],
+    ["FF&E procurement OS","spec ↔ budget ↔ PO ↔ status ↔ delivery",8,9,9,7,8,8.0],
+    ["RFI / submittal engine","consultant SLAs + double-hop routing",8,8,8,8,7,7.6],
+    ["Change-order capture","informal requests → billable COs",8,8,9,7,6,7.6],
+    ["Field-to-record system","photos/notes → reports, tied to drawings",7,8,7,8,6,7.4],
+    ["Designer-first practice OS","usable front end over the accounting",7,9,8,6,7,7.3],
+    ["Consultant coordination alerts","notify when a background changes",8,7,7,7,7,7.0],
+    ["Client approval / comment layer","versioned, approval-bound review",6,8,6,7,5,6.9],
+    ["Capacity & estimation intel","who’s overloaded; estimate from actuals",7,7,7,8,6,6.7],
+    ["Vendor / lead-time network","real-time status across trade vendors",7,7,7,6,9,6.7]
+  ];
+  // sequential ramp for 1..10
+  var ramp=["#D2DEEC","#C2D3E5","#A6C0DA","#8AAECF","#6E9AC3","#5286B6","#3E7CB1","#2A5E8E","#1F4E79","#173A5B"];
+  function cellColor(v){ return ramp[Math.max(0,Math.min(9,Math.round(v)-1))]; }
+  function textOn(v){ return v>=6 ? "#fff" : "var(--ink)"; }
+  var tb=document.getElementById('matrixbody');
+  rows.forEach(function(r){
+    var tr=document.createElement('tr');
+    var cells=[r[2],r[3],r[4],r[5],r[6]];
+    var html='<td class="name">'+r[0]+'<small>'+r[1]+'</small></td>';
+    cells.forEach(function(v){
+      html+='<td><span class="cell" style="background:'+cellColor(v)+'; color:'+textOn(v)+'" title="'+v+' / 10">'+v+'</span></td>';
+    });
+    html+='<td class="score">'+r[7].toFixed(1)+'</td>';
+    tr.innerHTML=html;
+    tb.appendChild(tr);
+  });
+
+  // ---- scroll reveal ----
+  var sheets=document.querySelectorAll('.sheet');
+  sheets.forEach(function(s){ s.classList.add('reveal'); });
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    },{threshold:.12});
+    sheets.forEach(function(s){ io.observe(s); });
+  } else { sheets.forEach(function(s){ s.classList.add('in'); }); }
+})();
+</script>
