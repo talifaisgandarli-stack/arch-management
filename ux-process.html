@@ -17,9 +17,11 @@
     --shadow:0 1px 2px rgba(35,39,44,.06),0 8px 30px rgba(35,39,44,.08);
     /* wireframe grays */
     --wf-bg:#DBD8D0;--wf-box:#C8C5BD;--wf-box-2:#B5B2AA;--wf-ink:#6E6C66;--wf-line:#9B988F;
-    /* product UI tokens (hi-fi mockups — deliberately light, like screenshots) */
-    --p-bg:#F6F4EF;--p-card:#FFFFFF;--p-ink:#20242A;--p-soft:#6B6E66;--p-faint:#9B9E95;
-    --p-line:#E3E0D7;--p-accent:#B4552D;--p-accent-soft:#F4E4DB;--p-sage:#7D8A80;--p-shadow:0 1px 3px rgba(32,36,42,.08),0 10px 28px rgba(32,36,42,.10);
+    /* product UI tokens (hi-fi mockups — deliberately light, like screenshots)
+       monochrome direction: cool light gray ground, white cards, charcoal CTA —
+       color in the UI comes only from the designer's own imagery */
+    --p-bg:#F3F4F6;--p-card:#FFFFFF;--p-ink:#17181B;--p-soft:#5E6165;--p-faint:#9DA0A5;
+    --p-line:#E8E9EC;--p-accent:#1A1B1E;--p-accent-soft:#EDEEF0;--p-sage:#45484D;--p-shadow:0 1px 3px rgba(23,24,27,.06),0 10px 28px rgba(23,24,27,.08);
   }
   @media (prefers-color-scheme:dark){
     :root{
@@ -182,15 +184,15 @@
   .hf .logo{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;font-size:.85rem;color:var(--p-ink)}
   .hf .crumb{font-size:.66rem;color:var(--p-faint)}
   .hf .sp{flex:1}
-  .hf .btn{background:var(--p-accent);color:#fff;font-size:.66rem;font-weight:600;letter-spacing:.02em;padding:.42rem .8rem;border-radius:999px;box-shadow:0 2px 8px rgba(180,85,45,.35)}
+  .hf .btn{background:var(--p-accent);color:#fff;font-size:.66rem;font-weight:600;letter-spacing:.02em;padding:.42rem .8rem;border-radius:999px;box-shadow:0 2px 8px rgba(23,24,27,.22)}
   .hf .btn.ghost{background:transparent;color:var(--p-soft);border:1px solid var(--p-line);box-shadow:none}
   .hf .avatar{width:24px;height:24px;border-radius:50%;background:var(--p-sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600}
   .hf .dots{inset:44px 0 0 0;background-image:radial-gradient(color-mix(in srgb,var(--p-ink) 12%,transparent) 1px,transparent 1px);background-size:22px 22px}
   .hf .card{background:var(--p-card);border:1px solid var(--p-line);border-radius:10px;box-shadow:var(--p-shadow)}
   .hf .chip{font-size:.56rem;font-weight:600;padding:.18rem .5rem;border-radius:999px;white-space:nowrap}
   .hf .chip.stage{background:var(--p-accent-soft);color:var(--p-accent)}
-  .hf .chip.ok{background:#E4EDE6;color:#3E6B4A}
-  .hf .chip.wait{background:#F0EBDF;color:#8A6D3B}
+  .hf .chip.ok{background:#E8EEE9;color:#44604E}
+  .hf .chip.wait{background:#EEEFF1;color:#5E6165}
   .hf .sw{border-radius:7px;box-shadow:0 2px 8px rgba(32,36,42,.18)}
   .hf .note{background:#FBF6E7;border:1px solid #EFE4C2;border-radius:7px;font-size:.56rem;color:#6B5F3B;padding:.45rem .5rem;line-height:1.35;box-shadow:0 3px 10px rgba(32,36,42,.10)}
   .hf .t-lg{font-weight:700;color:var(--p-ink)}
@@ -205,11 +207,11 @@
   .hf .rs.cur{color:var(--p-accent);font-weight:600}
   .hf .rs.cur .d{background:var(--p-accent);box-shadow:0 0 0 3px var(--p-accent-soft)}
   .hf .rs.lock .d{background:transparent;border:1.5px solid var(--p-line)}
-  .hf .ai{background:#EDF0F4;border:1px solid #D8DEE7;color:#42606C;border-radius:8px;font-size:.58rem;padding:.5rem .6rem;line-height:1.4;box-shadow:var(--p-shadow)}
+  .hf .ai{background:#F0F1F3;border:1px solid #DFE1E5;color:#4A4E55;border-radius:8px;font-size:.58rem;padding:.5rem .6rem;line-height:1.4;box-shadow:var(--p-shadow)}
   .hf .ai b{font-weight:700}
 
   /* present mode + phone */
-  .present{background:#FAF8F4}
+  .present{background:#FAFAFB}
   .present .ptitle{font-family:"Iowan Old Style",Palatino,Georgia,serif;color:#20242A}
   .phone-row{display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;margin-top:1.8rem}
   .phone{width:300px;aspect-ratio:9/18.5;border-radius:28px;border:1px solid var(--line-strong);box-shadow:var(--shadow);overflow:hidden;position:relative;background:var(--p-bg);font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;flex:0 0 auto}
@@ -617,15 +619,15 @@
     <div class="wrap">
       <div class="eyebrow mono"><span class="n">Faza 04</span> Hi-fi dizayn</div>
       <h2>Üslub bələdçisi və son ekranlar</h2>
-      <p class="soft"><strong>Moodboard istiqaməti:</strong> memar atelyesinin masası — isti gips divar, palıd taxta, kağız üzərində mürəkkəb, gün işığında material nümunələri. Rəqəmsal deyil, əl ilə toxunulan hiss. Tətbiqin özü «səhnə»dir: interfeys sakit qalır ki, dizaynerin şəkilləri parlasın.</p>
+      <p class="soft"><strong>Moodboard istiqaməti:</strong> ağ divarlı qalereya. İnterfeys monoxromdur — açıq boz fon, ağ kartlar, kömür-qara mətn və CTA, yumşaq kölgələr. (Referans: Rentizy tipli müasir əmlak dashboard-ları.) Rəng interfeysə <em>yalnız dizaynerin öz şəkillərindən və materiallarından</em> gəlir — qalereyanın divarları ağdır ki, əsərlər parlasın. Bu, məhsul prinsipinin özüdür: səhnə sakit, iş öndə.</p>
     </div>
 
     <div class="swatches">
-      <div class="swatch"><div class="c" style="background:#F6F4EF"></div><div class="n mono">Kətan<br>#F6F4EF · fon</div></div>
-      <div class="swatch"><div class="c" style="background:#20242A"></div><div class="n mono">Mürəkkəb<br>#20242A · mətn</div></div>
-      <div class="swatch"><div class="c" style="background:#B4552D"></div><div class="n mono">Terrakota<br>#B4552D · vurğu/CTA</div></div>
-      <div class="swatch"><div class="c" style="background:#7D8A80"></div><div class="n mono">Adaçayı<br>#7D8A80 · uğur/sakit</div></div>
-      <div class="swatch"><div class="c" style="background:#E3E0D7"></div><div class="n mono">Xətt<br>#E3E0D7 · sərhədlər</div></div>
+      <div class="swatch"><div class="c" style="background:#F3F4F6"></div><div class="n mono">Fon<br>#F3F4F6 · səhnə</div></div>
+      <div class="swatch"><div class="c" style="background:#FFFFFF"></div><div class="n mono">Kart<br>#FFFFFF · səthlər</div></div>
+      <div class="swatch"><div class="c" style="background:#17181B"></div><div class="n mono">Kömür<br>#17181B · mətn + CTA</div></div>
+      <div class="swatch"><div class="c" style="background:#9DA0A5"></div><div class="n mono">Boz<br>#9DA0A5 · meta/ikincil</div></div>
+      <div class="swatch"><div class="c" style="background:#E8E9EC"></div><div class="n mono">Xətt<br>#E8E9EC · sərhədlər</div></div>
     </div>
 
     <div class="wrap" style="margin-top:2.2rem">
@@ -666,7 +668,7 @@
         </div>
         <div class="card" style="left:44%;bottom:5%;padding:.3rem .7rem;border-radius:999px"><span class="t-sm" style="position:static">− &nbsp;100%&nbsp; +</span></div>
       </div>
-      <div class="cap mono"><b>HF-01 · Studiya.</b> WF-01-in geyindirilmiş halı: nöqtəli kətan, klaster = şəkil yığını + status çipi. Statuslar rənglə YANAŞI sözlə verilir (əlçatanlıq). Tək CTA terrakotadır.</div>
+      <div class="cap mono"><b>HF-01 · Studiya.</b> WF-01-in geyindirilmiş halı: nöqtəli kətan, klaster = şəkil yığını + status çipi. Statuslar rənglə YANAŞI sözlə verilir (əlçatanlıq). Tək CTA kömür-qaradır — rəngli olan yalnız dizaynerin materiallarıdır.</div>
     </div>
 
     <!-- HF 2: project canvas -->
@@ -693,7 +695,7 @@
           <span class="rs lock"><span class="d"></span>₼ Təhvil</span>
         </div>
       </div>
-      <div class="cap mono"><b>HF-02 · Layihə kətanı.</b> Xaos yuxarıda yaşayır; rels altda sakitdir — doldurulmalı forma yox, yol xəritəsi. Kilidli mərhələlər boş dairə ilə: ₼ qapısı görünür amma qışqırmır. AI kartı slate rəngdədir — vurğu (terrakota) yalnız insan hərəkətinə aiddir.</div>
+      <div class="cap mono"><b>HF-02 · Layihə kətanı.</b> Xaos yuxarıda yaşayır; rels altda sakitdir — doldurulmalı forma yox, yol xəritəsi. Kilidli mərhələlər boş dairə ilə: ₼ qapısı görünür amma qışqırmır. AI kartı neytral bozdur — dolu qara yalnız insanın əsas hərəkətinə aiddir.</div>
     </div>
 
     <!-- HF 3: present -->
@@ -706,13 +708,13 @@
         <div class="sw" style="left:70%;top:30%;width:17%;height:20.5%;background:linear-gradient(135deg,#8a9a8e,#5d6b60);border-radius:6px"></div>
         <div class="sw" style="left:50.5%;top:53.5%;width:17%;height:20.5%;background:linear-gradient(135deg,#ded8cd,#b8afa0);border-radius:6px"></div>
         <div class="sw" style="left:70%;top:53.5%;width:17%;height:20.5%;background:linear-gradient(135deg,#5f7079,#3c4b52);border-radius:6px"></div>
-        <div class="card" style="left:60%;top:47%;padding:.35rem .55rem;border-radius:999px"><span class="t-xs" style="position:static;color:#B4552D;font-weight:700">● Leyla: «bu tonu çox bəyəndim»</span></div>
+        <div class="card" style="left:60%;top:47%;padding:.35rem .55rem;border-radius:999px"><span class="t-xs" style="position:static;color:#17181B;font-weight:700">● Leyla: «bu tonu çox bəyəndim»</span></div>
         <div class="railbar" style="height:56px">
           <span class="btn" style="font-size:.7rem;padding:.55rem 1.1rem">Bəyəndim, davam edək</span>
           <span class="btn ghost" style="font-size:.7rem;margin-left:10px">Dəyişiklik istəyirəm</span>
         </div>
       </div>
-      <div class="cap mono"><b>HF-03 · Təqdimat rejimi.</b> Serif səsi burada danışır. Dizaynerin xaosu → redaksiya səliqəsi. Klientin şərhi pin kimi şəklin üstündə. İki hərəkət — biri isti (irəli), biri neytral (dəyişiklik) — «rədd et» sözü heç yerdə yoxdur.</div>
+      <div class="cap mono"><b>HF-03 · Təqdimat rejimi.</b> Serif səsi burada danışır. Dizaynerin xaosu → redaksiya səliqəsi. Klientin şərhi pin kimi şəklin üstündə. İki hərəkət — biri dolu (irəli), biri konturlu (dəyişiklik) — «rədd et» sözü heç yerdə yoxdur.</div>
     </div>
 
     <!-- HF 4: client phone -->
@@ -742,9 +744,10 @@
         <div class="cap mono" style="margin-top:0"><b>HF-04 · Klient pəncərəsi.</b> Qeydiyyatsız: link + SMS. Sıra bilərəkdən belədir: əvvəl gözəllik (təqdimat), sonra proqres, sonra pul. Ödəniş kartı təsdiq düyməsindən <em>ayrıdır</em> — «bəyənmək» pulsuz hərəkətdir, təzyiq hissi yaratmır.</div>
         <h4 style="margin-top:1.5rem">Hi-fi qaydaları — bir baxışda</h4>
         <ul class="clean sans" style="font-size:.92rem">
-          <li>Bir vurğu rəngi (terrakota) = yalnız əsas insan hərəkəti. AI — slate, uğur — adaçayı.</li>
+          <li>İnterfeys monoxromdur: dolu kömür-qara = yalnız əsas insan hərəkəti (bir ekranda bir dolu düymə).</li>
+          <li>Yeganə semantik rəng — tutqun yaşıl «uğur/ödəniş gəldi» çipi; qalan statuslar boz tonlardır.</li>
           <li>Serif = klientə baxan üz; sans = iş aləti.</li>
-          <li>İnterfeys neytral qalır — rəngli olan, dizaynerin öz materiallarıdır.</li>
+          <li>Rəng interfeysə yalnız dizaynerin öz şəkillərindən gəlir — buna görə boş hallar (şəkilsiz ekran) xüsusi diqqət istəyir: mikrokopiya + zərif illüstrasiya, yoxsa səhifə «ölü» görünər.</li>
           <li>Status heç vaxt yalnız rənglə verilmir — həmişə söz + rəng.</li>
           <li>Hər ekranın boş / yüklənmə / xəta halı Faza 2-dəki mikrokopiya ilə yazılır.</li>
         </ul>
