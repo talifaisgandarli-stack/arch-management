@@ -1,0 +1,897 @@
+<title>On Radikal Model — Tam İzah</title>
+<style>
+  :root{
+    --bg:#F5F1EA;--card:#FFFFFF;--bone:#FBF8F3;--ink:#1C1A17;--soft:#5F594F;--faint:#A79E92;
+    --hair:#E2DCD1;--line:#C4BAA9;--terr:#B4573A;--terrS:#F4E5DC;--sage:#79876F;--sageS:#E5EAE0;--brass:#A4823C;--brassS:#F2EAD8;
+    --shadow:0 1px 2px rgba(28,26,23,.05),0 10px 30px rgba(28,26,23,.07);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#1A1917;--card:#232220;--bone:#1F1E1C;--ink:#EDE8DE;--soft:#A9A296;--faint:#736C61;
+      --hair:#302E2A;--line:#413D37;--terr:#D07352;--terrS:#33241E;--sage:#9AAB90;--sageS:#232A21;--brass:#C6A055;--brassS:#2B2419;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+  }
+  :root[data-theme="light"]{--bg:#F5F1EA;--card:#FFFFFF;--bone:#FBF8F3;--ink:#1C1A17;--soft:#5F594F;--faint:#A79E92;
+    --hair:#E2DCD1;--line:#C4BAA9;--terr:#B4573A;--terrS:#F4E5DC;--sage:#79876F;--sageS:#E5EAE0;--brass:#A4823C;--brassS:#F2EAD8;
+    --shadow:0 1px 2px rgba(28,26,23,.05),0 10px 30px rgba(28,26,23,.07)}
+  :root[data-theme="dark"]{--bg:#1A1917;--card:#232220;--bone:#1F1E1C;--ink:#EDE8DE;--soft:#A9A296;--faint:#736C61;
+    --hair:#302E2A;--line:#413D37;--terr:#D07352;--terrS:#33241E;--sage:#9AAB90;--sageS:#232A21;--brass:#C6A055;--brassS:#2B2419;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:17px;line-height:1.68;
+    -webkit-font-smoothing:antialiased}
+  .sans{font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif}
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
+
+  header.bar{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+  .bar-in{max-width:1080px;margin:0 auto;padding:.6rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+  .brand span{color:var(--faint);font-weight:400}
+  nav.toc{display:flex;gap:.7rem;overflow-x:auto}
+  nav.toc a{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;color:var(--soft);text-decoration:none;white-space:nowrap;padding:.15rem .1rem}
+  nav.toc a:hover{color:var(--terr)}
+  @media (max-width:920px){nav.toc{display:none}}
+  .tg{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--soft);padding:.35rem .6rem;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .tg:hover{color:var(--ink)} .tg:focus-visible,a:focus-visible{outline:2px solid var(--terr);outline-offset:3px}
+
+  main{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+  section{padding:3.4rem 0;border-top:1px solid var(--hair)}
+  section:first-of-type{border-top:none}
+  h1{font-weight:400;letter-spacing:-.03em;line-height:1.02;font-size:clamp(2.4rem,7vw,4.6rem);margin:.4rem 0 0;text-wrap:balance}
+  h2{font-weight:400;letter-spacing:-.02em;line-height:1.12;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:0 0 .5rem;text-wrap:balance}
+  h3{font-weight:600;font-size:1.06rem;margin:0 0 .4rem}
+  p{margin:0 0 1rem}
+  .lead{font-size:1.2rem;line-height:1.55;color:var(--soft);max-width:720px}
+  .soft{color:var(--soft)} .wrap{max-width:740px}
+  .kicker{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 .8rem}
+  .kicker b{color:var(--terr);font-weight:500}
+
+  /* model block */
+  .model{border-top:1px solid var(--hair);padding-top:2.8rem;margin-top:2.8rem}
+  .model:first-of-type{border-top:none;margin-top:0;padding-top:0}
+  .mhead{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:.4rem}
+  .mnum{font-family:"SF Mono",ui-monospace,monospace;font-size:.82rem;color:var(--terr);font-weight:600}
+  .men{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .one{font-size:1.16rem;color:var(--soft);max-width:740px;margin-bottom:1.5rem;border-left:2px solid var(--terr);padding-left:1rem}
+
+  .qa{border-top:1px solid var(--hair);padding:1.4rem 0;display:grid;grid-template-columns:210px 1fr;gap:1.6rem}
+  .qa:first-child{border-top:none}
+  @media (max-width:700px){.qa{grid-template-columns:1fr;gap:.4rem}}
+  .qa .q{font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--terr);padding-top:.35rem}
+  .qa .a{font-size:1rem;line-height:1.68;color:var(--soft)}
+  .qa .a p{margin:0 0 .85rem} .qa .a p:last-child{margin:0}
+  .qa .a b{color:var(--ink);font-weight:600}
+  .qa .a ul{margin:.5rem 0 .9rem;padding-left:1.15rem}
+  .qa .a li{margin-bottom:.5rem}
+  .qa .a li::marker{color:var(--terr)}
+  .qa .a li b{color:var(--ink)}
+
+  .states{display:flex;gap:0;flex-wrap:wrap;align-items:center;margin:.9rem 0 1rem}
+  .states .st{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.05em;background:var(--bone);border:1px solid var(--hair);border-radius:999px;padding:.3rem .7rem;color:var(--ink);white-space:nowrap;margin:.2rem 0}
+  .states .ar{color:var(--faint);padding:0 .45rem;font-family:"SF Mono",monospace;font-size:.7rem}
+
+  .code{background:var(--bone);border:1px solid var(--hair);border-radius:10px;padding:1rem 1.15rem;margin:.9rem 0;
+    font-family:"SF Mono",ui-monospace,monospace;font-size:.76rem;line-height:1.7;color:var(--soft);white-space:pre;overflow-x:auto}
+  .code b{color:var(--ink);font-weight:600}
+  .code i{color:var(--terr);font-style:normal}
+
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin:1rem 0}
+  @media (max-width:700px){.split{grid-template-columns:1fr}}
+  .split>div{background:var(--card);padding:1.1rem 1.2rem}
+  .split .h{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.55rem}
+  .split .good .h{color:var(--sage)} .split .bad .h{color:var(--terr)}
+  .split ul{margin:0;padding-left:1.05rem} .split li{font-size:.93rem;line-height:1.55;color:var(--soft);margin-bottom:.4rem}
+
+  .steps{counter-reset:s;margin:.8rem 0}
+  .steps .s{counter-increment:s;position:relative;padding-left:2.4rem;margin-bottom:.85rem;font-size:.97rem;line-height:1.62;color:var(--soft)}
+  .steps .s::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:.1rem;font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;color:var(--terr)}
+  .steps .s b{color:var(--ink);font-weight:600}
+
+  .tag{display:inline-block;font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;padding:.16rem .45rem;border-radius:4px;margin-right:.35rem}
+  .tag.e{background:var(--sageS);color:var(--sage)}
+  .tag.h{background:var(--terrS);color:var(--terr)}
+  .tag.m{background:var(--brassS);color:var(--brass)}
+
+  .callout{border-left:3px solid var(--terr);background:var(--card);padding:1.1rem 1.3rem;border-radius:0 10px 10px 0;margin:1.6rem 0;box-shadow:var(--shadow)}
+  .callout p{margin:0 0 .55rem;font-size:1rem;line-height:1.6} .callout p:last-child{margin:0}
+  .callout .who{font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:.5rem}
+
+  .tblwrap{overflow-x:auto;margin-top:1.4rem}
+  table{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--card);border:1px solid var(--hair);border-radius:12px;overflow:hidden;min-width:720px}
+  th{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:left;font-weight:500;padding:.65rem .8rem;border-bottom:1px solid var(--line)}
+  td{padding:.6rem .8rem;border-bottom:1px solid var(--hair);color:var(--soft);vertical-align:top;line-height:1.5}
+  tr:last-child td{border-bottom:none}
+  td.n{font-family:"SF Mono",ui-monospace,monospace;font-size:.76rem;color:var(--ink);white-space:nowrap}
+  tr.win td{background:var(--sageS)}
+
+  ul.clean{margin:.9rem 0;padding-left:1.2rem}
+  ul.clean li{margin-bottom:.5rem;line-height:1.6;color:var(--soft)}
+  ul.clean li b{color:var(--ink);font-weight:600}
+  ul.clean li::marker{color:var(--terr)}
+
+  footer{border-top:1px solid var(--hair);padding:2.4rem 0 3.4rem;color:var(--faint);font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;line-height:1.7}
+  footer .f{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+</style>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">On Model <span>/ tam izah</span></div>
+    <nav class="toc">
+      <a href="#giris">Giriş</a><a href="#m1">01</a><a href="#m2">02</a><a href="#m3">03</a><a href="#m4">04</a><a href="#m5">05</a><a href="#m6">06</a><a href="#m7">07</a><a href="#m8">08</a><a href="#m9">09</a><a href="#m10">10</a><a href="#secim">Seçim</a>
+    </nav>
+    <button class="tg mono" id="tg" aria-label="Mövzunu dəyiş">◐ Mövzu</button>
+  </div>
+</header>
+
+<main>
+
+<section id="giris">
+  <div class="kicker mono">Memarlıq və interyer studiyaları üçün · <b>10 əməliyyat modeli</b> · tam izah</div>
+  <h1>Hər model başqa bir<br>«iş nədir?» cavabıdır.</h1>
+  <p class="lead" style="margin-top:1.4rem">Bu on model bir-birinin variantı deyil. Hər biri işin <em>ən kiçik vahidini</em> başqa cür təyin edir — və o vahid dəyişəndə məhsulun hər şeyi dəyişir: ekran, məlumat bazası, AI-nin rolu, hətta satış hekayəsi.</p>
+  <p class="soft wrap">Aşağıda hər model üçün beş sual cavablandırılır: <b>nədir</b>, <b>hansı problemi həll edir</b>, <b>nə işə yarayır</b>, <b>necə işləyir</b>, <b>necə hazırlanmalıdır</b>. Sonda müqayisə cədvəli və konkret tövsiyə var.</p>
+
+  <div class="callout">
+    <p><b>Əvvəlcə bir anlayış: «primitiv» nədir?</b></p>
+    <p>Primitiv — məhsulun ən kiçik, bölünməz iş vahididir. Jira-da bu <em>ticket</em>-dir, Figma-da <em>layer</em>, Notion-da <em>blok</em>, Linear-da <em>issue</em>. Bütün məhsul o vahidin ətrafında qurulur.</p>
+    <p>Bizim tapıntımız: memarlar və interyer dizaynerləri <b>«task» adlı primitiv istifadə etmirlər</b>. Sənayenin öz lüğətində (schedule, spec, proposal, PO, RFI, revision) «task» sözü heç yoxdur. Ona görə task-əsaslı alətlər onlara yad gəlir — və atılır.</p>
+    <div class="who mono">Açar fikir</div>
+  </div>
+
+  <div class="tblwrap">
+    <table>
+      <tr><th>№</th><th>Model</th><th>Primitiv (iş vahidi)</th><th>Bir cümlədə</th></tr>
+      <tr><td class="n">01</td><td class="n">Qərar Qrafı</td><td>Qərar</td><td>Layihə bir-birinə bağlı qərarlar şəbəkəsidir</td></tr>
+      <tr><td class="n">02</td><td class="n">Canlı Otaqlar</td><td>Otaq</td><td>Layihə irəliləmir — hər otaq ayrıca böyüyür</td></tr>
+      <tr><td class="n">03</td><td class="n">Obyekt Səyahəti</td><td>Seçim / əşya</td><td>Hər əşyanın öz həyat yolu var</td></tr>
+      <tr><td class="n">04</td><td class="n">İnam Mühərriki</td><td>İnam dərəcəsi</td><td>İrəliləyiş = məhv edilən qeyri-müəyyənlik</td></tr>
+      <tr><td class="n">05</td><td class="n">Ətraf Yaddaş</td><td>Fraqment</td><td>Qeydiyyat özü yazılır, insan yalnız təsdiqləyir</td></tr>
+      <tr><td class="n">06</td><td class="n">Versiyalı Dünya</td><td>Dəyişiklik</td><td>Layihə budaqlanan reallıqlar toplusudur</td></tr>
+      <tr><td class="n">07</td><td class="n">Niyyət Şəbəkəsi</td><td>Niyyət</td><td>Nə çatdırdığın yox, nəyi qorumağa söz verdiyin</td></tr>
+      <tr><td class="n">08</td><td class="n">Vəd Dəftəri</td><td>Vəd</td><td>Layihə qarşılıqlı öhdəliklər toru<span></span></td></tr>
+      <tr><td class="n">09</td><td class="n">Studiya Divarı</td><td>Sancaq (pin)</td><td>Hər şey məkanda yaşayır, qovluq yoxdur</td></tr>
+      <tr><td class="n">10</td><td class="n">Qeyri-müəyyənlik Xəritəsi</td><td>Naməlum</td><td>Layihə hava xəritəsidir; işıq = risk</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- 01 -->
+<section id="m1">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">01</span><h2>Qərar Qrafı</h2><span class="men mono">Decision Graph</span></div>
+  <div class="one">Layihə tapşırıq siyahısı deyil — <b>bir-birinə bağlı qərarlar şəbəkəsidir</b>. Hər cizgi, hər render, hər təsdiq bir qərarın sübutudur.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ekranda düyünlər (qərarlar) və onları birləşdirən xətlər (asılılıqlar) görürsən. «Mətbəx planı» bir düyündür. «Ada üçün travertin, yoxsa terrazzo?» başqa bir düyün — və birincidən asılıdır. Qərar dəyişəndə ondan asılı olan hər şey dərhal görünür.</p>
+    <p>Sənədlər, şəkillər, e-poçtlar silinmir — onlar <b>düyünə bağlanmış sübutlara</b> çevrilir. Yəni fayl artıq qovluqda yox, aid olduğu qərarın yanında yaşayır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Araşdırmanın ən dərin tapıntısı: studiyaların əsas ağrısı sürət deyil, <b>yaddaşdır</b> — «nə qərar verildi, kim təsdiqlədi, niyə belə seçdik?» sualına cavab verə bilməmək.</p>
+    <ul>
+      <li><b>Şifahi təsdiqlər.</b> «Sahədə dedin ki, davam et» — üç ay sonra mübahisədə heç bir gücü yoxdur.</li>
+      <li><b>Value engineering.</b> Podratçı ucuz material təklif edir; memar orijinal niyyəti yaddaşdan müdafiə etməyə məcburdur.</li>
+      <li><b>Faza keçidləri.</b> Konsept mərhələsindəki qərarlar icra komandasına <em>səbəbsiz həndəsə</em> kimi çatır.</li>
+      <li><b>İşçi getdi.</b> Bir nəfər çıxanda təşkilati biliyin ~45%-i onunla gedir — çünki «niyə» heç yerdə yazılmayıb.</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Mübahisəni bitirir — düyünü göstərmək kifayətdir. ② Fikri dəyişməyin qiymətini görünən edir: «bu qərarı yenidən açsan, 4 qərar və 28 400 $-lıq sifariş təsirlənir». ③ Yeni işçi layihəni bir gecədə başa düşür. ④ Zamanla studiyanın <b>qərar arxivi</b> yaranır — bu, rəqiblərin kopyalaya bilmədiyi məlumat aktividir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <p>Hər qərarın bir <b>vəziyyət maşını</b> var:</p>
+    <div class="states">
+      <span class="st">AÇIQ</span><span class="ar">→</span>
+      <span class="st">AXTARIŞDA</span><span class="ar">→</span>
+      <span class="st">TƏQDİM EDİLİB</span><span class="ar">→</span>
+      <span class="st">QƏBUL EDİLİB</span><span class="ar">→</span>
+      <span class="st">BƏRKİYİB ₼</span><span class="ar">⇢</span>
+      <span class="st">MÜBAHİSƏLİ ↺</span>
+    </div>
+    <ul>
+      <li><b>Axtarışda</b> — sərbəst və sonsuzdur. Variant əlavə etmək, silmək cəzasızdır. (Dizayn elmində «fixation» problemi: erkən qərarlaşdırmaq keyfiyyəti öldürür.)</li>
+      <li><b>Qəbul edilib</b> — kimin təsdiqlədiyi <em>adla</em> yazılır. Ər-arvad problemi burada həll olunur: hər iki qərar sahibi imzalamalıdır.</li>
+      <li><b>Bərkiyib</b> — pul hərəkət edib. Bu vəziyyətdəki qərarı geri açmaq üçün sistem əvvəlcə <b>təsir radiusunu</b> hesablayır.</li>
+      <li><b>Mübahisəli</b> — tam hüquqlu vəziyyətdir, uğursuzluq deyil. Layihələr geri qayıdır; alət bunu cəzalandırmamalıdır.</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="code"><b>Decision</b> {
+  id, layihə_id, məkan_id, başlıq
+  vəziyyət: açıq|axtarışda|təqdim|qəbul|bərkiyib|mübahisəli
+  variantlar: [<b>Option</b>{ id, ad, şəkillər[], qiymət, təchizatçı }]
+  seçilmiş_variant_id
+  <i>əsaslandırma</i>: mətn        <i>// «niyə» — ən dəyərli sahə</i>
+  təsdiqləyənlər: [{ şəxs, tarix, kanal }]
+  sübutlar: [<b>Evidence</b>{ tip, mənbə, tarix }]
+  asılılıqlar: [decision_id]     <i>// qraf kənarları</i>
+}</div>
+    <div class="steps">
+      <div class="s"><b>Qrafı qur.</b> Postgres + `decisions`, `options`, `edges`, `evidence` cədvəlləri. Qraf kiçikdir (layihə başına 100–500 düyün) — xüsusi graph DB lazım deyil.</div>
+      <div class="s"><b>Təsir radiusu hesablayıcısı.</b> Bir düyündən başlayıb kənarlar üzrə gəzən sadə rekursiv sorğu. Nəticə: neçə qərar, neçə cizgi, nə qədər pul. Bu funksiya məhsulun ürəyidir.</div>
+      <div class="s"><b>Qraf vizuallaşdırması.</b> Force-directed düzülüş (d3-force və ya cytoscape), amma <em>saxlanan mövqe ilə</em> — istifadəçi düyünü sürüyəndə yeri yadda qalmalıdır. Avtomatik yenidən düzülmə dizaynerləri əsəbləşdirir.</div>
+      <div class="s"><b>Vəziyyət qapıları.</b> «Bərkiyib» vəziyyətinə keçid ödəniş hadisəsi ilə bağlanır (Stripe webhook). Beləliklə qraf kommersiyaya toxunur.</div>
+      <div class="s"><b>AI qatı.</b> Yazışmalardan qərar namizədləri çıxarmaq (LLM + struktur çıxış), risk zəncirini hesablamaq, əsaslandırma qaralaması yazmaq.</div>
+    </div>
+    <p><span class="tag h">Çətinlik: yüksək</span> <span class="tag m">Vaxt: 4–6 ay MVP</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən dərin ağrını həll edir (yaddaş və sübut)</li>
+      <li>Ən güclü moat — qərar arxivi toplanır</li>
+      <li>Digər 9 modelin altında məlumat modeli kimi işləyə bilir</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>İnsan doldurmalı olsa — «sənədləşdirmə yükü» kimi hiss olunur və atılır</li>
+      <li>Tək başına gözəl deyil; gündəlik yaşamaq üçün darıxdırıcı</li>
+      <li>Öyrənmə əyrisi orta-yüksək</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 02 -->
+<section id="m2">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">02</span><h2>Canlı Otaqlar</h2><span class="men mono">Living Rooms</span></div>
+  <div class="one">Layihə irəliləmir — <b>hər otaq ayrıca canlı orqanizmdir</b>. Otaqlar böyüyür, dayanır, bəzən geri çəkilir.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ana ekran otaq kartlarından ibarətdir: fotoşəkil, ad, <b>yetkinlik dairəsi</b> (86%, 62%…) və üç «həyat göstəricisi» — seçimlər 14/16, açıq suallar 1, yolda 2. Yanda kiçik plan açarı: hər otaq yetkinliyinə görə rənglənib.</p>
+    <p>Otaq bir qovluq deyil — <b>vəziyyəti olan canlı obyektdir</b>. Tibbi monitor məntiqi: baxıb dərhal «bu otaq sağlamdır, o biri xəstədir» deyirsən.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Dizaynerlər <b>onsuz da otaqlarla düşünürlər</b> — bu, uydurma deyil, sənayenin öz strukturudur:</p>
+    <ul>
+      <li>FF&amp;E cədvəlləri Excel-də <b>otaq-tablı</b> qurulur</li>
+      <li>Ödəniş qapıları otaq üzrədir: «hər otağın bütün əşyaları təsdiqləndikdən sonra qalan 50%»</li>
+      <li>Klient təqdimatları otaq-otaq gedir</li>
+    </ul>
+    <p>Yəni bazardakı alətlər sənayenin təbii qabını sındırıb məlumat tipinə görə (tapşırıqlar, fayllar, sifarişlər) yenidən qururlar. Bu model sadəcə <b>müqavimət göstərməyi dayandırır</b>.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Sıfıra yaxın öyrənmə əyrisi — dizayner artıq belə düşünür. ② Klient üçün ideal dil: «mətbəx 62%-dədir» hər kəsə aydındır. ③ Otaq-səviyyəli ödəniş qapıları təbii şəkildə oturur. ④ Vizual olaraq gözəl — məhsulu satmaq asandır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <p>Hər otağın <b>yetkinlik səviyyəsi</b> var:</p>
+    <div class="states">
+      <span class="st">TOXUNULMAMIŞ</span><span class="ar">→</span>
+      <span class="st">İSTİQAMƏTLİ</span><span class="ar">→</span>
+      <span class="st">HƏLL OLUNUB</span><span class="ar">→</span>
+      <span class="st">SƏNƏDLƏŞİB</span><span class="ar">→</span>
+      <span class="st">TİKİLİB</span>
+    </div>
+    <p><b>Kritik detal:</b> yetkinlik faizi əl ilə yazılmır. Sistem onu otağın içindəki obyektlərdən hesablayır:</p>
+    <div class="code"><i>yetkinlik</i> = (
+    təsdiqlənmiş_seçimlər / ümumi_seçimlər  × 0.45
+  + bağlanmış_suallar / ümumi_suallar        × 0.25
+  + sifariş_verilmiş / təsdiqlənmiş          × 0.20
+  + (moodboard_təsdiqi ? 1 : 0)              × 0.10
+) × 100</div>
+    <p>Geriləmə də mümkündür və <b>gizlədilmir</b> — əksinə, qövs geriyə hərəkət edir və səbəb yazılır: «Daş qərarı yenidən açıldıqdan sonra iki seçim geri götürüldü».</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="code"><b>Space</b> {
+  id, layihə_id, ad, tip (yaşayış|servis|xarici)
+  plan_poliqonu: [[x,y]...]      <i>// plan açarı üçün</i>
+  hero_şəkil, yetkinlik_faizi (hesablanır)
+  büdcə: { planlanan, öhdəlik, ödənilmiş }
+}
+<b>Selection</b> { id, space_id, ad, təchizatçı, qiymət, vəziyyət, şəkil }
+<b>OpenQuestion</b> { id, space_id, mətn, kimə, açılıb, bağlanıb }</div>
+    <div class="steps">
+      <div class="s"><b>Otaq modelindən başla.</b> Ən sadə məlumat sxemi — layihə → otaq → seçim. Üç səviyyə, artıq yox.</div>
+      <div class="s"><b>Yetkinlik hesablayıcısı.</b> Yuxarıdakı düstur; hər seçim dəyişikliyində yenidən hesablanır. Kart qövsü SVG arc path ilə çəkilir.</div>
+      <div class="s"><b>Plan açarı.</b> Ən çətin texniki hissə — planı vektor kimi almaq. MVP-də sadə: dizayner plan şəklini yükləyir, otaq sahələrini əl ilə çəkir (poliqon alət). Sonra DWG/PDF import.</div>
+      <div class="s"><b>Otaq içi ekran.</b> Kartın açılması: hero şəkil + seçimlər şəbəkəsi + açıq suallar + büdcə.</div>
+      <div class="s"><b>AI.</b> Yetkinliyi artefaktlardan qiymətləndirmək; <em>estetik sürüşməni</em> aşkarlamaq («kabinet iyun palitrasından uzaqlaşıb»).</div>
+    </div>
+    <p><span class="tag e">Çətinlik: aşağı-orta</span> <span class="tag m">Vaxt: 2–3 ay MVP</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən aşağı öyrənmə əyrisi — sənaye belə düşünür</li>
+      <li>Vizual olaraq ən gözəl və satılabilən</li>
+      <li>Ödəniş qapıları təbii oturur</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Otaq <em>qab</em>dır, mühərrik deyil — otaqlararası qərarlar (palitra, döşəmə axını) divarları tanımır</li>
+      <li>Orijinallıq aşağıdır — kopyalanması asandır</li>
+      <li>Tək başına moat yaratmır</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 03 -->
+<section id="m3">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">03</span><h2>Obyekt Səyahəti</h2><span class="men mono">Object Journey</span></div>
+  <div class="one">Hər divan, plitə, çilçıraq və kran <b>öz həyat yolunu</b> gedir — ilhamdan quraşdırmaya. Dizayner hava limanı dispetçeridir.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ekran doqquz mərhələli üfüqi relsdir. Hər əşya bir sətirdir: arxasında keçdiyi yolun izi, qabağında kölgə nişanlar, cari mövqedə isə <b>əşyanın öz şəkli</b> olan kiçik çip. Şaquli qara xətt — <b>quraşdırma günü</b>. Hər şey ora doğru axır.</p>
+    <p>Bu Gantt <em>deyil</em>: heç bir şey müddəti göstərmir, yalnız <b>həyat dövründəki mövqeyi</b>.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Procurement (təchizat) studiyaların həm pul, həm də klient etibarı itirdiyi mərhələdir:</p>
+    <ul>
+      <li>Layihə başına <b>80–150+</b> əşya, hər birinin ayrıca təsdiqi lazım</li>
+      <li>«Spesifikasiya bir yerdə, təsdiq söhbəti başqa yerdə, büdcə üçüncüdə, çatdırılma izi <b>heç yerdə</b>»</li>
+      <li>Excel <b>~100 əşyadan</b> sonra sınır</li>
+      <li>8 həftə deyilən müddət 12 həftə çıxır — və klient dizaynerə hirslənir</li>
+      <li>Zədə iddiaları daşıyıcının müddəti keçəndən sonra aşkarlanır</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Ən çox saat yeyən işi (expediting — sifariş qovmaq) birbaşa hədəf alır. ② Pula ən yaxın moduldur, ona görə <b>ödəməyə hazırlıq ən yüksəkdir</b>. ③ Quraşdırma gününə yaxınlaşma hissi — bir gecikən əşyanın bütün açılışı girov saxladığı reallığı görünən edir. ④ Təchizatçıların <b>real vs vəd edilən</b> müddət tarixçəsi toplanır — bu, şəbəkə effekti yaradır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <p>Sənayenin özünün istifadə etdiyi vəziyyət maşını — biz onu icad etmirik, sadəcə görünən edirik:</p>
+    <div class="states">
+      <span class="st">İLHAM</span><span class="ar">→</span><span class="st">KONSEPT</span><span class="ar">→</span>
+      <span class="st">SPESİFİKASİYA</span><span class="ar">→</span><span class="st">QİYMƏT</span><span class="ar">→</span>
+      <span class="st">₼ SİFARİŞ</span><span class="ar">→</span><span class="st">YOLDA</span><span class="ar">→</span>
+      <span class="st">QƏBUL</span><span class="ar">→</span><span class="st">QURAŞDIRMA</span><span class="ar">→</span><span class="st">FOTO</span>
+    </div>
+    <p><b>Qapı qaydası:</b> «Sifariş» mərhələsinə keçid yalnız iki şərt ödənəndə açılır — klient təsdiqi <em>və</em> avans. Bu, sənayenin müqəddəs qaydasıdır: «Klient imzalamadan heç vaxt sifariş vermə».</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="code"><b>Object</b> {
+  id, space_id, ad, kateqoriya, şəkil
+  təchizatçı_id, sku, ölçülər, material
+  qiymətlər: { ticarət, klient, marja_faizi }
+  vəd_edilən_müddət_gün, <i>real_müddət_gün</i>
+  vəziyyət: ilham|konsept|spec|qiymət|sifariş|yolda|qəbul|quraşdırıldı|foto
+  sənədlər: [tearsheet, qiymət_pdf, PO, qaimə, qəbul_foto]
+}
+<b>Vendor</b> { id, ad, <i>müddət_tarixçəsi[]</i>, etibarlılıq_balı }</div>
+    <div class="steps">
+      <div class="s"><b>Web clipper ilə başla.</b> Brauzer uzantısı: təchizatçı səhifəsindən şəkil, qiymət, SKU-nu bir kliklə götürür. Bu, istifadəçini cəlb edən ilk qarmaqdır (Gather bununla sevilir).</div>
+      <div class="s"><b>Sənəd oxuma (AI).</b> Qiymət təklifi və qaimə PDF-lərini LLM ilə oxuyub sahələrə çevir. 2026-cı ildə dəqiqlik ~90% — yəni <em>yenidən yazmaq</em> yox, <em>nəzərdən keçirmək</em> axını qur.</div>
+      <div class="s"><b>Rels vizualı.</b> Sadə: hər sətir bir SVG/HTML sətri, mərhələ mövqeləri sabit koordinatlar. Ağır kitabxana lazım deyil.</div>
+      <div class="s"><b>Ödəniş qapısı.</b> Stripe/yerli provayder → «sifariş» vəziyyətinin kilidi.</div>
+      <div class="s"><b>Qovucu agent.</b> E-poçt agenti təchizatçıya statusu soruşur, cavabı oxuyur, çipi özü irəli sürür.</div>
+      <div class="s"><b>Müddət telemetriyası.</b> Hər sifarişdə vəd/real fərqini yaz. Studiyalar arası toplananda bu, əvəzedilməz məlumat olur.</div>
+    </div>
+    <p><span class="tag e">Çətinlik: orta</span> <span class="tag m">Vaxt: 3–4 ay MVP</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən tez gəlir gətirən modul — pula yaxındır</li>
+      <li>Şəbəkə effekti: təchizatçı telemetriyası</li>
+      <li>Ağrı çox konkret və ölçüləbiləndir</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Ən az orijinal — Programa, Materio, Gather burada yaşayır</li>
+      <li>Yaradıcı yarımı tamamilə görməzdən gəlir</li>
+      <li>Tək başına «yeni kateqoriya» hekayəsi qurmur</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 04 -->
+<section id="m4">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">04</span><h2>İnam Mühərriki</h2><span class="men mono">Confidence Engine</span></div>
+  <div class="one">Heç nə tapşırıq saymır. Hər şey <b>inamı</b> ölçür — klientin, dizaynerin, büdcənin, tikintinin — və AI inamın harada çökəcəyini əvvəlcədən deyir.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Tünd kömür fonda dörd axan zolaq: <b>Klient · Dizayner · Büdcə · Tikinti</b>. Zolağın qalınlığı = inam səviyyəsi. Soldan sağa zaman axır; ortada işıqlı «İNDİ» xətti, ondan sonra kəsik-kəsik <b>proqnoz</b>. Solda nəhəng rəqəmlər: 84, 93, 36, 78.</p>
+    <p>Bu ekran «nə etməli» demir. <b>«İşlər necə gedir»</b> deyir — və bu, tamam başqa bir sualdır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Dizayn problemlərinin <b>dayanma qaydası yoxdur</b> (Rittel &amp; Webber, «wicked problems»). Yəni «bitdi» anı obyektiv mövcud deyil — vaxt, pul və ya səbr bitəndə dayanırsan.</p>
+    <p>Ona görə «tamamlanma faizi» yalandır. Dizayner onu ya uydurur, ya da alətdən qaçır. Halbuki hər studiya rəhbəri beynində <em>onsuz da</em> inam izləyir: «mətbəx hələ oturmayıb», «klient tərəddüd edir».</p>
+    <p>Bu model həmin gizli, adı çəkilməyən mühakiməni <b>görünən obyektə</b> çevirir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Studiya rəhbəri üçün: iclas keçirmədən layihənin sağlamlığını görmək. ② Erkən xəbərdarlıq — problem partlamazdan 3 həftə əvvəl. ③ «Sofanı seçmək layihəni irəli aparır?» sualının düzgün cavabı: yalnız qonaq otağına olan inamı artırırsa. ④ Radikal orijinallıq — heç bir rəqib belə düşünmür.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <p>Dörd bal, hər biri müşahidə olunan siqnallardan hesablanır:</p>
+    <div class="code"><b>Klient inamı</b>   ← təsdiq gecikmələri, reviziya sayı,
+                     mesajların tonu, «əmin deyiləm» ifadələri
+<b>Dizayner inamı</b> ← qərarların açıq/bağlı nisbəti,
+                     yenidən açılma tezliyi
+<b>Büdcə inamı</b>    ← öhdəlik vs plan, qiymət sürüşməsi,
+                     etibarsız qiymət təklifləri
+<b>Tikinti inamı</b>  ← cavabsız RFI-lar, koordinasiya boşluqları,
+                     təchizatçı gecikmələri</div>
+    <p><b>Vacib dizayn qaydası:</b> hər bal <em>həmişə</em> onu doğuran sübutlara açılmalıdır. Bal qara qutu olarsa, heç kim inanmaz. Və bal <b>onluq rəqəmsiz</b> olmalıdır — 36.4 saxta dəqiqlikdir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Əvvəlcə hadisə axını qur.</b> Bu model <em>öz məlumatını yaratmır</em> — o, digər modellərin (qərarlar, obyektlər, vədlər) üstündə oturan analitik qatdır. Yəni tək başına birinci qurula bilməz.</div>
+      <div class="s"><b>Siqnalları topla.</b> Hər hadisəyə (təsdiq, gecikmə, reviziya) əlamət və çəki ver.</div>
+      <div class="s"><b>Bal hesablayıcısı.</b> Sadə çəkili model ilə başla — ML lazım deyil. Şəffaflıq dəqiqlikdən vacibdir.</div>
+      <div class="s"><b>Proqnoz.</b> Son 8 həftənin trendini ekstrapolyasiya et + bilinən gələcək hadisələr (gözlənilən çatdırılma, planlaşdırılan təqdimat).</div>
+      <div class="s"><b>Zolaq vizualı.</b> SVG sahə yolu (area path): hər zaman nöqtəsində yuxarı və aşağı kənar = baza ± dəyər×amplituda.</div>
+      <div class="s"><b>Sürücü siyahısı.</b> Hər balın dəyişməsinə ən çox təsir edən 5 hadisə — «Daş qərarı yenidən açıldı −22».</div>
+    </div>
+    <p><span class="tag h">Çətinlik: yüksək (məlumat asılılığı)</span> <span class="tag m">Tək başına MVP olmur</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən orijinal çərçivə — kateqoriya yaradan hekayə</li>
+      <li>Studiya rəhbəri üçün son dərəcə cəlbedici</li>
+      <li>Wicked problem reallığına dürüst cavab</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Ballar özbaşına görünə bilər — inam qazanmaq çətindir</li>
+      <li>Başqa modellərin məlumatı olmadan işləmir</li>
+      <li>Manipulyasiya riski (bal üçün işləmək)</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 05 -->
+<section id="m5">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">05</span><h2>Ətraf Yaddaş</h2><span class="men mono">Ambient Memory</span></div>
+  <div class="one">Qeydiyyat <b>özü yazılır</b>. Heç nə əl ilə fayllanmır, heç nə axtarılmır — bilik lazım olduğu anda özü üzə çıxır, insan yalnız təsdiqləyir.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ekranda naviqasiya yoxdur. Yan panel yoxdur. Tab yoxdur. Yalnız mərkəzdə bir sütun və orada üç-dörd kart: səs qeydindən çıxarılmış bir qərar, klientin təsdiq e-poçtu, sənin unutduğun bir vəd.</p>
+    <p>Hər kartın üstündə <b>niyə göründüyü</b> yazılır: «çünki mətbəxi açdın», «çünki 041 nömrəli qərar yenidən açıldı». Aşağıda bir sətir var — amma axtarış qutusu deyil: <em>«İstədiyini soruş — ya da sadəcə işləməyə davam et.»</em></p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p><b>Alətlərin ölüm səbəbi #1: adam məlumat daxil etmir.</b> Bütün əvvəlki alətlər «dizayner bunu doldursun» fərziyyəsi üzərində qurulub — və dizaynerlər doldurmur. Studiya alətləri 60 gündən sonra sakitcə tərk edilir.</p>
+    <ul>
+      <li>Peşəkarların <b>69%-i</b> qərar vermək üçün lazım olan məlumatı tapa bilmir</li>
+      <li>Qərarlar e-poçt və WhatsApp arasında bölünür; tikintidə <b>72%</b> WhatsApp istifadə edir</li>
+      <li>Hər zəngdən sonra «yazılı xülasə» rituali — əl ilə, hər dəfə</li>
+    </ul>
+    <p>2026-cı ildə bu problemin texniki həlli mövcuddur: uzun kontekst, sənəd oxuma, transkripsiya, çoxmodallı axtarış — hamısı istehsal keyfiyyətindədir. <b>Sadəcə heç kim bunları dizayn studiyaları üçün birləşdirməyib.</b></p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Qəbul problemini həll edir — heç kim davranışını dəyişmir, hamı e-poçt və mesajla işləməyə davam edir. ② DEQ meylli auditoriya üçün ideal: <b>sıfır mərasim</b>. ③ Bütün digər modellərin məlumatını istehsal edir — bu, mühərrikdir. ④ AI-native: modeli çıxarsan, məhsul qalmır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <p>Üç mərhələli boru xətti:</p>
+    <div class="code"><b>1. UDMA</b>    e-poçt · WhatsApp · görüş yazısı · foto · PDF
+             ↓
+<b>2. ÇIXARMA</b>  LLM → { qərar, vəd, təsdiq, qiymət, tarix }
+             hər biri <i>etibar balı</i> və mənbə istinadı ilə
+             ↓
+<b>3. ÜZƏ ÇIXARMA</b>  cari kontekstə görə sıralama
+             → bir toxunuşla təsdiq → qraf a yazılır</div>
+    <p><b>Ən vacib dizayn qərarı:</b> AI heç vaxt avtomatik yazmır. Həmişə <em>təklif edir</em>, insan təsdiqləyir. Səhv çıxarma məhsula olan inamı bir dəfəyə öldürər.</p>
+    <p><b>İkinci vacib qərar:</b> «Sonra» düyməsi rədd etmək deyil — fraqment aktuallığı artanda yenidən qayıdır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Məhdud başla — inbox OAuth ilə yox.</b> İlk versiyada yalnız <b>yönləndirmə ünvanı</b> ver: <span class="mono">layihe@atelier.app</span>. Dizayner lazım bildiyi məktubu ötürür. Məxfilik etimadı belə qazanılır.</div>
+      <div class="s"><b>Çıxarma sxemi.</b> LLM-dən struktur çıxış (JSON schema) tələb et. Hər sahə üçün <em>mənbə sitatı</em> saxla — istifadəçi «haradan çıxardın?» deyə bilməlidir.</div>
+      <div class="s"><b>Etibar həddi.</b> Aşağı balda ümumiyyətlə göstərmə. Səhv təklif göstərməmək, doğru təklifi qaçırmaqdan pisdir.</div>
+      <div class="s"><b>Aktuallıq motoru.</b> Sadə başla: hazırda açıq olan məkan/qərar + son fəaliyyət. Vektor axtarışı (pgvector) ikinci mərhələdə.</div>
+      <div class="s"><b>Səs.</b> Görüş/sahə səyahəti transkripsiyası — hazır API-lar (Whisper sinfi). Sonra qərar çıxarma eyni boru xətti ilə.</div>
+      <div class="s"><b>Heç vaxt çatbot qurma.</b> AI-nin yeganə səsi kartdakı kursiv «çünki…» sətri olmalıdır.</div>
+    </div>
+    <p><span class="tag h">Çətinlik: yüksək (AI dəqiqliyi)</span> <span class="tag m">Vaxt: 3–5 ay</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Qəbul problemini kökündən həll edir</li>
+      <li>Digər modellərin məlumatını istehsal edir</li>
+      <li>2026-cı ildə mövcud olan yeganə boş qat</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Məxfilik/etibar maneəsi — inbox həssas ərazidir</li>
+      <li>Strukturu olmayan axın sadəcə «lent»dir — altında qraf lazımdır</li>
+      <li>Səhv çıxarma inamı tez öldürür</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 06 -->
+<section id="m6">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">06</span><h2>Versiyalı Dünya</h2><span class="men mono">Versioned World</span></div>
+  <div class="one">Bütün layihə <b>versiyalanır</b> — otaq, cizgi, moodboard, material. Variantlar budaqdır, qərarlar birləşmədir, təhvil verilən dəst teqdir. Bir dənə də texniki söz olmadan.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ekranın ortasından üfüqi <b>gövdə xətti</b> keçir — cari reallıq. Ondan budaqlar ayrılır: yuxarı və aşağı. Hər budağın başında kiçik render şəkli var — «isti mətbəx», «daha sıx dülgərlik». Bəziləri gövdəyə qayıdır (qəbul edilib), bəziləri havada bitir (tərk edilib, kəsik-kəsik xətlə).</p>
+    <p>Altda sürüşdürücü var: onu geri çəkəndə <b>bütün layihə</b> həmin tarixə qayıdır.</p>
+    <p><b>Ən vacib qayda:</b> «commit», «merge», «branch», «HEAD», «conflict» sözləri ekranda <em>heç vaxt</em> görünmür. Onların yerinə: dəyişiklik, istiqamət, qəbul et, cari, fərq, fikir ayrılığı.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <ul>
+      <li><b>Kəşfiyyat cəzalandırılır.</b> Mövcud alətlərdə hər variant «bağlanmalı tapşırıqdır» — bu, erkən qərarlaşmağı mükafatlandırır və dizayn keyfiyyətini öldürür (design fixation araşdırması).</li>
+      <li><b>Köhnəlmiş revizor faciəsi.</b> «Divar səhv yerdə tikildi, çünki sahə komandası Rev B ilə işləyirdi — halbuki Rev D üç həftə əvvəl verilmişdi». Bu, sənayenin ən bahalı xəta sinfidir.</li>
+      <li><b>«Niyə dəyişdi?»</b> — dəyişikliyin səbəbi heç yerdə saxlanmır.</li>
+    </ul>
+    <p>Versiyalama bu üç problemi <b>struktur olaraq</b> həll edir: yalnız bir «cari» ola bilər, və hər dəyişikliyin səbəbi var.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Kəşfiyyat pulsuz və utancsız olur — budaq açmaq heç nəyə başa gəlmir. ② Klientə iki reallığı yan-yana göstərmək mümkün olur: «bu, bu qədər; o, o qədər». ③ Zaman səyahəti — «iyunda nə düşünürdük?» sualı bir sürüşdürmə ilə cavablanır. ④ Heç nə silinmir; tərk edilmiş istiqamətlər şərtlər dəyişəndə geri qaytarıla bilər.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <div class="code"><b>Change</b> {          <i>// «commit» demirik</i>
+  id, valideyn_id, budaq_id, müəllif, tarix
+  <i>səbəb</i>: mətn         <i>// məcburi sahə — bu, git-dən fərqimizdir</i>
+  fərqlər: [{ obyekt_tipi, obyekt_id, əvvəl, sonra }]
+}
+<b>Branch</b> { id, ad (AI yazır), başlanğıc_change_id,
+           vəziyyət: canlı|qəbul|tərk, thumbnail }
+<b>Tag</b> { id, change_id, ad: "DD DƏSTİ · TƏHVİL" }</div>
+    <p><b>Kritik texniki qərar:</b> hər şeyi versiyalamaq mümkün deyil — BIM/CAD faylları bizim deyil. Ona görə biz <b>metadatanı</b> versiyalayırıq: seçimlər, materiallar, qərarlar, moodboard tərkibi, büdcə. Cizgi faylları isə <em>istinad + teq</em> kimi saxlanır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Event sourcing ilə qur.</b> Vəziyyəti birbaşa saxlama — hadisələri saxla, vəziyyəti onlardan hesabla. Zaman səyahəti bunun pulsuz nəticəsidir.</div>
+      <div class="s"><b>Budaq = alternativ hadisə axını.</b> Kopyalama yox, istinad. Budaq yalnız fərqləri saxlayır.</div>
+      <div class="s"><b>Fərq hesablayıcısı.</b> İki vəziyyəti müqayisə edib insan dilində fərq yazan funksiya — «ada 200 mm böyüdü və oturacaq çıxıntısını itirdi».</div>
+      <div class="s"><b>Lüğət qatı.</b> Kod daxilində git terminologiyası, interfeysdə <em>heç vaxt</em>. Bunu bir tərcümə cədvəli kimi rəsmiləşdir.</div>
+      <div class="s"><b>Fikir ayrılığı UX-i.</b> Merge conflict → iki şəkil, iki ad, bir sual: «hansı doğrudur?». Üç tərəfli birləşdirmə interfeysi qurma — dizaynerlər onu istifadə etməyəcək.</div>
+    </div>
+    <p><span class="tag h">Çətinlik: çox yüksək</span> <span class="tag h">Platforma mərtəbəsində investisiya</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən dərin və müdafiə oluna bilən məlumat strukturu</li>
+      <li>Köhnəlmiş revizor xətasını struktur olaraq öldürür</li>
+      <li>Kəşfiyyatı pulsuz edir</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Git zehni modeli mühəndislərin çoxunu belə məğlub edib</li>
+      <li>CAD/BIM faylına sahib olmadan yarımçıq qalır</li>
+      <li>10 illik platforma mərcidir, MVP deyil</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 07 -->
+<section id="m7">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">07</span><h2>Niyyət Şəbəkəsi</h2><span class="men mono">Intent Network</span></div>
+  <div class="one">Təhvil verilənləri yox, <b>niyyətləri</b> izlə. «İsti qonaqpərvərlik», «gün işığını maksimuma çatdır», «vizual dağınıqlığı azalt» — hər qərar bunları ya gücləndirir, ya zəiflədir.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Radial bürc: mərkəzdən müxtəlif məsafələrdə niyyətlər böyük serif sözlərlə dayanıb. <b>Güclü niyyət mərkəzə yaxındır, zəif niyyət kənarda və solğundur</b> — məsafə informasiyadır.</p>
+    <p>Qərarlar kiçik nöqtələrdir və <em>xidmət etdikləri niyyətlərin arasında</em> yerləşirlər. İki niyyətə xidmət edən qərar hərfi mənada ikisinin ortasındadır. Bir niyyətə xidmət edib digərinə zərər verən qərar isə <b>gərginlik xətti</b> yaradır — terrakota rəngli nazik xətt.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Dizayn araşdırmasında buna <b>«primary generator»</b> deyilir (Jane Darke, 1979): memar mürəkkəbliyi idarə etmək üçün erkən mərhələdə sadə bir təşkiledici fikrə yapışır və qalan hər şeyi onun ətrafında qurur.</p>
+    <p>Bu fikir layihənin <b>ən dəyərli obyektidir</b> — və heç bir proqram onu saxlamır. Nəticədə:</p>
+    <ul>
+      <li><b>Value engineering döyüşü.</b> Podratçı ucuz əvəz təklif edir; memar orijinal niyyəti yaddaşdan müdafiə etməyə çalışır və uduzur. Bir halda əvəz edilmiş örtük <b>2 mln $</b> təmirə səbəb olub.</li>
+      <li><b>Estetik sürüşmə.</b> 200 kiçik qərardan sonra layihə başladığı yerdən uzaqlaşır — heç kim tək bir qərarı günahlandıra bilmir.</li>
+      <li><b>İşçi dəyişikliyi.</b> «Niyə belə qərara gəlmişdik» sussuz bilikdir və insanla birlikdə gedir.</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Memarın <b>öz işi haqqında düşündüyü dilə</b> uyğun gəlir — emosional olaraq ən güclü model. ② VE müzakirəsinə hazır arqument verir: «bu şüşələmə 14 000 $ qənaət edir və <em>gün işığı</em> niyyətini 18 vahid zəiflədir». ③ Klientlə başlanğıcda imzalanan niyyətlər sonrakı bütün mübahisələr üçün mərkəz olur.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <div class="code"><b>Intent</b> {
+  id, layihə_id, ifadə: "Gün işığını maksimuma çatdır"
+  mənbə_sitatı: "ilk görüşdən sitat"
+  imzalayanlar: [dizayner, klient], tarix
+  <i>güc</i>: 0–100 (hesablanır), tarixçə: [{tarix, güc}]
+  vəziyyət: aktiv | təqaüdə çıxarılıb
+}
+<b>IntentEffect</b> {
+  decision_id, intent_id
+  təsir: −3 … +3          <i>// AI qiymətləndirir, insan düzəldir</i>
+  izah: "şüşələmə sahəsi 22% azalır"
+}</div>
+    <p><b>Güc düsturu:</b> başlanğıc 50 + bütün təsirlərin çəkili cəmi, son dövrə daha çox ağırlıq verilir.</p>
+    <p><b>Ən vacib məhdudiyyət:</b> AI zövq haqqında hökm verə bilməz. Ona görə hər bal «bizim oxumağımız» kimi təqdim olunur, bir kliklə düzəldilir — və düzəliş layihənin öz modelini öyrədir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Niyyət yazma ekranından başla.</b> Layihənin ilk günü: 5–6 cümlə, hər ikisi tərəfindən imzalanır. Bu, məhsulun ən sadə və ən vacib ekranıdır.</div>
+      <div class="s"><b>Brifdən çıxarma.</b> AI ilk görüş transkriptindən niyyət namizədləri təklif edir — dizayner yazmır, redaktə edir.</div>
+      <div class="s"><b>Qiymətləndirici.</b> Hər yeni qərar üçün: vision modeli şəkillərə baxır + LLM əsaslandırmaya baxır → təsir balı + izah.</div>
+      <div class="s"><b>Eroziya aşkarlayıcısı.</b> Tək pozuntu yox, <em>təkrarlanan meyl</em> axtar: «vizual dağınıqlığı azalt iyundan bəri 4 dəfə zəifləyib — həmişə dülgərlik qərarları ilə».</div>
+      <div class="s"><b>Bürc vizualı.</b> Bucaq mövqeləri sabit, radius = 380 − güc×1.4. Force simulyasiyası lazım deyil.</div>
+    </div>
+    <p><span class="tag h">Çətinlik: yüksək (subyektiv qiymətləndirmə)</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Emosional olaraq ən rezonanslı — memarlar işlərini belə görürlər</li>
+      <li>Layihənin ən dəyərli, ən az saxlanan obyektini qoruyur</li>
+      <li>VE müdafiəsi konkret biznes dəyəridir</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Niyyət qəsdən qeyri-müəyyəndir; həddən artıq rəsmiləşdirmək onu öldürür</li>
+      <li>AI-nin zövq mühakiməsi iddiası müqavimətlə qarşılaşacaq</li>
+      <li>Tək başına gündəlik istifadə səbəbi vermir</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 08 -->
+<section id="m8">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">08</span><h2>Vəd Dəftəri</h2><span class="men mono">Promise Ledger</span></div>
+  <div class="one">Kimin nə söz verdiyi — klient, təchizatçı, podratçı və studiyanın özü — <b>tarixlə və qarşılıqlı</b> yazılır. Mühasibat dəftəri yox, <b>etibar dəftəri</b>.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Ekran bir <b>cizgili kağız səhifədir</b>. Sol tərəfdə tarix novu, ortada vədlər — hər biri bir cümlə, serif şriftlə. Sağ kənarda əl ilə çəkilmiş kimi işarələr: yaşıl tik (yerinə yetirildi), terrakota kəsik (pozuldu), bürünc ox (yenidən razılaşdırıldı), boş halqa (açıq).</p>
+    <p>Səhifədən kənarda, sol kənarda hər tərəfin <b>etibar zolağı</b> var: «Ferro Stone — 6/11 yerinə yetirilib».</p>
+    <p>Vədlər <b>silinmir</b>. Səhv vəd «geri götürülür» — üstündən xətt çəkilir, amma qalır. Dəftərin bütövlüyü məhsulun özüdür.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <ul>
+      <li><b>Şifahi təsdiq.</b> «Sahibkar sahədə dedi ki, davam et» — üç ay sonra xərc mübahisəsində keçmir. Təsdiq səlahiyyətinin müəyyən edilməməsi tikintidə <b>ən böyük məhkəmə mənbələrindən</b> biridir.</li>
+      <li><b>Təchizatçı müddəti.</b> 8 həftə deyilir, 12 həftə olur — və klient dizaynerə hirslənir.</li>
+      <li><b>Ər-arvad dönüşü.</b> Təsdiqdən sonra həyat yoldaşı fikri dəyişir; yazılı iz olmasa, dizayner yenidən işi öz cibindən ödəyir.</li>
+      <li><b>24 saat rituali.</b> Hər zəngdən sonra yazılı xülasə göndərmək — dizaynerlərin əl ilə etdiyi, tez-tez unutduğu iş.</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Məhkəmə səviyyəli ağrını hədəf alır — ödəməyə hazırlıq yüksəkdir. ② <b>Qarşılıqlıdır</b>: təkcə klienti izləmir, studiyanın öz vədlərini də. Bu, onu «nəzarət aləti» olmaqdan çıxarır. ③ Təchizatçıların real etibarlılıq tarixçəsi studiyalar arasında toplananda — <b>şəbəkə moatı</b>. ④ Sənəd kimi görünür, yəni mübahisədə avtoritet daşıyır.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <div class="states">
+      <span class="st">VERİLDİ</span><span class="ar">→</span><span class="st">VAXTI ÇATIR</span><span class="ar">→</span>
+      <span class="st">YERİNƏ YETİRİLDİ ✓</span>
+      <span class="ar">/</span><span class="st">POZULDU ✕</span>
+      <span class="ar">/</span><span class="st">YENİDƏN RAZILAŞDIRILDI ↗</span>
+    </div>
+    <p><b>Ən incə hissə — vədi mülahizədən ayırmaq.</b> «Ola bilsin cümə axşamına göndərək» vəd deyil. «Cümə günü göndərəcəyəm» vəddir. AI bu fərqi tutmalı və <b>şübhə halında yazmamalıdır</b> — yanlış vəd yazmaq, vədi qaçırmaqdan pisdir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="code"><b>Promise</b> {
+  id, layihə_id
+  mətn: "Ada üstü 8 avqusta çatdırılacaq"
+  verən_tərəf_id, alan_tərəf_id     <i>// qarşılıqlıdır</i>
+  verilmə_tarixi, vəd_edilən_tarix
+  vəziyyət: açıq|yerinə_yetirildi|pozuldu|yenidən_razılaşdı|geri_götürüldü
+  sübut: { kanal, sitat, audio_offset }
+  yenidən_razılaşma_zənciri: [promise_id]
+}
+<b>Party</b> { id, ad, tip, <i>etibar_balı</i> }</div>
+    <div class="steps">
+      <div class="s"><b>Çıxarma modeli ilə başla.</b> Bu, LLM-lərin ən yaxşı etdiyi işdir. Yüksək həddə köklə — az sayda, amma dəqiq.</div>
+      <div class="s"><b>Təsdiq kartı.</b> «Bir vəd eşitdim: <em>“cümə günü elevasiyaları göndərəcəyəm”</em>. Yazım?» İki söz: Yaz / Yox.</div>
+      <div class="s"><b>Etibar hesablayıcısı.</b> Sadə nisbət, amma ağırlıq son 6 aya verilir.</div>
+      <div class="s"><b>Xəbərdarlıq.</b> Pozulmadan <em>əvvəl</em> — həmin tərəfin öz tarixçəsinə əsaslanaraq, ümumi xatırlatma yox.</div>
+      <div class="s"><b>Ton qoruyucusu.</b> Qovma məktubunun qaralamasını münasibətin istiliyinə uyğun yaz. Heç vaxt avtomatik göndərmə.</div>
+      <div class="s"><b>Dizayn qaydası:</b> mühasibat estetikasından qaç. Cizgili kağız, serif şrift, çəkilmiş işarələr — «sənəd» hissi.</div>
+    </div>
+    <p><span class="tag e">Çətinlik: orta</span> <span class="tag m">Vaxt: 2–3 ay</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Məhkəmə səviyyəli ağrı — aydın ROI</li>
+      <li>Təchizatçı telemetriyası = şəbəkə moatı</li>
+      <li>AI-nin ən etibarlı bacarığına söykənir</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Səhv edilsə <b>ittihamedici</b> hiss verir — münasibətə söykənən mədəniyyəti korlaya bilər</li>
+      <li>Aşağı «sevinc» faktoru — heç kim vəd izləmək üçün oyanmır</li>
+      <li>Tək başına gündəlik məhsul deyil</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 09 -->
+<section id="m9">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">09</span><h2>Studiya Divarı</h2><span class="men mono">Studio Wall</span></div>
+  <div class="one">Layihə idarəetməsini <b>bir nəhəng divarla</b> əvəz et. Moodboard, cizgi, qeyd, səs, video, söhbət — hər şey məkanda yaşayır. Qovluq yox, səhifə yox, naviqasiya yox.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Sonsuz kətan. Şəkillər <b>əyri bucaqlarda</b> (−6°..+7°) ağ kağız haşiyələrlə sancılıb; materiallar divarın üstündə ayrı kölgə ilə oturur; sarı qeydlər, səs qeydləri, divara yapışdırılmış söhbət fraqmentləri.</p>
+    <p><b>Zoom səviyyəsi = iyerarxiya.</b> 25%-də otaqlar rəngli kütlələr kimi görünür; 60%-də lövhələr; 100%-də qeydləri oxuyursan; 200%-də materialın toxumasına baxırsan. Menyu yox — sadəcə yaxınlaş və uzaqlaş.</p>
+    <p>Yeganə interfeys elementi aşağıda üzən 360px zolaqdır: <span class="mono">WALL · GRAPH · ROOMS · LEDGER</span> — eyni məlumatın fərqli linzaları.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Studiyalar <b>onsuz da divarla işləyirlər</b> — sanc, qrupla, geri çəkil, müzakirə et. Bu, «pin-up» adlanır və memarlıq təhsilindən praktikaya keçir.</p>
+    <p>Koqnitiv elm bunu təsdiqləyir: eskiz və sancılmış referanslar <b>xarici yaddaşdır</b> — düşüncənin özüdür, tapşırığa əlavə edilmiş fayl deyil (Goldschmidt, «backtalk of sketches»; paylanmış idrak araşdırmaları).</p>
+    <p>Şəkli fayl əlavəsinə çevirən hər alət <b>idrakın özünü kəsir</b>. Ona görə dizaynerlər Pinterest və Milanote-a qayıdırlar.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① <b>Ən yüksək qəbul tavanı və ən aşağı öyrənmə əyrisi</b> — dizayner ilk baxışdan «bu mənim divarımdır» deyir. ② DEQ meylli, vizual-məkani düşünən auditoriya üçün təbii mühit: sıfır mərasim, sərbəst tutma. ③ Pin-up iclasını əvəz edir (çoxoyunçulu rejim). ④ «Dağınıqlıqdan → təqdimata» anı buradan doğur.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <div class="code"><b>Pin</b> {
+  id, layihə_id
+  tip: şəkil|material|qeyd|səs|söhbət|cizgi|link
+  <i>x, y, bucaq, en, hündürlük, z</i>    <i>// mövqe = metadata</i>
+  məzmun_id
+  klaster_id (nullable)     <i>// AI təyin edir, insan poza bilər</i>
+}
+<b>Cluster</b> { id, ad, məkan_id, əhatə_düzbucaqlısı }</div>
+    <p><b>Kritik dizayn qərarı: heç nə bir-birinə tuşlanmır (snap yoxdur).</b> Bu, qəsdəndir — tuşlanma onu şəbəkəyə çevirər, şəbəkə isə cədvələ.</p>
+    <p><b>İkinci kritik qərar:</b> divar özü <em>hesabat vermir</em>. Buna görə o, tək başına məhsul deyil — altında qərar qrafı olmalıdır. Milanote-un dayandığı yer məhz budur: «hesabatsız kətan».</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Kətan mühərriki seç.</b> Canvas/WebGL rendering (PixiJS və ya öz tətbiqin). DOM ilə 1000+ element yavaşlayacaq. Viewport culling məcburidir.</div>
+      <div class="s"><b>Tutma axını.</b> Sürüklə-burax hər şeyi qəbul etməlidir: şəkil, PDF, səs, URL. Dialoq yox, qovluq seçimi yox, ad vermə yox.</div>
+      <div class="s"><b>Zoom bantları.</b> Hər zoom aralığında hansı detalın göründüyünü təyin et (LOD — level of detail). Bu, məhsulun əsas UX işidir.</div>
+      <div class="s"><b>Çoxoyunçu.</b> CRDT (Yjs) ilə real vaxt. Kursorlar adla.</div>
+      <div class="s"><b>AI klasterləmə.</b> Vision modeli şəkilləri otağa və üsluba görə qruplaşdırır; kəsik-kəsik halo çəkir; istifadəçi həmişə poza bilər.</div>
+      <div class="s"><b>«Bərkit» funksiyası.</b> Klasteri seç → bir kliklə klient təqdimatına çevir. Bu, məhsulun imza anıdır.</div>
+    </div>
+    <p><span class="tag m">Çətinlik: orta-yüksək (performans)</span> <span class="tag m">Vaxt: 3–4 ay</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Ən yüksək qəbul və sevinc — «bu mənim divarımdır»</li>
+      <li>Sənədləşdirilmiş idrakla tam uyğun</li>
+      <li>Sıfır öyrənmə əyrisi</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Tək başına <b>hesabatsız kətandır</b> — pul yox, vəziyyət yox, yaddaş yox</li>
+      <li>Milanote/Miro artıq burada var (amma biznes qatı olmadan)</li>
+      <li>Performans ciddi mühəndislik tələb edir</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 10 -->
+<section id="m10">
+<div class="model">
+  <div class="mhead"><span class="mnum mono">10</span><h2>Qeyri-müəyyənlik Xəritəsi</h2><span class="men mono">Uncertainty Map</span></div>
+  <div class="one">Layihəyə <b>hava xəritəsi</b> kimi bax. Konturlar sıxlaşdıqca naməlum artır — büdcə, texniki, təchizatçı, klient, tikinti. AI fırtınanı həftələr əvvəl görür.</div>
+
+  <div class="qa"><div class="q mono">Nədir</div><div class="a">
+    <p>Planın nazik cizgisi <b>altda</b>, üstündə isə izobar konturlar. Mətbəxin üzərində konturlar sıxlaşıb və içəri terrakotaya keçir — orada ciddi qeyri-müəyyənlik var. Girişin üzərində konturlar geniş və solğundur — orada işlər sakitdir.</p>
+    <p>Damın üzərində <b>tək kəsik-kəsik kontur</b> var: hələ mövcud olmayan, amma <em>proqnozlaşdırılan</em> sistem.</p>
+    <p>Sağda bülleten — cümlələrlə, hava proqnozu dilində: «Mətbəx üzərindəki təchizatçı sistemi gələn həftə dərinləşir; 14 avqusta dülgərlik paketinə çatması gözlənilir.»</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Hansı problemi həll edir</div><div class="a">
+    <p>Dizayn işində prioritetləşdirmə «növbəti tapşırıq nədir?» deyil — <b>«ən riskli naməlum hansıdır?»</b> sualıdır.</p>
+    <ul>
+      <li><b>RFI iqtisadiyyatı:</b> hər 1 mln $ tikintiyə ~9.9 RFI, hər biri ~1 080 $ və 8 saat; <b>21.9%-i heç vaxt cavablanmır</b>; orta layihə komandası RFI-lara ~6 368 saat sərf edir.</li>
+      <li><b>Gözləmə vəziyyətləri</b> heç bir alətdə görünmür: parça nümunəsi, daş rezervi, emalatxana qiyməti.</li>
+      <li><b>Backlog yalanı:</b> tapşırıq siyahısı bütün elementləri bərabər göstərir. Halbuki bir naməlum 40 qərarı bloklaya bilər, digəri heç nəyi.</li>
+    </ul>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Nə işə yarayır</div><div class="a">
+    <p>① Prioritetləşdirməni prinsipial edir — <b>təsir radiusuna görə</b>, tarixə görə yox. ② Universal oxunaqlıdır: hər kəs hava xəritəsi oxumağı bilir. ③ Düzgün instinkt yaradır: <em>havanın olduğu yerə get</em>, siyahını yuxarıdan aşağı işləmə. ④ Naməlum həll olunanda konturlar açılır — <b>izlənə bilən irəliləyiş</b>, burndown qrafikinin heç vaxt verə bilmədiyi hiss.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə işləyir</div><div class="a">
+    <div class="code"><b>Unknown</b> {
+  id, layihə_id, məkan_id
+  tip: büdcə|texniki|təchizatçı|klient|tikinti
+  sual: "Ada üçün plitə tək parça kimi kifayət qədər genişdirmi?"
+  vəziyyət: aşkarlandı|ölçüldü|həll_olunur|həll_olundu
+  <i>təsir_radiusu</i>: { qərarlar[], obyektlər[], cizgilər[], məbləğ }
+  ciddilik: 1–5    <i>// radius × təcililik</i>
+  mənbə: rfi|yazışma|qiymət_bitib|təchizatçı_tarixçəsi
+}</div>
+    <p><b>Ciddiliyin hesablanması</b> qraf gəzintisi ilə olur — yəni bu model <b>01 Qərar Qrafından asılıdır</b>. Qraf olmadan «təsir radiusu» hesablana bilmir.</p>
+    <p><b>Yaratma düyməsi yoxdur.</b> Naməlumlar aşkarlanır, əl ilə yazılmır — məntiq: əgər yaza bilirsənsə, artıq bilirsən deməkdir.</p>
+  </div></div>
+
+  <div class="qa"><div class="q mono">Necə hazırlanmalı</div><div class="a">
+    <div class="steps">
+      <div class="s"><b>Aşkarlayıcılar yaz.</b> Cavabsız suallar (yazışmada sual işarəsi + cavabsızlıq), müddəti bitmiş qiymət təklifləri, təsdiqlənməmiş ölçülər, tarixçəsi pis olan təchizatçılar.</div>
+      <div class="s"><b>Radius hesablayıcısı.</b> Qraf üzərində rekursiv gəzinti; nəticə həm say, həm məbləğdir.</div>
+      <div class="s"><b>Kontur render.</b> Hər sistem üçün 5–7 konsentrik forma; <b>aralıq məsafəsi = informasiya</b> (aşağı ciddilikdə 28px, yüksəkdə 9px). Sadə həll: fırlanmış ellipslər; incə həll: metaball/marching squares.</div>
+      <div class="s"><b>Zaman sürüşdürücüsü.</b> İndi → +6 həftə. Hər addımda naməlumların ciddiliyini proqnozlaşdır.</div>
+      <div class="s"><b>Bülleten yazıcısı.</b> LLM hava proqnozu registrində cümlələr yazır — siyahı yox, mətn.</div>
+      <div class="s"><b>Dürüstlük ekranı.</b> Keçmiş proqnozlar vs real nəticə. Proqnoz verirsənsə, auditə açıq olmalısan.</div>
+    </div>
+    <p><span class="tag h">Çətinlik: yüksək (qraf asılılığı)</span></p>
+  </div></div>
+
+  <div class="split">
+    <div class="good"><div class="h mono">Güclü tərəfi</div><ul>
+      <li>Wicked problem reallığına dürüst</li>
+      <li>Prioritetləşdirmə prinsipial olur</li>
+      <li>Universal oxunaqlı metafora</li>
+    </ul></div>
+    <div class="bad"><div class="h mono">Zəif tərəfi</div><ul>
+      <li>Mənfi çərçivə — qorxu idarə edir, gözəllik yaratmır</li>
+      <li>Qərar qrafı olmadan işləmir</li>
+      <li>Naməlumların siyahılanması özü çətin problemdir</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- SEÇİM -->
+<section id="secim">
+  <div class="kicker mono">Nəticə</div>
+  <h2>Hansını qurmalı?</h2>
+  <p class="soft wrap">On modelin heç biri təkbaşına tam məhsul deyil. Bəziləri <b>səth</b>dir (istifadəçinin yaşadığı yer), bəziləri <b>struktur</b> (məlumat modeli), bəziləri <b>mühərrik</b> (məlumatı istehsal edən), bəziləri isə <b>linza</b> (eyni məlumatın başqa oxunuşu).</p>
+
+  <div class="tblwrap">
+    <table>
+      <tr><th>Model</th><th>Rolu</th><th>Tək başına işləyir?</th><th>Asılılığı</th><th>Tövsiyə</th></tr>
+      <tr class="win"><td class="n">09 Studiya Divarı</td><td>Səth</td><td>Yarımçıq (hesabat yox)</td><td>—</td><td><b>Birinci qur</b></td></tr>
+      <tr class="win"><td class="n">01 Qərar Qrafı</td><td>Struktur</td><td>Yarımçıq (yük hissi)</td><td>—</td><td><b>Altına qur</b></td></tr>
+      <tr class="win"><td class="n">05 Ətraf Yaddaş</td><td>Mühərrik</td><td>Yarımçıq (struktursuz lent)</td><td>01</td><td><b>Yazıcı kimi qur</b></td></tr>
+      <tr><td class="n">03 Obyekt Səyahəti</td><td>Kommersiya</td><td>Bəli</td><td>02 faydalı</td><td>İkinci mərhələ — gəlir</td></tr>
+      <tr><td class="n">02 Canlı Otaqlar</td><td>Linza</td><td>Bəli</td><td>—</td><td>Görünüş kimi əlavə et</td></tr>
+      <tr><td class="n">08 Vəd Dəftəri</td><td>Modul</td><td>Bəli</td><td>05 faydalı</td><td>İkinci mərhələ</td></tr>
+      <tr><td class="n">10 Qeyri-müəyyənlik</td><td>Linza</td><td>Xeyr</td><td>01 məcburi</td><td>Üçüncü mərhələ</td></tr>
+      <tr><td class="n">04 İnam Mühərriki</td><td>Linza</td><td>Xeyr</td><td>01, 03, 08</td><td>Üçüncü mərhələ</td></tr>
+      <tr><td class="n">07 Niyyət Şəbəkəsi</td><td>Linza</td><td>Xeyr</td><td>01 məcburi</td><td>Fərqləndirici, sonra</td></tr>
+      <tr><td class="n">06 Versiyalı Dünya</td><td>Platforma</td><td>Xeyr</td><td>hər şey</td><td>Uzunmüddətli mərc</td></tr>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p><b>Tövsiyə: üç qatlı kompozisiya.</b></p>
+    <p><b>Üzdə 09 Studiya Divarı</b> — dizayner burada yaşayır, sıfır mərasim, maksimum sevinc. Onun çatışmazlığı (hesabat yoxdur) altdakı qatla bağlanır.</p>
+    <p><b>Altında 01 Qərar Qrafı</b> — divardakı klasterlər səssizcə qərar düyünlərinə çevrilir, variantlar, təsdiqlər və ödəniş qapıları ilə. Onun çatışmazlığı (sənədləşdirmə yükü) növbəti qatla bağlanır.</p>
+    <p><b>Mühərrik kimi 05 Ətraf Yaddaş</b> — AI e-poçt, mesaj və görüşləri oxuyur, qərarları və vədləri çıxarır, qrafa yazır. <b>Heç kim məlumat daxil etmir.</b></p>
+    <p>Sonra <b>03</b> onu kommersiyaya bərkidir (sifariş, ödəniş), <b>10</b> və <b>04</b> isə eyni qrafı fərqli linzalarla oxuyur. Heç bir mərhələ pivot deyil — hamısı eyni qrafı dərinləşdirir.</p>
+    <div class="who mono">Yol xəritəsi</div>
+  </div>
+
+  <p class="soft wrap" style="margin-top:1.6rem">Bir dürüst qeyd: bu tövsiyə <b>araşdırmadan gəlir, zövqdən yox</b> — dörd axının hamısı eyni nöqtəyə göstərir. Amma sən müsahibələri apardıqdan sonra bu sıralama dəyişə bilər, və dəyişməlidir. Model seçimi məlumatla yoxlanmalı olan fərziyyədir.</p>
+</section>
+
+</main>
+
+<footer>
+  <div class="f">
+    <p>On radikal model · tam izah · Atelier araşdırma seriyası. Əlaqəli sənədlər: discovery-report.html (araşdırma), ten-futures-spec.html (Figma build spesifikasiyası), ten-futures-06-10.html (06–10 mockup-ları).</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var b=document.getElementById('tg');
+    function cur(){var a=document.documentElement.getAttribute('data-theme');
+      return a?a:(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
+    b.addEventListener('click',function(){document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
+  })();
+</script>
