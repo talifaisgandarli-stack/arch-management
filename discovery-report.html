@@ -1,0 +1,583 @@
+<title>The Missing Primitive — A New OS for Design Studios</title>
+<style>
+  :root{
+    --bg:#F2F3F5;--card:#FFFFFF;--ink:#131417;--soft:#5B5E63;--faint:#9DA0A6;
+    --line:#E6E7EA;--line-strong:#D4D6DA;
+    --cobalt:#2B3FE0;--cobalt-soft:#E9EBFC;
+    --red:#D6402B;--ok:#3E5B48;--ok-soft:#E8EEE9;
+    --shadow:0 1px 2px rgba(19,20,23,.05),0 10px 30px rgba(19,20,23,.07);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#141519;--card:#1D1F24;--ink:#ECEDEF;--soft:#A3A6AC;--faint:#6C6F76;
+      --line:#2A2C32;--line-strong:#3A3D44;--cobalt:#7C8CF8;--cobalt-soft:#252A48;
+      --red:#E0604C;--ok:#8FB39B;--ok-soft:#22302A;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+  }
+  :root[data-theme="light"]{--bg:#F2F3F5;--card:#FFFFFF;--ink:#131417;--soft:#5B5E63;--faint:#9DA0A6;
+    --line:#E6E7EA;--line-strong:#D4D6DA;--cobalt:#2B3FE0;--cobalt-soft:#E9EBFC;--red:#D6402B;
+    --ok:#3E5B48;--ok-soft:#E8EEE9;--shadow:0 1px 2px rgba(19,20,23,.05),0 10px 30px rgba(19,20,23,.07)}
+  :root[data-theme="dark"]{--bg:#141519;--card:#1D1F24;--ink:#ECEDEF;--soft:#A3A6AC;--faint:#6C6F76;
+    --line:#2A2C32;--line-strong:#3A3D44;--cobalt:#7C8CF8;--cobalt-soft:#252A48;--red:#E0604C;
+    --ok:#8FB39B;--ok-soft:#22302A;--shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Helvetica Neue",Helvetica,"Segoe UI",system-ui,Arial,sans-serif;
+    font-size:16.5px;line-height:1.62;-webkit-font-smoothing:antialiased}
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace}
+  .serif{font-family:"Iowan Old Style",Palatino,"Hoefler Text",Georgia,serif}
+
+  header.bar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar-inner{max-width:1100px;margin:0 auto;padding:.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+  .brand span{color:var(--faint);font-weight:400}
+  nav.toc{display:flex;gap:.9rem;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;overflow-x:auto}
+  nav.toc a{color:var(--soft);text-decoration:none;white-space:nowrap}
+  nav.toc a:hover{color:var(--cobalt)}
+  @media (max-width:860px){nav.toc{display:none}}
+  .toggle{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--line-strong);color:var(--soft);padding:.38rem .6rem;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .toggle:hover{color:var(--ink)}
+  .toggle:focus-visible,a:focus-visible{outline:2px solid var(--cobalt);outline-offset:3px}
+
+  main{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+  section{padding:4rem 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  .eyebrow{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 1rem}
+  .eyebrow b{color:var(--cobalt);font-weight:500}
+  h1{font-weight:700;letter-spacing:-.035em;line-height:.97;font-size:clamp(2.8rem,8vw,5.6rem);margin:.4rem 0 0;text-wrap:balance}
+  h2{font-weight:700;letter-spacing:-.02em;line-height:1.08;font-size:clamp(1.55rem,3.2vw,2.3rem);margin:0 0 1rem;text-wrap:balance}
+  h3{font-weight:650;font-size:1.12rem;margin:0 0 .4rem;letter-spacing:-.01em}
+  h4{font-weight:650;font-size:.95rem;margin:0 0 .3rem}
+  p{margin:0 0 1rem}
+  .lead{font-size:1.2rem;line-height:1.52;color:var(--soft);max-width:680px}
+  .soft{color:var(--soft)}
+  .wrap{max-width:700px}
+  strong{font-weight:650}
+
+  .hero{padding:4.6rem 0 3.8rem}
+
+  /* evidence tags */
+  .tag{display:inline-block;font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.06em;padding:.06rem .32rem;border-radius:4px;vertical-align:1px;font-weight:600}
+  .tag.e{background:var(--ok-soft);color:var(--ok)}
+  .tag.i{background:var(--cobalt-soft);color:var(--cobalt)}
+  .legend{display:flex;gap:1.2rem;flex-wrap:wrap;font-size:.82rem;color:var(--soft);margin-top:1.4rem}
+
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1.6rem}
+  .grid.two{grid-template-columns:1fr 1fr}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:820px){.grid.two,.grid.three{grid-template-columns:1fr}}
+  .cell{background:var(--card);padding:1.35rem 1.3rem}
+  .cell .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.15em;text-transform:uppercase;color:var(--faint);margin-bottom:.55rem}
+  .cell .k b{color:var(--cobalt);font-weight:500}
+  .cell p{font-size:.92rem;line-height:1.55;color:var(--soft);margin:0 0 .6rem}
+  .cell p:last-child{margin-bottom:0}
+  .cell p b,.cell li b{color:var(--ink);font-weight:600}
+  .cell ul{margin:.2rem 0 0;padding-left:1.05rem}
+  .cell li{font-size:.9rem;line-height:1.5;color:var(--soft);margin-bottom:.4rem}
+
+  .quote{background:var(--card);border-left:3px solid var(--line-strong);border-radius:0 10px 10px 0;padding:1rem 1.25rem;margin:1rem 0;box-shadow:var(--shadow)}
+  .quote p{margin:0;font-size:.98rem;line-height:1.5;font-style:italic}
+  .quote .src{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.06em;color:var(--faint);margin-top:.45rem;font-style:normal}
+
+  .num-item{border-top:1px solid var(--line);padding:1.3rem 0;display:grid;grid-template-columns:56px 1fr;gap:1.2rem}
+  .num-item:first-child{border-top:none}
+  @media (max-width:560px){.num-item{grid-template-columns:1fr;gap:.3rem}}
+  .num-item .n{font-family:"SF Mono",ui-monospace,monospace;font-size:.78rem;color:var(--faint);border-top:2px solid var(--cobalt);padding-top:.4rem;height:fit-content}
+  .num-item h3{margin-bottom:.35rem}
+  .num-item p{font-size:.96rem;line-height:1.58;color:var(--soft);margin:0}
+  .num-item p b{color:var(--ink)}
+
+  .callout{border-left:3px solid var(--cobalt);background:var(--card);padding:1.2rem 1.4rem;border-radius:0 10px 10px 0;margin:1.8rem 0;box-shadow:var(--shadow)}
+  .callout p{margin:0 0 .6rem;font-size:1.02rem;line-height:1.56}
+  .callout p:last-child{margin:0}
+  .callout .who{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:.6rem}
+
+  /* model cards */
+  .model{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);margin-top:1.5rem;overflow:hidden}
+  .model .head{padding:1.3rem 1.4rem 1rem;border-bottom:1px solid var(--line);display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap}
+  .model .head .mn{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;color:var(--cobalt);font-weight:600}
+  .model .head h3{margin:0;font-size:1.25rem}
+  .model .head .thesis{font-size:.92rem;color:var(--soft);width:100%;margin-top:.2rem}
+  .model .body{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line)}
+  @media (max-width:760px){.model .body{grid-template-columns:1fr}}
+  .model .f{background:var(--card);padding:.95rem 1.4rem}
+  .model .f .fk{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:.3rem}
+  .model .f p{font-size:.88rem;line-height:1.5;color:var(--soft);margin:0}
+  .model .f p b{color:var(--ink)}
+  .model .foot{background:var(--card);border-top:1px solid var(--line);padding:.8rem 1.4rem;font-size:.82rem;color:var(--faint);line-height:1.5}
+  .model .foot b{color:var(--soft);font-weight:600}
+
+  /* matrix table */
+  .tblwrap{overflow-x:auto;margin-top:1.6rem;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:.85rem;background:var(--card);min-width:860px}
+  th{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:left;font-weight:500;padding:.65rem .7rem;border-bottom:1px solid var(--line-strong);position:sticky;top:0;background:var(--card)}
+  td{padding:.55rem .7rem;border-bottom:1px solid var(--line);line-height:1.4;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  td.name{font-weight:600;white-space:nowrap}
+  td.tot{font-weight:700;color:var(--cobalt)}
+  tr.win td{background:var(--cobalt-soft)}
+  .matrix-note{font-size:.82rem;color:var(--faint);margin-top:.8rem;line-height:1.5}
+
+  /* primitives spec */
+  .prim{border-top:1px solid var(--line);padding:1.2rem 0;display:grid;grid-template-columns:190px 1fr;gap:1.2rem;align-items:baseline}
+  .prim:first-child{border-top:none}
+  @media (max-width:640px){.prim{grid-template-columns:1fr;gap:.3rem}}
+  .prim .d{font-family:"SF Mono",ui-monospace,monospace;font-size:.74rem;letter-spacing:.05em;color:var(--ink);font-weight:600}
+  .prim .w{font-size:.94rem;color:var(--soft);line-height:1.55}
+  .prim .w b{color:var(--ink);font-weight:600}
+
+  /* decision state demo */
+  .staterow{display:flex;gap:0;overflow-x:auto;padding:1.2rem 0 .6rem;align-items:center}
+  .st{display:flex;align-items:center;white-space:nowrap}
+  .st .pl{background:var(--card);border:1px solid var(--line-strong);border-radius:999px;padding:.32rem .8rem;font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;font-weight:600;box-shadow:var(--shadow)}
+  .st.cur .pl{border-color:var(--cobalt);color:var(--cobalt);box-shadow:0 0 0 3px var(--cobalt-soft)}
+  .st .arr{color:var(--faint);padding:0 .5rem;font-family:"SF Mono",monospace;font-size:.7rem}
+
+  ul.clean{margin:1rem 0;padding-left:1.2rem}
+  ul.clean li{margin-bottom:.5rem;line-height:1.55}
+  ul.clean li::marker{color:var(--cobalt)}
+  ul.clean li b{font-weight:650}
+
+  footer{border-top:1px solid var(--line);padding:2.6rem 0 3.6rem;color:var(--faint);font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;line-height:1.7}
+  footer .fin{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+</style>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand">The Missing Primitive <span>/ research report</span></div>
+    <nav class="toc mono">
+      <a href="#p1">01 Reality</a><a href="#p2">02 Behavior</a><a href="#p3">03 Hidden pain</a><a href="#p4">04 True units</a><a href="#p5">05 Ten models</a><a href="#p6">06 Matrix</a><a href="#p7">07 Verdict</a><a href="#p8">08 Vision</a>
+    </nav>
+    <button class="toggle mono" id="tg" aria-label="Toggle theme">◐ Theme</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="eyebrow mono">First-principles discovery · <b>4 research streams · 100+ sources</b> · July 2026</div>
+    <h1>Designers don't manage tasks.<br>They manage decisions.</h1>
+    <p class="lead" style="margin-top:1.5rem">A first-principles investigation into how architecture and interior design studios actually work — and what primitive should replace the task if their operating system were invented today. Synthesized from firm workflow anthropology, studio procurement reality, forty years of design-cognition research, and the 2026 AI capability frontier.</p>
+    <div class="legend mono">
+      <span><span class="tag e">E</span> evidence — sourced claim</span>
+      <span><span class="tag i">I</span> inference — our reasoning</span>
+    </div>
+  </section>
+
+  <!-- PART 1 -->
+  <section id="p1">
+    <div class="eyebrow mono"><b>Part 01</b> · Current workflow reality</div>
+    <h2>Two industries, one shape: phase-gated visual work stitched together by email</h2>
+    <div class="grid two">
+      <div class="cell">
+        <div class="k mono">Architecture firms</div>
+        <p><b>Work flows through issued document sets, not tasks.</b> <span class="tag e">E</span> AIA phases (SD→DD→CD→Bidding→CA) and RIBA stages 0–7 each terminate in an issued package — a CD set can run to hundreds of coordinated sheets. Progress is "the set issued on a date."</p>
+        <p><b>The redline cycle is the production loop.</b> <span class="tag e">E</span> A senior marks printed drawings in red ink and <em>verbally</em> explains intent to a junior who edits the model. One artifact carries QA, task assignment, and apprenticeship at once — and never enters any PM system.</p>
+        <p><b>Construction admin is industrialized email ping-pong.</b> <span class="tag e">E</span> ~9.9 RFIs per $1M of construction, ~$1,080 and 8 hours each, median 9.7-day response; 21.9% never answered; ~6,368 team-hours per average project (Navigant, 1,362 projects).</p>
+        <p><b>Email is the system of record; WhatsApp is the shadow system.</b> <span class="tag e">E</span> 72% of construction stakeholders coordinate on WhatsApp; 69% of professionals say they can't find the information they need to make decisions (Newforma study).</p>
+      </div>
+      <div class="cell">
+        <div class="k mono">Interior design studios</div>
+        <p><b>Procurement is a phase, not a task.</b> <span class="tag e">E</span> Boutique residential lifecycle: Discovery → Schematic → Development → <em>Procurement</em> → Installation → Reveal. FF&amp;E has its own six-phase sub-process, 80–150+ line items per project, each needing individual client approval.</p>
+        <p><b>Approval-before-order is the sacred rule.</b> <span class="tag e">E</span> "Never issue a purchase order before the client has signed off." Money gates are standard: deposits before ordering, 100% upfront on custom goods, "all sales final" signatures.</p>
+        <p><b>Tracking fragments across 4–6 tools and breaks at ~100 items.</b> <span class="tag e">E</span> "The specification lives in one place, the approval conversation happens in another, the budget sits in a third, and delivery tracking exists nowhere at all." Studios report 12–15 admin hours weekly.</p>
+        <p><b>Install day is a batch convergence event.</b> <span class="tag e">E</span> Receiving warehouses inspect, photograph and store everything for a single install day — one late sofa holds the reveal hostage. <span class="tag i">I</span></p>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>The tooling autopsy is unanimous:</strong> every incumbent chose its primitive from the <em>business</em> layer — Monograph the fee-phase Gantt, Studio Designer the accounting ledger, BQE the timesheet, Programa the FF&amp;E schedule, Materio the plan-pinned selection. <span class="tag e">E</span> Not one chose a primitive from the <em>cognitive</em> layer — how designers actually think and decide. That layer is the whitespace. <span class="tag i">I</span></p>
+      <div class="who mono">Part 01 conclusion</div>
+    </div>
+  </section>
+
+  <!-- PART 2 -->
+  <section id="p2">
+    <div class="eyebrow mono"><b>Part 02</b> · Deep behavioral insights</div>
+    <h2>Eight findings about how design work actually behaves</h2>
+    <div class="wrap" style="max-width:760px">
+      <div class="num-item"><div class="n mono">001</div><div>
+        <h3>Design is a conversation, not plan execution</h3>
+        <p><span class="tag e">E</span> Schön's studies of architecture studios: the designer makes a move, the situation "talks back" with unintended consequences, the designer reframes and moves again. <b>The work is a loop of move → surprise → reframe</b> — a tool that only records predefined operations captures nothing of the actual work.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">002</div><div>
+        <h3>Problem and solution co-evolve — there is no stable problem to decompose</h3>
+        <p><span class="tag e">E</span> Dorst &amp; Cross (2001), protocol studies of nine designers: problem space and solution space restructure each other continuously. <b>A work-breakdown made at kickoff describes a problem that will no longer exist by design development.</b> Task lists rot immediately — this is structural, not a discipline failure.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">003</div><div>
+        <h3>The sketch and the wall are external memory</h3>
+        <p><span class="tag e">E</span> Goldschmidt's "backtalk of sketches"; distributed-cognition studies of studios: pin-ups, clippings, and samples on walls ARE the team's shared cognitive state. <b>Pinned references are the substrate of thought, not attachments.</b> Any tool that demotes images to file attachments amputates the cognition.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">004</div><div>
+        <h3>Wicked problems have no stopping rule</h3>
+        <p><span class="tag e">E</span> Rittel &amp; Webber: design problems have no definitive formulation and no natural "done" — you stop when time, money, or patience runs out. <b>"% complete" and done-checkboxes presuppose a stopping rule design work lacks</b> — so designers either lie to the tool or abandon it.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">005</div><div>
+        <h3>Designers think Project → Room → Selection, never in tasks</h3>
+        <p><span class="tag e">E</span> FF&amp;E templates are room-tabbed; payment gates are room-scoped ("50% due upon approval of all items per room"); presentations are room-by-room. Below the room sits the <b>selection</b> — an image with vendor, price, lead time, and status attached. The industry's own vocabulary (schedule, spec, proposal, PO) never uses the word "task." <span class="tag i">I</span> Tasks exist only as derivatives: chase the CFA, call the rep, file the claim.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">006</div><div>
+        <h3>Approval is an emotional event, engineered through curation</h3>
+        <p><span class="tag e">E</span> The canonical option count is 2–3 ("reduces overwhelm, increases confidence"); designers script framing — "Pick the one you love, and we will move" — require all decision-makers to sign, and describe "emotional holding": absorbing client anxiety about their home and money. <b>The client-facing core loop is curation-with-confidence, not choice.</b></p>
+      </div></div>
+      <div class="num-item"><div class="n mono">007</div><div>
+        <h3>Iteration is cognitively necessary — tools that reward closure institutionalize fixation</h3>
+        <p><span class="tag e">E</span> Jansson &amp; Smith's design-fixation studies: early convergence produces worse design; quality demands cheap re-divergence. <span class="tag i">I</span> A PM system that frames each option as "a task to close" morally penalizes the core act of designing. Forking and abandoning directions must be cheap and shame-free.</p>
+      </div></div>
+      <div class="num-item"><div class="n mono">008</div><div>
+        <h3>The population skews neurodivergent-friendly-hostile</h3>
+        <p><span class="tag e">E</span> ADHD traits correlate with divergent thinking; practitioner sources say the creative industry "runs on ADHD brains" (prevalence data thin — treat as directional). Clinical guidance converges on <b>externalized executive function</b>: visual, spatial, ambient, zero-ceremony capture. <span class="tag i">I</span> Exactly what studio walls provide physically and form-heavy PM tools destroy.</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- PART 3 -->
+  <section id="p3">
+    <div class="eyebrow mono"><b>Part 03</b> · Hidden pain points nobody discusses</div>
+    <h2>Where context dies, and the work no software has ever seen</h2>
+    <div class="grid two">
+      <div class="cell">
+        <div class="k mono">The eight moments context dies <span class="tag e">E</span></div>
+        <ul>
+          <li><b>The verbal redline handoff</b> — intent is explained orally over marked paper; the "why" evaporates with the CAD edit</li>
+          <li><b>Phase transitions</b> — SD decisions arrive at the CD team as geometry without rationale</li>
+          <li><b>The email/WhatsApp fork</b> — a decision made in a chat thread never reaches the project record</li>
+          <li><b>Revision issuance</b> — "a partition wall was built from Rev B when Rev D had been issued three weeks earlier"</li>
+          <li><b>The site-walk verbal approval</b> — "'the owner told me to go ahead' doesn't hold up in a cost dispute three months later"</li>
+          <li><b>Staff departure</b> — ~45% of institutional knowledge lost per exit; the "why" is precisely the undocumented part</li>
+          <li><b>Value-engineering rounds</b> — original intent behind a spec must be re-argued from memory; one substituted coating cost $2M</li>
+          <li><b>The spouse flip</b> — an approval reverses after the fact; without a written trail, the designer eats the rework</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <div class="k mono">Invisible work — real hours, zero representation <span class="tag e">E</span></div>
+        <ul>
+          <li>Waiting on client decisions (assembling decision-makers can take a month)</li>
+          <li>Re-explaining design intent — to juniors, consultants, contractors, and the same client again</li>
+          <li>Chasing approvals; converting verbal yeses into paper</li>
+          <li>Email archaeology (69% can't find what they need to decide)</li>
+          <li>Weekly vendor expediting — status calls per open PO</li>
+          <li>Waiting states: fabric samples, CFAs, stone holds, workroom quotes</li>
+          <li>Damage forensics — same-day photo documentation to beat carrier claim windows</li>
+          <li>Re-entering the same product data into moodboard, spreadsheet, proposal, and PO</li>
+          <li>Aesthetic-consistency checking across rooms while selections churn <span class="tag i">I</span></li>
+          <li>Emotional labor: confidence scripts, expectation pre-management, "saving marriages"</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      <p><strong>The deepest unspoken pain is memory, not speed.</strong> Studios don't primarily suffer from doing things slowly — they suffer from <em>not being able to prove or recall what was decided, by whom, and why</em>. The evidence: CYA recap rituals within 24h of every call, litigation over verbal approvals, VE battles lost for lack of recorded rationale, disputes like the $750K markup lawsuit. <span class="tag e">E</span> Every studio is running an unfunded, manual, failure-prone memory institution on top of its actual job. <span class="tag i">I</span></p>
+      <div class="who mono">Part 03 conclusion</div>
+    </div>
+  </section>
+
+  <!-- PART 4 -->
+  <section id="p4">
+    <div class="eyebrow mono"><b>Part 04</b> · The true units of architectural work</div>
+    <h2>What actually moves a project forward</h2>
+    <div class="wrap">
+      <p class="lead">Strip away the tools and watch what changes state when a project advances. It is never "a task closed." It is one of these:</p>
+    </div>
+    <div class="grid three">
+      <div class="cell"><div class="k mono">The Decision</div><p><b>The atomic unit of progress.</b> Every drawing is evidence of a design decision; every RFI is a request for one; every redline is a correction of one; every approval is the client ratifying one. <span class="tag i">I</span> A project advances exactly when a decision moves from open to committed — or regresses when a committed one reopens.</p></div>
+      <div class="cell"><div class="k mono">The Selection</div><p><b>The decision's physical species.</b> An image with money and state attached: proposed → presented → approved → paid → ordered → shipped → received → installed. <span class="tag e">E</span> The room-tabbed spreadsheet is the industry's home-grown attempt to track a swarm of these.</p></div>
+      <div class="cell"><div class="k mono">The Space</div><p><b>The container designers actually think in.</b> Rooms are how work is organized, presented, gated, and paid. <span class="tag e">E</span> A room has a maturity: vague → directional → resolved → documented → built. <span class="tag i">I</span></p></div>
+      <div class="cell"><div class="k mono">The Promise</div><p><b>The connective tissue.</b> "Drawings by Friday," "8-week lead time," "we'll hold the slab" — projects are webs of commitments between designer, client, vendors, and contractor, each with a date and a fragile verbal existence. <span class="tag e">E</span></p></div>
+      <div class="cell"><div class="k mono">Confidence</div><p><b>The real progress metric.</b> Does selecting a sofa move the project? Only if it raises confidence in the living room. Uncertainty reduction — the client's, the contractor's, the designer's own — is what schedules actually track by proxy. <span class="tag i">I</span></p></div>
+      <div class="cell"><div class="k mono">Intent</div><p><b>The thing being protected.</b> The primary generator — "calm, warm minimalism; the kitchen is the heart" — is set early and defended for years against VE, substitutions, and drift. <span class="tag e">E</span> It is the most valuable object in the project and no tool stores it.</p></div>
+    </div>
+    <div class="callout">
+      <p><strong>The unifying claim:</strong> a design project is a <b>graph of decisions</b> — each attached to a space, evidenced by images and conversations, guarded by intent, bound to promises, and hardening into commerce (spec → PO → invoice) as confidence rises. Tasks are merely the exhaust of this graph. Existing software manages the exhaust. <span class="tag i">I</span></p>
+      <div class="who mono">Part 04 thesis</div>
+    </div>
+  </section>
+
+  <!-- PART 5 -->
+  <section id="p5">
+    <div class="eyebrow mono"><b>Part 05</b> · Ten radically different operating models</div>
+    <h2>Ten ways to rebuild the studio OS from first principles</h2>
+    <p class="soft wrap">Each model replaces the task with a different primitive. None is a feature list — each is a complete reorganization of what work <em>is</em>. Derivations cite the observations (Parts 1–4) that produced them.</p>
+
+    <!-- M1 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M01</span><h3>The Decision Graph</h3><div class="thesis">Work is a living graph of decisions; every artifact is evidence attached to a node.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Projects advance decision-by-decision, not task-by-task. The system's job is to make every decision's <b>options, evidence, rationale, owner, and state</b> permanent and findable.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Decision</b>: open → exploring → presented → committed → hardened (money spent) → contested. Tasks become auto-generated chores hanging off decision states.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>A decision card with its option set. Rendered as a graph over the floor plan and a timeline ("the project's commit log").</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Client ratifies decisions in a gallery view; consultants subscribe to decisions that touch their scope; disputes resolve by pointing at the node.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Directly attacks the memory catastrophe (Part 3): VE defense, verbal-approval litigation, phase handoffs. Compounds into the moat — a corpus of decided projects.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Risk: feels like documentation overhead if humans must feed it. Missed because pre-AI, capturing decisions cost more than it returned. <b>AI changes the economics</b>: decisions can be detected in communication streams and confirmed with one tap.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> context-death moments (P3), Newforma 69%, CYA rituals, "every drawing is evidence of a decision," decision-graph moat analysis.</div>
+    </div>
+
+    <!-- M2 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M02</span><h3>Living Rooms</h3><div class="thesis">The project is its spaces; each room is an organism maturing from vague to built.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Organize everything the way designers already think: by space. Each room carries its own moodboard, selections, budget, approvals, and maturity level.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Room-state delta</b>: any act that raises a room's maturity (vague → directional → resolved → documented → built).</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>A room card on a live floor plan that literally gains visual resolution as it matures — fog lifting off the plan.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Room-scoped everything: presentations, sign-offs, payments ("all items per room, prior to ordering" — already industry practice).</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Zero learning curve — matches the room-tabbed spreadsheet designers already build. Beautiful, spatial, instantly legible to clients.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Rooms are containers, not engines — cross-room decisions (palette, flooring runs) and money don't respect walls. Missed because tools organize by data type, not space. AI: room-maturity scoring from artifact analysis is feasible.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> room-tabbed FF&amp;E templates, room-scoped payment gates, room-by-room presentations (P2 #005).</div>
+    </div>
+
+    <!-- M3 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M03</span><h3>The Object Journey</h3><div class="thesis">A project is a swarm of physical objects in flight; the designer is air-traffic control.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Every sofa, slab, and sconce travels the same arc: inspiration → selection → approval → payment → order → transit → receiving → install. Make the swarm visible and self-reporting.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Selection state machine</b> — the industry's proven object (P2 #005), promoted to system core.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>The spec card. Rendered as flight-board lanes and a convergence view: everything must land before install day.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Vendors update via email parsed by AI; clients approve from the card; receivers attach inspection photos to the same object.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Attacks the highest-hour pain (procurement, expediting, damage forensics). Immediate ROI; money-adjacent so willingness to pay is high.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Least original — Programa/Materio/Gather live here; ignores the upstream creative half. Missed only in execution quality, not concept. AI: quote/invoice extraction (~90%) and vendor-chasing agents are production-grade.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> selection state machine, receiving-warehouse infrastructure, expediting hours, install-day convergence (P1, P3).</div>
+    </div>
+
+    <!-- M4 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M04</span><h3>The Confidence Engine</h3><div class="thesis">Progress is measured in uncertainty destroyed, not items completed.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Since wicked problems have no "done" (P2 #004), track the only honest metric: how confident each stakeholder is in each part of the design, and what would raise it.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Confidence move</b>: any act (option set, sample, render, site visit) whose purpose is raising a confidence score.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>A confidence delta on a space or decision. Rendered as a heatmap over the plan: cold = uncertain, warm = committed.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Clients register reactions (love/unsure/no) instead of vague feedback; the system suggests the next confidence-raising move.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Names the designer's real intuition ("the client isn't sure about the kitchen yet"). Radically original framing of status.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Scores feel arbitrary; gaming risk; hard to trust as system of record. Missed because unmeasurable pre-AI. AI: sentiment over communications makes scores plausible — but still soft. Better as an overlay than an OS.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> no-stopping-rule (P2 #004), emotional-event approvals (P2 #006), "does the sofa move the project or does confidence in the living room."</div>
+    </div>
+
+    <!-- M5 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M05</span><h3>Ambient Memory</h3><div class="thesis">The project record writes itself from the communication stream; humans only confirm.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Email, WhatsApp, meetings, and site photos already contain the project. Stop asking designers to do data entry — ingest the stream, extract the structure, ask for one-tap confirmation.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Captured event</b>: a detected decision, promise, approval, price, or date — pending human confirmation.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>A confirmation card ("Client approved the terrazzo — log it?"). Rendered as a self-building project timeline.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Nobody changes behavior: everyone keeps emailing and messaging. The system is the quiet secretary in the room.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Solves adoption — the #1 killer of studio tools ("we set it up and stopped using it"). Zero-ceremony capture fits the ADHD-leaning population (P2 #008).</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Privacy/trust hurdles; inbox access is sensitive; capture without structure is just a feed. Missed because impossible before LLMs. AI: this IS the AI-native pattern (Granola/Cursor economics) — the empty layer identified in the 2026 landscape.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> email-as-record + WhatsApp shadow system (P1), Height's failure horizontally, ambient-ingestion pattern, "no product builds the record automatically."</div>
+    </div>
+
+    <!-- M6 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M06</span><h3>The Versioned World</h3><div class="thesis">The whole project is one versioned body of intent — git for buildings.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Every change is a commit with rationale; options are branches; decisions are merges; "current set" is HEAD. Rev B vs Rev D errors become structurally impossible.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Commit</b>: a change to the project state, with author, diff, and reason.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>The diff. Rendered as a visual history: scrub the timeline, watch the project evolve, branch at any point.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Consultants work on branches; issuance = tagged release; the field always sees HEAD.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Makes exploration shame-free (branches, P2 #007) and revision chaos tractable. Deeply defensible data structure.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Git's mental model defeated even many engineers; designers won't merge conflicts. Requires owning the artifact format (BIM lock-in blocks it). Missed for exactly these reasons. AI could hide the entire version vocabulary — but it's a decade-scale platform bet.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> superseded-drawing failure class, redline deltas/clouds, forkable-exploration need (P2 #007).</div>
+    </div>
+
+    <!-- M7 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M07</span><h3>The Intent Network</h3><div class="thesis">Design intent is a first-class object that everything else is checked against.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>The primary generator ("calm, warm minimalism") is captured at kickoff and becomes a live constraint network. Every selection, substitution, and VE attack is evaluated against recorded intent.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Intent statement</b> and its satisfactions/violations.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>An intent node with linked evidence. Rendered as a constellation: intent at center, decisions orbiting, drift flagged in red.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Client co-signs intent early; later disagreements resolve by returning to the signed center. VE substitutions arrive pre-scored against intent.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Protects the most valuable, least-stored object in the project (P4). Emotionally resonant — this is what designers believe their job is.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Intent is ambiguous by design (moodboards hold productive paradoxes — Lucero); over-formalizing kills it. Missed because unformalizable pre-AI. AI: style-consistency scoring by vision models is plausible but taste-judgment claims will meet resistance.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> primary-generator research, VE defense failures ($2M coating), "AI fails to grasp design intent" complaints, aesthetic-consistency invisible work.</div>
+    </div>
+
+    <!-- M8 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M08</span><h3>The Promise Ledger</h3><div class="thesis">A project is a web of commitments; health equals promise integrity.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Track every commitment — designer↔client, studio↔vendor, architect↔contractor — with date, evidence, and state. The schedule is derived, not drawn.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Promise</b>: made → due → kept / broken / renegotiated.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>A promise card with countdown. Rendered as an integrity dashboard per party — who keeps their word, who slips.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Promises are mutual and visible; vendors' real (vs quoted) lead times accumulate; verbal approvals get converted to logged promises within hours.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Attacks litigation-grade pain (verbal approvals, lead-time lies). Cross-studio vendor telemetry is a genuine network moat.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Feels adversarial/legalistic — corrodes the relationship-driven culture (P2 #006); low delight. Missed because promise-tracking is socially awkward when manual. AI: extraction of commitments from email is exactly what LLMs do well.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> verbal-approval litigation, 8→12 week vendor slips, spouse-flip disputes, expediting hours.</div>
+    </div>
+
+    <!-- M9 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M09</span><h3>The Studio Wall</h3><div class="thesis">The pin-up wall becomes the system of record — spatial arrangement is the interface.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Studios already run on walls: pin, cluster, step back, discuss. Digitize the wall without adding ceremony — position and proximity carry meaning; the wall hardens into deliverables.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Pin</b>: any artifact placed in space (image, sample, note, drawing) whose location is metadata.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>The pin and the cluster. Rendered as an infinite zoomable canvas: project → room clusters → option piles.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>Multiplayer wall sessions replace pin-up meetings; a one-click "harden" turns a cluster into a client presentation.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Mirrors documented cognition (external memory, P2 #003); zero learning curve; maximum delight; native to the ADHD-leaning capture style.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Canvas alone is Milanote — "canvas without accountability": no money, no state, no memory. Missed half: existing canvases refused to grow a commercial skeleton. AI: vision models can now read the wall (recognize products, cluster styles, detect the room being explored).</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> pin-up/desk-crit practice, sketches-as-external-memory, Milanote's love + commerce dead-end.</div>
+    </div>
+
+    <!-- M10 -->
+    <div class="model">
+      <div class="head"><span class="mn mono">M10</span><h3>The Uncertainty Map</h3><div class="thesis">A project is a fog of unknowns; work is clearing the fog in the right order.</div></div>
+      <div class="body">
+        <div class="f"><div class="fk mono">Philosophy</div><p>Replace "what's next?" with "what's the riskiest unknown?" Every ambiguity (unconfirmed dimension, undecided finish, unanswered RFI, unreliable lead time) is an object with blast radius.</p></div>
+        <div class="f"><div class="fk mono">Replaces tasks with</div><p>The <b>Unknown</b>: identified → sized → being-collapsed → resolved.</p></div>
+        <div class="f"><div class="fk mono">Smallest unit / visual form</div><p>An uncertainty with its blast radius. Rendered as fog-of-war over plan and calendar that clears as unknowns resolve.</p></div>
+        <div class="f"><div class="fk mono">Collaboration</div><p>RFIs, sample requests, and client questions are all the same object; the team burns down risk, not backlog.</p></div>
+        <div class="f"><div class="fk mono">Why it fits / strengths</div><p>Honest about wickedness (P2 #004); prioritization becomes principled; RFI hell (P1) gets a native home.</p></div>
+        <div class="f"><div class="fk mono">Weaknesses / why missed / AI</div><p>Negative framing (managing fear, not making beauty); enumeration of unknowns is itself hard. Missed because risk registers were enterprise-only ceremony. AI: propagation analysis over a structured graph can size blast radii — but needs the graph to exist first.</p></div>
+      </div>
+      <div class="foot"><b>Derived from:</b> RFI economics (~$1,080/RFI, 21.9% unanswered), wicked-problem structure, change-propagation nightmare.</div>
+    </div>
+  </section>
+
+  <!-- PART 6 -->
+  <section id="p6">
+    <div class="eyebrow mono"><b>Part 06</b> · Evaluation matrix</div>
+    <h2>Scoring the ten models</h2>
+    <p class="soft wrap">1–5 per criterion; learning curve scored so higher = easier. Scores are judgment calls grounded in Parts 1–4 <span class="tag i">I</span> — treat as a decision aid, not measurement.</p>
+    <div class="tblwrap">
+      <table>
+        <tr><th>Model</th><th>Usability</th><th>Originality</th><th>Scalability</th><th>AI fit</th><th>Defensibility</th><th>Learning ease</th><th>Delight</th><th>Category potential</th><th>Σ</th></tr>
+        <tr class="win"><td class="name">M01 Decision Graph</td><td>4</td><td>4</td><td>5</td><td>5</td><td>5</td><td>3</td><td>3</td><td>5</td><td class="tot">34</td></tr>
+        <tr class="win"><td class="name">M05 Ambient Memory</td><td>4</td><td>4</td><td>4</td><td>5</td><td>5</td><td>4</td><td>4</td><td>4</td><td class="tot">34</td></tr>
+        <tr class="win"><td class="name">M09 Studio Wall</td><td>5</td><td>3</td><td>3</td><td>3</td><td>3</td><td>5</td><td>5</td><td>3</td><td class="tot">31</td></tr>
+        <tr><td class="name">M02 Living Rooms</td><td>5</td><td>3</td><td>3</td><td>4</td><td>3</td><td>5</td><td>4</td><td>3</td><td class="tot">30</td></tr>
+        <tr><td class="name">M03 Object Journey</td><td>5</td><td>2</td><td>4</td><td>4</td><td>4</td><td>5</td><td>3</td><td>3</td><td class="tot">30</td></tr>
+        <tr><td class="name">M08 Promise Ledger</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>4</td><td>2</td><td>3</td><td class="tot">29</td></tr>
+        <tr><td class="name">M07 Intent Network</td><td>3</td><td>5</td><td>3</td><td>4</td><td>4</td><td>2</td><td>4</td><td>3</td><td class="tot">28</td></tr>
+        <tr><td class="name">M04 Confidence Engine</td><td>2</td><td>5</td><td>3</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td class="tot">25</td></tr>
+        <tr><td class="name">M10 Uncertainty Map</td><td>2</td><td>5</td><td>3</td><td>4</td><td>3</td><td>2</td><td>3</td><td>3</td><td class="tot">25</td></tr>
+        <tr><td class="name">M06 Versioned World</td><td>2</td><td>4</td><td>4</td><td>3</td><td>4</td><td>1</td><td>2</td><td>3</td><td class="tot">23</td></tr>
+      </table>
+    </div>
+    <p class="matrix-note mono">Reading: no single pure model wins everything. M01 wins on moat and category potential but risks feeling like documentation. M09 wins on adoption and delight but has no memory or money. M05 wins on adoption economics but is a feed without a data model. They are complements, not competitors.</p>
+  </section>
+
+  <!-- PART 7 -->
+  <section id="p7">
+    <div class="eyebrow mono"><b>Part 07</b> · The verdict</div>
+    <h2>One direction: the Decision Graph, worn as a Studio Wall, written by Ambient Memory</h2>
+    <div class="wrap">
+      <p class="lead">The strongest direction is not one model — it is a specific three-layer composition in which each layer fixes the fatal flaw of another.</p>
+    </div>
+    <div class="grid three">
+      <div class="cell"><div class="k mono">Surface · M09</div><p><b>The Studio Wall</b> is the interface. Designers live on an infinite canvas that mirrors their documented cognition. This layer wins adoption and delight — the flaw it inherits (no accountability) is fixed below.</p></div>
+      <div class="cell"><div class="k mono">Structure · M01</div><p><b>The Decision Graph</b> is the data model. Clusters on the wall quietly become decision nodes with options, evidence, approvals, and money gates. This layer wins defensibility — the flaw it inherits (documentation overhead) is fixed below.</p></div>
+      <div class="cell"><div class="k mono">Engine · M05</div><p><b>Ambient Memory</b> is the writer. AI ingests email, chat, and meetings; detects decisions, promises, and approvals; and files them into the graph for one-tap confirmation. Nobody does data entry.</p></div>
+    </div>
+    <div class="callout" style="margin-top:2rem">
+      <p><strong>Why this composition wins the category:</strong></p>
+      <p>① <b>All four research streams triangulate on it.</b> Cognition science says the native units are moves, options, and external visual memory (M09+M01). Field anthropology says the deepest pain is decision memory and approval evidence (M01). Studio commerce says selections-with-state are the proven object — the Decision Graph's physical species (M03 absorbed as the hardening layer). The AI landscape says ambient project memory is the one empty layer, and the decision graph is precisely the data asset that forms the moat (M05).</p>
+      <p>② <b>It has the Figma/Linear structure of success:</b> mirror the audience's cognitive unit (canvas for visual thinkers), become the system of record (the graph holds approvals and money), and stay opinionated (the six-stage gate flow, not configurable workflows). <span class="tag e">E</span></p>
+      <p>③ <b>It is defensible where incumbents can't follow.</b> Programa/Studio Designer would need to abandon their ledger-and-schedule paradigm; Milanote/Canva would need to grow money, state, and memory; horizontal AI-PM died trying (Height). The accumulated decision corpus — what was chosen, what stalled, what real lead times were — compounds into predictions no entrant can replicate. <span class="tag i">I</span></p>
+      <div class="who mono">The bet, stated falsifiably: designers will accept a canvas that quietly files their chaos into a decision graph, because it removes their worst fear (unprovable decisions) without adding ceremony. The founder's earlier two-layer instinct — chaos on top, order underneath — survives contact with the evidence, with one sharpening: the hidden layer is not a task pipeline. It is a decision graph.</div>
+    </div>
+  </section>
+
+  <!-- PART 8 -->
+  <section id="p8">
+    <div class="eyebrow mono"><b>Part 08</b> · Product vision</div>
+    <h2>The studio's memory: a founding spec</h2>
+    <div class="wrap"><p class="soft">Working name <b>Atelier</b>. Positioning: <em>the operating system for design studios — where the wall thinks, the record writes itself, and every decision is money-grade.</em> All copy in English; visual language: monochrome gallery ground, cobalt for live state, gradient reserved for AI moments.</p></div>
+
+    <h3 style="margin-top:2rem">The six primitives</h3>
+    <div style="margin-top:.6rem">
+      <div class="prim"><div class="d mono">DECISION</div><div class="w">The spine. Carries an option set, evidence, rationale, owner, and state. Everything else attaches to it.</div></div>
+      <div class="prim"><div class="d mono">SPACE</div><div class="w">The container (room/zone). Holds decisions, carries maturity, scopes presentations and payments.</div></div>
+      <div class="prim"><div class="d mono">OBJECT</div><div class="w">The physical species of a committed decision — the selection with SKU, vendor, price, lead time, and its journey to installed.</div></div>
+      <div class="prim"><div class="d mono">EVIDENCE</div><div class="w">Any fragment — image, message, meeting excerpt, redline, sample photo — auto-linked to the decision it informs.</div></div>
+      <div class="prim"><div class="d mono">PROMISE</div><div class="w">A dated commitment between parties, extracted from communication, tracked to kept/broken.</div></div>
+      <div class="prim"><div class="d mono">GATE</div><div class="w">A money-or-approval lock between stages. Gates make the graph commercial: approval → deposit → order → balance.</div></div>
+    </div>
+
+    <h3 style="margin-top:2.4rem">The decision lifecycle</h3>
+    <div class="staterow">
+      <span class="st"><span class="pl mono">OPEN</span><span class="arr">→</span></span>
+      <span class="st"><span class="pl mono">EXPLORING</span><span class="arr">→</span></span>
+      <span class="st cur"><span class="pl mono">PRESENTED</span><span class="arr">→</span></span>
+      <span class="st"><span class="pl mono">COMMITTED</span><span class="arr">→</span></span>
+      <span class="st"><span class="pl mono">HARDENED&nbsp;$</span><span class="arr">⇢</span></span>
+      <span class="st"><span class="pl mono">CONTESTED&nbsp;↺</span></span>
+    </div>
+    <p class="soft" style="font-size:.92rem;max-width:700px">Exploring is shame-free and unbounded (anti-fixation). Committed requires named ratifiers — the spouse-flip defense. Hardened means money moved; reopening a hardened decision auto-computes blast radius (budget lines, drawings, orders affected) before anyone says yes. Contested is a first-class state, not a failure.</p>
+
+    <h3 style="margin-top:2.4rem">Four surfaces</h3>
+    <div class="grid two">
+      <div class="cell"><div class="k mono">01 · The Wall</div><p>Infinite zoomable canvas: project → space clusters → option piles. Drop anything; AI recognizes products, clusters by space, and proposes decision nodes. The daily habitat.</p></div>
+      <div class="cell"><div class="k mono">02 · The Ledger</div><p>The project as a decision timeline — the commit log a lawyer, a new hire, or a forgetful client can read. Search answers "when did we decide the terrazzo, and why?"</p></div>
+      <div class="cell"><div class="k mono">03 · The Flight Board</div><p>Every hardened object in transit: orders, lead times, receiving reports, damage photos. Convergence view counts down to install day.</p></div>
+      <div class="cell"><div class="k mono">04 · The Client Window</div><p>Link + SMS code, no account. Sees the presented option set (2–3, curated), taps "Love it, let's move on," pays at gates, and can always see where things stand. The viral loop: every client of a studio experiences the product.</p></div>
+    </div>
+
+    <h3 style="margin-top:2.4rem">Five AI roles (all gradient-signed, all confirm-before-commit)</h3>
+    <ul class="clean">
+      <li><b>Scribe</b> — ingests email/WhatsApp/meetings; drafts decisions, promises, and approvals for one-tap filing.</li>
+      <li><b>Librarian</b> — multimodal recall: "the pendant the client rejected in March," across images, messages, and specs.</li>
+      <li><b>Propagator</b> — computes blast radius when anything changes; flags stale drawings, orphaned orders, budget drift.</li>
+      <li><b>Chaser</b> — drafts vendor expediting emails, tracks real-vs-quoted lead times, files the telemetry.</li>
+      <li><b>Assembler</b> — one click from wall cluster to client presentation, spec sheet, or tearsheet package.</li>
+    </ul>
+
+    <div class="grid two" style="margin-top:1.6rem">
+      <div class="cell">
+        <div class="k mono">MVP wedge (learnable in one project)</div>
+        <ul>
+          <li>The Wall with space clusters + drop-anything capture</li>
+          <li>Decision cards with 2–3 options and named ratifiers</li>
+          <li>Assembler: cluster → client presentation, one click</li>
+          <li>Client Window with approve + deposit gate (Stripe)</li>
+          <li>Scribe v1: email-forwarding address only — no inbox OAuth at first (trust ramp)</li>
+        </ul>
+        <p style="margin-top:.6rem"><b>North-star metric:</b> committed decisions per studio per week — it measures designer value, client trust, and data-moat growth in one number.</p>
+      </div>
+      <div class="cell">
+        <div class="k mono">Deliberately not building</div>
+        <ul>
+          <li>CAD/BIM authoring or a render engine — we hold evidence and decisions, not geometry</li>
+          <li>Full accounting — export to QuickBooks/Xero; own the decision-to-PO chain only</li>
+          <li>A chat app — we read streams, we don't replace them</li>
+          <li>Lead-gen marketplace (the Houzz trust trap)</li>
+        </ul>
+        <p style="margin-top:.6rem"><b>Sensitive nerve:</b> markup transparency is litigation-grade (the $750K lawsuit). The graph must let studios control money visibility per client — a disclosure dial, not forced transparency. <span class="tag e">E</span></p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Sequencing:</strong> ① boutique interiors studios (2–10 people — acute pain, fast sales, the underserved middle) → ② the Flight Board and procurement hardening (Object Journey absorbed) → ③ small architecture practices (redlines and RFIs enter as Evidence and Unknowns) → ④ the corpus: cross-studio lead-time telemetry, decision-stall prediction, client-taste graphs. Each stage deepens the same graph; nothing is a pivot.</p>
+      <div class="who mono">A founding team can start designing from this spec. The next artifact is the interactive prototype: Wall → decision card → one-click presentation → approval gate.</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="fin">
+    <p>Method: four parallel research streams (architecture workflow anthropology · interior studio operations · design cognition &amp; PM history · AI capability landscape), ~90 searches, synthesized July 2026. Reddit and several review sites were proxy-blocked; practitioner quotes come via search-rendered excerpts of cited pages and review aggregates — spot-verify before external publication. Full source lists live in the four research stream reports. Scores in Part 06 are analytical judgments, not measurements.</p>
+    <p style="margin-top:.6rem">The Missing Primitive · Atelier research series · works with product-vision.html, ux-process.html, design-language.html</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn=document.getElementById('tg');
+    function cur(){
+      var a=document.documentElement.getAttribute('data-theme');
+      if(a) return a;
+      return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+    }
+    btn.addEventListener('click',function(){
+      document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');
+    });
+  })();
+</script>
