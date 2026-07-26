@@ -1,0 +1,459 @@
+<title>Atelier — Pitch Deck</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --bg:#EAE4DA; --surface:#F5F1EA; --surface-2:#E2DACE;
+    --ink:#221E1A; --ink-2:#665D53; --ink-3:#978C7F;
+    --line:#D5CCBF; --line-strong:#B7AB99;
+    --accent:#C0532F; --accent-soft:#d3785a;
+    --sage:#5F7357; --gold:#A9822F;
+    --shadow:0 1px 0 rgba(34,30,26,.03), 0 18px 40px -24px rgba(34,30,26,.35);
+    --serif:"Iowan Old Style","Charter","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+    --sans:"Inter","Helvetica Neue",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#16110D; --surface:#1E1811; --surface-2:#271F17;
+      --ink:#F1EBE1; --ink-2:#B6AB9D; --ink-3:#7E7365;
+      --line:#342A20; --line-strong:#4A3D2E;
+      --accent:#E07A56; --accent-soft:#eb9576; --sage:#8AA07C; --gold:#CBA254;
+      --shadow:0 1px 0 rgba(0,0,0,.4), 0 22px 48px -26px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#EAE4DA; --surface:#F5F1EA; --surface-2:#E2DACE; --ink:#221E1A; --ink-2:#665D53; --ink-3:#978C7F;
+    --line:#D5CCBF; --line-strong:#B7AB99; --accent:#C0532F; --accent-soft:#d3785a; --sage:#5F7357; --gold:#A9822F;
+    --shadow:0 1px 0 rgba(34,30,26,.03), 0 18px 40px -24px rgba(34,30,26,.35);
+  }
+  :root[data-theme="dark"]{
+    --bg:#16110D; --surface:#1E1811; --surface-2:#271F17; --ink:#F1EBE1; --ink-2:#B6AB9D; --ink-3:#7E7365;
+    --line:#342A20; --line-strong:#4A3D2E; --accent:#E07A56; --accent-soft:#eb9576; --sage:#8AA07C; --gold:#CBA254;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 22px 48px -26px rgba(0,0,0,.7);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto} }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); font-size:17px; line-height:1.55; -webkit-font-smoothing:antialiased;
+    scroll-snap-type:y proximity;
+  }
+  ::selection{background:var(--accent); color:#fff}
+  h1,h2{font-family:var(--serif); font-weight:600; line-height:1.02; letter-spacing:-.015em; text-wrap:balance; margin:0}
+  .serif{font-family:var(--serif)}
+  .mono{font-family:var(--mono)}
+  .eyebrow{font-family:var(--mono); font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--accent)}
+  .tnum{font-variant-numeric:tabular-nums}
+  em{font-style:italic}
+  a{color:var(--accent)}
+
+  /* slide scaffold */
+  .slide{min-height:100svh; scroll-snap-align:start; display:flex; flex-direction:column; justify-content:center;
+    padding:84px clamp(24px,7vw,110px) 96px; position:relative; border-bottom:1px solid var(--line)}
+  .slide-inner{max-width:1080px; width:100%; margin:0 auto}
+  .slide .num{position:absolute; top:30px; right:clamp(24px,7vw,110px); font-family:var(--mono); font-size:12px; color:var(--ink-3); letter-spacing:.12em}
+  .slide .kicker{position:absolute; top:30px; left:clamp(24px,7vw,110px); font-family:var(--mono); font-size:12px; color:var(--ink-3); letter-spacing:.16em; text-transform:uppercase}
+  .wordmark{font-family:var(--serif); font-weight:600; font-size:15px; letter-spacing:.02em}
+  .wordmark b{color:var(--accent)}
+
+  h2.title{font-size:clamp(30px,5.2vw,54px)}
+  .lead{font-size:clamp(18px,2.3vw,23px); color:var(--ink-2); line-height:1.45; max-width:62ch}
+  .eyebrow+h2{margin-top:16px}
+  h2+.lead{margin-top:22px}
+
+  .grid{display:grid; gap:20px}
+  .c2{grid-template-columns:1fr 1fr}
+  .c3{grid-template-columns:repeat(3,1fr)}
+  .c4{grid-template-columns:repeat(4,1fr)}
+  @media (max-width:800px){ .c2,.c3,.c4{grid-template-columns:1fr} .c4.keep2,.c3.keep2{grid-template-columns:1fr 1fr} }
+
+  .card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:22px 22px; box-shadow:var(--shadow)}
+  .card h3{font-family:var(--sans); font-weight:700; font-size:17px; margin:0 0 8px; letter-spacing:-.01em}
+  .card p{margin:0; color:var(--ink-2); font-size:15px; line-height:1.5}
+  .card .ic{font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:12px; display:block}
+
+  .stat{font-family:var(--serif); font-weight:600; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+  .stat.xl{font-size:clamp(48px,8vw,84px)}
+  .stat .u{font-size:.32em; color:var(--ink-3); letter-spacing:0}
+  .statlabel{font-family:var(--mono); font-size:12px; color:var(--ink-2); margin-top:12px; line-height:1.5}
+  .accent{color:var(--accent)}
+  .src{font-family:var(--mono); font-size:10.5px; color:var(--ink-3); margin-top:14px}
+
+  ul.clean{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:14px}
+  ul.clean li{display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start; font-size:16px; color:var(--ink-2)}
+  ul.clean li b{color:var(--ink); font-weight:700}
+  ul.clean .mk{font-family:var(--mono); color:var(--accent); font-size:13px; padding-top:3px}
+
+  .pill{display:inline-block; font-family:var(--mono); font-size:11px; letter-spacing:.06em; padding:4px 10px; border-radius:20px; border:1px solid var(--line-strong); color:var(--ink-2)}
+  .pill.a{border-color:var(--accent); color:var(--accent)}
+
+  /* cover */
+  .cover{background:
+      radial-gradient(120% 80% at 85% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 60%)}
+  .cover h1{font-size:clamp(42px,8vw,88px); letter-spacing:-.03em}
+  .cover .tag{font-family:var(--serif); font-style:italic; color:var(--accent); font-size:clamp(24px,4vw,40px)}
+  .cover .sub{margin-top:26px; font-size:clamp(17px,2.2vw,21px); color:var(--ink-2); max-width:56ch}
+
+  /* 2x2 map */
+  .map{position:relative; aspect-ratio:1/.78; border:1px solid var(--line); border-radius:12px; background:var(--surface); box-shadow:var(--shadow)}
+  .map .ax{position:absolute; background:var(--line-strong)}
+  .map .axv{left:50%; top:8%; bottom:8%; width:1px}
+  .map .axh{top:50%; left:8%; right:8%; height:1px}
+  .map .lbl{position:absolute; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3)}
+  .dot{position:absolute; transform:translate(-50%,-50%); font-family:var(--sans); font-size:12.5px; font-weight:700; color:var(--ink-2); white-space:nowrap; text-align:center}
+  .dot::before{content:""; display:block; width:11px; height:11px; border-radius:50%; background:var(--ink-3); margin:0 auto 6px}
+  .dot.you{color:var(--accent); font-size:14px}
+  .dot.you::before{background:var(--accent); width:15px; height:15px; box-shadow:0 0 0 5px color-mix(in srgb,var(--accent) 20%, transparent)}
+
+  /* market nested */
+  .tam{display:flex; flex-direction:column; gap:12px}
+  .tam .row{display:grid; grid-template-columns:90px 1fr; gap:14px; align-items:center}
+  .tam .k{font-family:var(--mono); font-size:12px; color:var(--ink-2)}
+  .tam .bar{height:34px; border-radius:8px; display:flex; align-items:center; padding:0 14px; color:#fff; font-family:var(--mono); font-size:12px; font-weight:600}
+
+  table.cmp{width:100%; border-collapse:collapse; font-size:14px; background:var(--surface); border-radius:10px; overflow:hidden; box-shadow:var(--shadow)}
+  table.cmp th, table.cmp td{padding:11px 12px; text-align:left; border-bottom:1px solid var(--line)}
+  table.cmp thead th{font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); background:var(--surface-2)}
+  table.cmp td.f{font-weight:600; color:var(--ink)}
+  table.cmp .yes{color:var(--sage); font-weight:700}
+  table.cmp .no{color:var(--ink-3)}
+  table.cmp tr.me td{background:color-mix(in srgb,var(--accent) 8%, var(--surface))}
+  table.cmp tr.me td.f{color:var(--accent)}
+
+  .toggle{position:fixed; top:14px; right:14px; z-index:40; font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:20px; padding:7px 12px; cursor:pointer; box-shadow:var(--shadow)}
+  .toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .progress{position:fixed; left:0; top:0; height:3px; background:var(--accent); width:0; z-index:41; transition:width .15s ease}
+
+  .flow{display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:10px; align-items:center}
+  @media (max-width:800px){ .flow{grid-template-columns:1fr; } .flow .arw{display:none} }
+  .flow .step{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px; text-align:center; box-shadow:var(--shadow)}
+  .flow .step .n{font-family:var(--mono); font-size:11px; color:var(--accent); letter-spacing:.1em}
+  .flow .step h3{font-family:var(--serif); font-weight:600; font-size:19px; margin:8px 0 6px}
+  .flow .step p{font-size:13.5px; color:var(--ink-2); margin:0}
+  .flow .arw{color:var(--ink-3); font-size:22px; text-align:center}
+
+  .ask-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:26px}
+  @media (max-width:800px){ .ask-grid{grid-template-columns:1fr} }
+  .use{display:flex; flex-direction:column; gap:10px}
+  .use .u{display:grid; grid-template-columns:52px 1fr; gap:12px; align-items:center; font-size:15px; color:var(--ink-2)}
+  .use .u b{font-family:var(--mono); color:var(--accent); font-size:14px}
+  .use .u .bar{height:8px; border-radius:6px; background:var(--accent); grid-column:2; margin-top:2px}
+</style>
+
+<div class="progress" id="prog"></div>
+<button class="toggle" id="tgl" aria-label="Toggle theme">◐ Theme</button>
+
+<!-- 01 COVER -->
+<section class="slide cover" id="s1">
+  <span class="kicker wordmark">▲ <b>Atelier</b></span>
+  <span class="num">01 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Pre-seed · Confidential</div>
+    <h1 style="margin-top:18px">The design studio OS<br>for <span class="tag">high-end interiors.</span></h1>
+    <p class="sub">Atelier turns a designer's inspiration into a client-ready presentation, captures the approval, and keeps the whole project up to date — automatically. Not another board they abandon. The base layer every studio runs on.</p>
+    <div style="margin-top:30px; display:flex; gap:10px; flex-wrap:wrap">
+      <span class="pill a">AI-native</span><span class="pill">Client-facing</span><span class="pill">Beautiful by default</span>
+    </div>
+  </div>
+</section>
+
+<!-- 02 PROBLEM -->
+<section class="slide" id="s2">
+  <span class="kicker">The Problem</span><span class="num">02 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Designers design 30% of the time. The rest is admin.</div>
+    <h2 class="title">Great taste, buried under busywork.</h2>
+    <p class="lead">High-end residential designers lose their days to the unglamorous middle: rebuilding moodboards by hand, chasing client sign-off over email, and re-keying specs — while the tools meant to help are either ugly, manual, or distrusted.</p>
+    <div class="grid c3 keep2" style="margin-top:34px">
+      <div class="card"><span class="ic">Lost approvals</span><h3>"I never approved that."</h3><p>Client sign-off lives in email and text. When it's disputed, the designer eats the rework — and the relationship.</p></div>
+      <div class="card"><span class="ic">Manual everything</span><h3>Hours per moodboard</h3><p>Inspiration is collected on Pinterest, then rebuilt by hand in Canva/PowerPoint. Specs are copy-pasted into spreadsheets that break.</p></div>
+      <div class="card"><span class="ic">Tools they resent</span><h3>Ugly or untrusted</h3><p>Incumbents feel like a "dinosaur," or are marketing machines in court over billing. Designers try them and quietly quit.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 WHY NOW -->
+<section class="slide" id="s3">
+  <span class="kicker">Why Now</span><span class="num">03 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">This was impossible 3 years ago.</div>
+    <h2 class="title">AI can finally do the tedious part.</h2>
+    <div class="grid c3 keep2" style="margin-top:30px">
+      <div class="card"><span class="ic">Vision + OCR</span><h3>It reads the world</h3><p>Snap a cut sheet or a fabric tag → price, dimensions, and vendor extracted. No typing.</p></div>
+      <div class="card"><span class="ic">Generative</span><h3>It composes</h3><p>Pinterest moods → an editorial, presentation-ready board with the color palette pulled automatically.</p></div>
+      <div class="card"><span class="ic">Multimodal match</span><h3>It finds the look</h3><p>"Show me sofas like this" → visually similar products the designer can actually use.</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px">The result: the boring 30%–70% of a designer's day becomes automatic — and what comes out is beautiful enough to put in front of a client.</p>
+  </div>
+</section>
+
+<!-- 04 SOLUTION -->
+<section class="slide" id="s4">
+  <span class="kicker">The Solution</span><span class="num">04 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">One loop, done exceptionally well.</div>
+    <h2 class="title">Capture → Present → Approve — and it stays true.</h2>
+    <div class="flow" style="margin-top:36px">
+      <div class="step"><div class="n">01 · CAPTURE</div><h3>It fills itself</h3><p>Moods, photos, cut sheets, emails → structured selections with palette, price &amp; lead time.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><div class="n">02 · PRESENT</div><h3>Luxe by default</h3><p>An editorial, branded lookbook the client is delighted to receive.</p></div>
+      <div class="arw">→</div>
+      <div class="step"><div class="n">03 · APPROVE</div><h3>Binding sign-off</h3><p>One tap = a timestamped, version-bound approval. The dispute ends.</p></div>
+    </div>
+    <p class="lead" style="margin-top:34px">Every approval flows back and <b style="color:var(--ink)">advances the project's state on its own</b> — so the studio always knows where every project stands, without anyone updating a board.</p>
+  </div>
+</section>
+
+<!-- 05 PRODUCT / MAGIC -->
+<section class="slide" id="s5">
+  <span class="kicker">The Product</span><span class="num">05 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">The "wait, how did it know that?" moment</div>
+    <h2 class="title">A living picture of every project.</h2>
+    <div class="grid c2" style="margin-top:30px">
+      <ul class="clean">
+        <li><span class="mk">◆</span><span><b>Self-updating "Studio" view.</b> What's awaiting a client, what's slipping, what installs this week — across every project, automatically.</span></li>
+        <li><span class="mk">◆</span><span><b>Room-based visual canvas.</b> A moodboard that secretly knows order status and budget.</span></li>
+        <li><span class="mk">◆</span><span><b>Client approval as a record.</b> The artifact invoked in every dispute — and the growth engine.</span></li>
+        <li><span class="mk">◆</span><span><b>Your data, always yours.</b> One-click export. No lock-in. No dark-pattern billing.</span></li>
+      </ul>
+      <div class="card" style="display:flex; flex-direction:column; justify-content:center">
+        <span class="ic">Deliberately NOT</span>
+        <p style="font-size:15px">❌ Full accounting → we sync QuickBooks.<br>❌ Lead-gen / ads → that's not who we are.<br>❌ Generic tasks &amp; Gantt → the graveyard.<br>❌ "For all levels" → we serve professionals only.</p>
+        <p style="margin-top:14px; color:var(--ink); font-weight:600; font-family:var(--serif); font-size:18px">Restraint is the feature.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 DIFFERENTIATION MAP -->
+<section class="slide" id="s6">
+  <span class="kicker">Why We Win</span><span class="num">06 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">The whole category trades depth for beauty. We refuse.</div>
+    <h2 class="title">Nobody owns the top-right.</h2>
+    <div class="grid c2" style="margin-top:26px; grid-template-columns:1.15fr .85fr">
+      <div class="map">
+        <div class="ax axv"></div><div class="ax axh"></div>
+        <div class="lbl" style="top:2%; left:50%; transform:translateX(-50%)">DEEP</div>
+        <div class="lbl" style="bottom:2%; left:50%; transform:translateX(-50%)">LIGHT</div>
+        <div class="lbl" style="top:50%; left:1%; transform:translateY(-50%)">MANUAL / UGLY</div>
+        <div class="lbl" style="top:50%; right:1%; transform:translateY(-50%); text-align:right">AI / BEAUTIFUL</div>
+        <div class="dot" style="left:26%; top:24%">Studio Designer</div>
+        <div class="dot" style="left:30%; top:70%">Mydoma</div>
+        <div class="dot" style="left:22%; top:58%">Houzz Pro</div>
+        <div class="dot" style="left:66%; top:66%">Spoak</div>
+        <div class="dot" style="left:64%; top:40%">Programa</div>
+        <div class="dot you" style="left:80%; top:22%">Atelier</div>
+      </div>
+      <ul class="clean" style="align-self:center">
+        <li><span class="mk">01</span><span><b>Spoak</b> is manual &amp; built "for all levels." We're <b>AI-native &amp; pro-only.</b></span></li>
+        <li><span class="mk">02</span><span><b>Studio Designer</b> is deep but a "dinosaur." We have the depth <b>without the pain.</b></span></li>
+        <li><span class="mk">03</span><span><b>Houzz Pro</b> is a marketing machine, in court over billing. We're <b>designer-aligned &amp; trust-first.</b></span></li>
+        <li><span class="mk">04</span><span>Everyone's board goes stale. Ours <b>updates itself.</b></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 07 COMPETITION TABLE -->
+<section class="slide" id="s7">
+  <span class="kicker">Competition</span><span class="num">07 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Crowded, but uniformly weak</div>
+    <h2 class="title">The scorecard.</h2>
+    <div style="margin-top:26px; overflow-x:auto">
+      <table class="cmp">
+        <thead><tr><th>Capability</th><th>Atelier</th><th>Spoak</th><th>Studio Designer</th><th>Houzz Pro</th><th>Programa</th></tr></thead>
+        <tbody>
+          <tr class="me"><td class="f">AI-native capture</td><td class="yes">Yes</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr class="me"><td class="f">Self-updating state</td><td class="yes">Yes</td><td class="no">—</td><td class="no">—</td><td class="no">—</td><td class="no">—</td></tr>
+          <tr class="me"><td class="f">Binding client approval</td><td class="yes">Yes</td><td class="no">—</td><td class="no">Weak</td><td class="no">Weak</td><td class="no">Weak</td></tr>
+          <tr><td class="f">Beautiful / pro-grade</td><td class="yes">Yes</td><td class="no">Consumer</td><td class="no">Dated</td><td class="no">Mixed</td><td class="yes">Yes</td></tr>
+          <tr><td class="f">Trust (data export)</td><td class="yes">Yes</td><td class="no">?</td><td class="no">?</td><td class="no">Lawsuit</td><td class="no">?</td></tr>
+          <tr><td class="f">Focus</td><td class="yes">Pro only</td><td class="no">All levels</td><td class="no">Pro</td><td class="no">Broad</td><td class="yes">Pro</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="src">Assessment drawn from public reviews (Capterra, G2, SourceForge, TechRadar) and legal filings (Carr v. Houzz, 3:25-cv-503). To be re-validated with hands-on trials.</p>
+  </div>
+</section>
+
+<!-- 08 MARKET -->
+<section class="slide" id="s8">
+  <span class="kicker">Market</span><span class="num">08 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Enter narrow. Expand into the money.</div>
+    <h2 class="title">A beachhead into a $60B buying flow.</h2>
+    <div class="grid c2" style="margin-top:28px">
+      <div class="tam" style="align-self:center">
+        <div class="row"><span class="k">GMV upside</span><div class="bar" style="width:100%; background:var(--gold)">$60B+ furnishings purchased through designers / yr</div></div>
+        <div class="row"><span class="k">TAM</span><div class="bar" style="width:74%; background:var(--sage)">$26.5B US interior design market</div></div>
+        <div class="row"><span class="k">SAM</span><div class="bar" style="width:40%; background:var(--accent)">100k+ US design firms · design software</div></div>
+        <div class="row"><span class="k">Beachhead</span><div class="bar" style="width:20%; background:var(--ink-2)">~40k high-end residential firms (global)</div></div>
+      </div>
+      <div class="grid" style="gap:16px; align-content:center">
+        <div class="card"><div class="stat xl accent">100k<span class="u">+</span></div><div class="statlabel">US interior design firms — fragmented, taste-driven, tightly networked.</div></div>
+        <div class="card"><div class="stat xl">$60B<span class="u">/yr GMV</span></div><div class="statlabel">Furnishings specified by designers — the expansion prize a small take-rate turns into a $100M+ business.</div></div>
+      </div>
+    </div>
+    <p class="src">Sources: IBISWorld (US interior design market &amp; firm count); category GMV estimated from home-furnishings spend attributable to designer specification.</p>
+  </div>
+</section>
+
+<!-- 09 BUSINESS MODEL -->
+<section class="slide" id="s9">
+  <span class="kicker">Business Model</span><span class="num">09 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">SaaS is the wedge. Payments are the business.</div>
+    <h2 class="title">Land on seats. Expand into the flow.</h2>
+    <div class="grid c3 keep2" style="margin-top:30px">
+      <div class="card"><span class="ic">Now — SaaS</span><h3>$49–$149 / seat / mo</h3><p>Solo → studio → firm. Free for invited clients &amp; collaborators — that's the growth loop, not the revenue.</p></div>
+      <div class="card"><span class="ic">Next — Payments</span><h3>Take-rate on client billing</h3><p>Designers already invoice clients. Process those payments → a GMV take-rate that dwarfs seat revenue.</p></div>
+      <div class="card"><span class="ic">Later — Procurement</span><h3>Marketplace / trade</h3><p>As specs → POs flow through Atelier, monetize the $60B furnishings pipeline.</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px">Same playbook as Toast &amp; Shopify: a beloved vertical tool that becomes the <b style="color:var(--ink)">system of record for the money.</b></p>
+  </div>
+</section>
+
+<!-- 10 GTM -->
+<section class="slide" id="s10">
+  <span class="kicker">Go To Market</span><span class="num">10 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">We manufacture the loop the market won't give us.</div>
+    <h2 class="title">The client is the channel.</h2>
+    <div class="grid c3 keep2" style="margin-top:30px">
+      <div class="card"><span class="ic">Viral by design</span><h3>Every approval = a lead</h3><p>Each client who taps "Approve" on our branded surface asks their next designer to use it. Figma/DocuSign-style recipient growth.</p></div>
+      <div class="card"><span class="ic">Beachhead</span><h3>High-end residential</h3><p>Rich, tasteful, and refers relentlessly. Own the 40k, then expand to commercial &amp; architecture.</p></div>
+      <div class="card"><span class="ic">Where they live</span><h3>Instagram · Houzz · community</h3><p>Designers publish their work publicly and evangelize peer-to-peer. Beautiful output is the marketing.</p></div>
+    </div>
+    <p class="lead" style="margin-top:30px">Self-serve, no forced demo, low friction — the opposite of the enterprise sales designers already resent.</p>
+  </div>
+</section>
+
+<!-- 11 ROADMAP -->
+<section class="slide" id="s11">
+  <span class="kicker">Roadmap</span><span class="num">11 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Prove the magic before building the platform.</div>
+    <h2 class="title">Focused, sequenced, honest.</h2>
+    <ul class="clean" style="margin-top:26px; max-width:none">
+      <li><span class="mk">M0–2</span><span><b>MVP: the core loop.</b> AI capture + client approval + a room canvas. 10 design-partner studios, hands-on onboarding.</span></li>
+      <li><span class="mk">M3–6</span><span><b>Self-serve + moodboard→presentation.</b> Palette extraction, launch pricing, first 100+ paying studios.</span></li>
+      <li><span class="mk">M6–9</span><span><b>Vendor / order tracking.</b> Kill the vendor-chasing tax; deepen retention.</span></li>
+      <li><span class="mk">M9–12</span><span><b>Client payments (beta).</b> Turn on the take-rate — the venture-scale lever.</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 12 FINANCIALS -->
+<section class="slide" id="s12">
+  <span class="kicker">Financials</span><span class="num">12 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Base case · 12-month plan</div>
+    <h2 class="title">To ~$636K ARR and near-breakeven.</h2>
+    <div class="grid c2" style="margin-top:26px; grid-template-columns:1.1fr .9fr">
+      <div class="card">
+        <span class="ic">Monthly recurring revenue — Year 1</span>
+        <svg viewBox="0 0 520 220" width="100%" height="auto" role="img" aria-label="MRR grows from zero to about 53,000 dollars per month by month 12.">
+          <line x1="44" y1="186" x2="508" y2="186" style="stroke:var(--line-strong)" stroke-width="1"></line>
+          <line x1="44" y1="20" x2="44" y2="186" style="stroke:var(--line-strong)" stroke-width="1"></line>
+          <polyline id="area" fill="var(--accent)" fill-opacity="0.12" stroke="none" points=""></polyline>
+          <polyline id="line" fill="none" style="stroke:var(--accent)" stroke-width="2.5" points=""></polyline>
+          <circle id="end" r="5" style="fill:var(--accent)"></circle>
+          <text x="44" y="205" style="fill:var(--ink-3); font-family:var(--mono)" font-size="10">M1</text>
+          <text x="490" y="205" style="fill:var(--ink-3); font-family:var(--mono)" font-size="10">M12</text>
+          <text id="endlbl" style="fill:var(--accent); font-family:var(--mono); font-weight:700" font-size="12">$53k</text>
+        </svg>
+      </div>
+      <div class="grid" style="gap:14px; align-content:center">
+        <div class="card" style="padding:16px 18px"><div class="stat" style="font-size:38px">~$636K<span class="u"> exit ARR</span></div><div class="statlabel">~589 paying studios · ~80% gross margin</div></div>
+        <div class="card" style="padding:16px 18px"><div class="stat" style="font-size:38px; color:var(--sage)">~M12<span class="u"> breakeven</span></div><div class="statlabel">EBITDA approaching zero as revenue catches costs</div></div>
+        <div class="card" style="padding:16px 18px"><div class="stat" style="font-size:38px; color:var(--accent)">LTV/CAC<span class="u"> ~24×*</span></div><div class="statlabel">*if the viral approval loop works — the key assumption to prove</div></div>
+      </div>
+    </div>
+    <p class="src">Illustrative base case. Sensitive to churn and CAC; a viral coefficient below 1 materially lowers the outcome.</p>
+  </div>
+</section>
+
+<!-- 13 ASK -->
+<section class="slide" id="s13">
+  <span class="kicker">The Ask</span><span class="num">13 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">Fuel for 18 months to product-market fit</div>
+    <h2 class="title">Raising $400K pre-seed.</h2>
+    <div class="ask-grid" style="margin-top:30px">
+      <div class="card">
+        <span class="ic">Use of funds</span>
+        <div class="use">
+          <div class="u"><b>50%</b><div class="bar" style="width:100%"></div></div>
+          <div class="u" style="margin-top:-6px"><span class="mono" style="grid-column:2; font-size:12px; color:var(--ink-2)">Engineering — the auto-capture magic</span></div>
+          <div class="u"><b>25%</b><div class="bar" style="width:50%"></div></div>
+          <div class="u" style="margin-top:-6px"><span class="mono" style="grid-column:2; font-size:12px; color:var(--ink-2)">Design &amp; product — the craft that sells</span></div>
+          <div class="u"><b>20%</b><div class="bar" style="width:40%"></div></div>
+          <div class="u" style="margin-top:-6px"><span class="mono" style="grid-column:2; font-size:12px; color:var(--ink-2)">Community-led GTM &amp; content</span></div>
+          <div class="u"><b>5%</b><div class="bar" style="width:12%"></div></div>
+          <div class="u" style="margin-top:-6px"><span class="mono" style="grid-column:2; font-size:12px; color:var(--ink-2)">Ops &amp; buffer</span></div>
+        </div>
+      </div>
+      <div style="align-self:center">
+        <h3 class="serif" style="font-size:24px; font-weight:600; margin:0 0 14px">Milestones we'll hit</h3>
+        <ul class="clean">
+          <li><span class="mk">→</span><span>Live MVP + <b>10 design-partner studios</b> using the loop weekly.</span></li>
+          <li><span class="mk">→</span><span><b>Proven auto-capture</b> — the "how did it know that?" demo.</span></li>
+          <li><span class="mk">→</span><span><b>~500 paying studios</b> &amp; a measurable viral coefficient.</span></li>
+          <li><span class="mk">→</span><span>Payments beta live — the seed story.</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 VISION -->
+<section class="slide cover" id="s14">
+  <span class="kicker wordmark">▲ <b>Atelier</b></span><span class="num">14 / 14</span>
+  <div class="slide-inner">
+    <div class="eyebrow">The Vision</div>
+    <h1 style="margin-top:16px; font-size:clamp(34px,6.5vw,68px)">Not a one-off tool.<br>The <span class="tag">base layer</span> every studio runs on.</h1>
+    <p class="sub">Own the daily loop for high-end residential designers on craft and AI. Become the system of record for their decisions, their approvals — and their money. Then widen to every design studio in the built environment.</p>
+    <p class="serif" style="font-style:italic; font-size:22px; color:var(--accent); margin-top:30px">Let's build the studio operating system with taste.</p>
+    <div style="margin-top:24px; font-family:var(--mono); font-size:12px; color:var(--ink-3)">hello@atelier.studio &nbsp;·&nbsp; working name — replace with yours</div>
+  </div>
+</section>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('tgl');
+  function cur(){var t=root.getAttribute('data-theme'); return t|| (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');}
+  btn.addEventListener('click',function(){ root.setAttribute('data-theme', cur()==='dark'?'light':'dark'); });
+
+  // progress bar
+  var prog=document.getElementById('prog');
+  function upd(){ var h=document.documentElement; var p=h.scrollTop/(h.scrollHeight-h.clientHeight); prog.style.width=(p*100)+'%'; }
+  addEventListener('scroll',upd,{passive:true}); upd();
+
+  // arrow-key slide nav
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  addEventListener('keydown',function(e){
+    if(e.key!=='ArrowDown'&&e.key!=='ArrowRight'&&e.key!=='ArrowUp'&&e.key!=='ArrowLeft') return;
+    var y=scrollY, cur=0;
+    slides.forEach(function(s,i){ if(s.offsetTop<=y+10) cur=i; });
+    var nx=(e.key==='ArrowDown'||e.key==='ArrowRight')?Math.min(cur+1,slides.length-1):Math.max(cur-1,0);
+    slides[nx].scrollIntoView({behavior:'smooth'}); e.preventDefault();
+  });
+
+  // MRR chart
+  var mrr=[0,0,900,2363,4515,7824,11912,17032,24599,32113,40605,52974];
+  var x0=44,x1=508,y0=186,y1=22,max=54000;
+  function px(i){ return x0+(x1-x0)*(i/(mrr.length-1)); }
+  function py(v){ return y0-(y0-y1)*(v/max); }
+  var pts=mrr.map(function(v,i){return px(i).toFixed(1)+','+py(v).toFixed(1);}).join(' ');
+  document.getElementById('line').setAttribute('points',pts);
+  document.getElementById('area').setAttribute('points', x0+','+y0+' '+pts+' '+x1+','+y0);
+  var ex=px(mrr.length-1), ey=py(mrr[mrr.length-1]);
+  var end=document.getElementById('end'); end.setAttribute('cx',ex); end.setAttribute('cy',ey);
+  var el=document.getElementById('endlbl'); el.setAttribute('x', ex-52); el.setAttribute('y', ey-6);
+})();
+</script>
