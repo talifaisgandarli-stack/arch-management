@@ -1,0 +1,782 @@
+<title>Atelier — UX Prosesi: Araşdırmadan Ekrana</title>
+<style>
+  :root{
+    /* doc identity — "plaster & drafting ink" (Atelier layihə sənədləri sistemi) */
+    --paper:#E9E5DC;
+    --surface:#F3F0E9;
+    --surface-2:#EFEBE2;
+    --ink:#23272C;
+    --ink-soft:#5C5E5C;
+    --ink-faint:#8A8B84;
+    --line:rgba(35,39,44,.14);
+    --line-strong:rgba(35,39,44,.28);
+    --ochre:#AE7233;
+    --ochre-soft:rgba(174,114,51,.12);
+    --slate:#42606C;
+    --slate-soft:rgba(66,96,108,.12);
+    --shadow:0 1px 2px rgba(35,39,44,.06),0 8px 30px rgba(35,39,44,.08);
+    /* wireframe grays */
+    --wf-bg:#DBD8D0;--wf-box:#C8C5BD;--wf-box-2:#B5B2AA;--wf-ink:#6E6C66;--wf-line:#9B988F;
+    /* product UI tokens (hi-fi mockups — deliberately light, like screenshots) */
+    --p-bg:#F6F4EF;--p-card:#FFFFFF;--p-ink:#20242A;--p-soft:#6B6E66;--p-faint:#9B9E95;
+    --p-line:#E3E0D7;--p-accent:#B4552D;--p-accent-soft:#F4E4DB;--p-sage:#7D8A80;--p-shadow:0 1px 3px rgba(32,36,42,.08),0 10px 28px rgba(32,36,42,.10);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#181B1E;--surface:#212528;--surface-2:#1D2124;--ink:#E8E4DA;--ink-soft:#A6A39A;--ink-faint:#71736C;
+      --line:rgba(232,228,218,.14);--line-strong:rgba(232,228,218,.26);--ochre:#CE9A57;--ochre-soft:rgba(206,154,87,.15);
+      --slate:#7EA0AC;--slate-soft:rgba(126,160,172,.14);--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.34);
+      --wf-bg:#26292C;--wf-box:#33373A;--wf-box-2:#3F4448;--wf-ink:#8E8F88;--wf-line:#4A4E51;
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#E9E5DC;--surface:#F3F0E9;--surface-2:#EFEBE2;--ink:#23272C;--ink-soft:#5C5E5C;--ink-faint:#8A8B84;
+    --line:rgba(35,39,44,.14);--line-strong:rgba(35,39,44,.28);--ochre:#AE7233;--ochre-soft:rgba(174,114,51,.12);
+    --slate:#42606C;--slate-soft:rgba(66,96,108,.12);--shadow:0 1px 2px rgba(35,39,44,.06),0 8px 30px rgba(35,39,44,.08);
+    --wf-bg:#DBD8D0;--wf-box:#C8C5BD;--wf-box-2:#B5B2AA;--wf-ink:#6E6C66;--wf-line:#9B988F;
+  }
+  :root[data-theme="dark"]{
+    --paper:#181B1E;--surface:#212528;--surface-2:#1D2124;--ink:#E8E4DA;--ink-soft:#A6A39A;--ink-faint:#71736C;
+    --line:rgba(232,228,218,.14);--line-strong:rgba(232,228,218,.26);--ochre:#CE9A57;--ochre-soft:rgba(206,154,87,.15);
+    --slate:#7EA0AC;--slate-soft:rgba(126,160,172,.14);--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.34);
+    --wf-bg:#26292C;--wf-box:#33373A;--wf-box-2:#3F4448;--wf-ink:#8E8F88;--wf-line:#4A4E51;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Hoefler Text",Georgia,serif;
+    font-size:18px;line-height:1.68;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace}
+  .sans{font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif}
+
+  header.bar{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar-inner{max-width:1100px;margin:0 auto;padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{display:flex;align-items:baseline;gap:.55rem}
+  .brand b{font-weight:600}
+  .brand .tag{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+  nav.toc{display:flex;gap:1.1rem;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+  nav.toc a{color:var(--ink-soft);text-decoration:none}
+  nav.toc a:hover{color:var(--ochre)}
+  @media (max-width:760px){nav.toc{display:none}}
+  .toggle{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid var(--line-strong);color:var(--ink-soft);padding:.4rem .6rem;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .toggle:hover{color:var(--ink);border-color:var(--ink-soft)}
+  .toggle:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:3px;border-radius:2px}
+
+  main{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+  .wrap{max-width:680px}
+  section{padding:4.2rem 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  .eyebrow{font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ochre);display:flex;align-items:center;gap:.7rem;margin:0 0 1.1rem}
+  .eyebrow .n{color:var(--ink-faint)}
+  h1{font-weight:600;letter-spacing:-.015em;line-height:1.06;text-wrap:balance;font-size:clamp(2.4rem,6vw,4rem);margin:.2rem 0 0}
+  h2{font-weight:600;letter-spacing:-.01em;line-height:1.12;text-wrap:balance;font-size:clamp(1.6rem,3.4vw,2.4rem);margin:0 0 1rem}
+  h3{font-weight:600;font-size:1.18rem;margin:0 0 .4rem}
+  h4{font-weight:600;font-size:1rem;margin:0 0 .3rem}
+  p{margin:0 0 1.1rem}
+  .lead{font-size:1.28rem;line-height:1.55}
+  .soft{color:var(--ink-soft)}
+  strong{font-weight:600}
+
+  .hero{padding:5rem 0 4.2rem}
+  .kicker{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  .hero .sub{font-size:1.28rem;line-height:1.52;color:var(--ink-soft);max-width:620px;margin-top:1.5rem}
+  .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:2.4rem}
+  @media (max-width:720px){.phases{grid-template-columns:1fr 1fr}}
+  .phases a{background:var(--surface);padding:1.1rem 1.2rem;text-decoration:none;color:var(--ink)}
+  .phases a:hover{background:var(--surface-2)}
+  .phases .pn{font-family:"SF Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre)}
+  .phases .pt{font-weight:600;font-size:1rem;margin-top:.3rem}
+  .phases .pd{font-size:.85rem;color:var(--ink-soft);margin-top:.2rem;line-height:1.4}
+
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1.8rem}
+  .grid.two{grid-template-columns:1fr 1fr}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:720px){.grid.two,.grid.three{grid-template-columns:1fr}}
+  .cell{background:var(--surface);padding:1.4rem 1.35rem}
+  .cell .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.15em;text-transform:uppercase;color:var(--ochre);margin-bottom:.55rem}
+  .cell p{font-size:.96rem;line-height:1.55;color:var(--ink-soft);margin:0}
+  .cell ul{margin:.3rem 0 0;padding-left:1.05rem}
+  .cell li{font-size:.93rem;line-height:1.5;color:var(--ink-soft);margin-bottom:.4rem}
+
+  .callout{border-left:3px solid var(--ochre);background:var(--surface-2);padding:1.15rem 1.35rem;border-radius:0 10px 10px 0;margin:1.7rem 0}
+  .callout p{margin:0;font-size:1.03rem;line-height:1.55}
+  .callout .who{font-family:"SF Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:.55rem}
+  .callout.slate{border-left-color:var(--slate)}
+
+  ul.clean{margin:1rem 0 1.1rem;padding-left:1.2rem}
+  ul.clean li{margin-bottom:.5rem;padding-left:.2rem}
+  ul.clean li::marker{color:var(--ochre)}
+  ol.qs{margin:1rem 0;padding-left:1.4rem;counter-reset:q}
+  ol.qs li{margin-bottom:.7rem;line-height:1.55}
+  ol.qs li em{color:var(--ink-soft);font-size:.9rem;display:block;font-style:normal}
+
+  /* competitor cards */
+  .comp{border-top:1px solid var(--line);padding:1.5rem 0;display:grid;grid-template-columns:190px 1fr 1fr;gap:1.4rem}
+  .comp:first-child{border-top:none}
+  @media (max-width:760px){.comp{grid-template-columns:1fr}}
+  .comp .name{font-weight:600;font-size:1.1rem}
+  .comp .meta{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-top:.3rem;line-height:1.6}
+  .comp h5{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);margin:0 0 .4rem;font-weight:500}
+  .comp p{font-size:.94rem;line-height:1.55;color:var(--ink-soft);margin:0}
+  .comp .lesson p{color:var(--ink)}
+  .comp .lesson h5{color:var(--ochre)}
+
+  /* personas */
+  .persona{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:1.6rem;margin-top:1.6rem;display:grid;grid-template-columns:200px 1fr;gap:1.6rem}
+  @media (max-width:720px){.persona{grid-template-columns:1fr}}
+  .persona .id .avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:1.5rem;color:#fff;margin-bottom:.8rem}
+  .persona .id .nm{font-weight:600;font-size:1.15rem}
+  .persona .id .rl{font-size:.9rem;color:var(--ink-soft);line-height:1.45;margin-top:.15rem}
+  .persona .id .quote{font-style:italic;font-size:.98rem;line-height:1.5;color:var(--ink);margin-top:1rem;border-left:2px solid var(--ochre);padding-left:.7rem}
+  .persona .cols{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem}
+  @media (max-width:560px){.persona .cols{grid-template-columns:1fr}}
+  .persona h5{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ochre);margin:0 0 .45rem;font-weight:500}
+  .persona ul{margin:0;padding-left:1rem}
+  .persona li{font-size:.9rem;line-height:1.5;color:var(--ink-soft);margin-bottom:.35rem}
+
+  /* flow map */
+  .flow{display:flex;gap:0;overflow-x:auto;padding:1.6rem 0 1rem;align-items:stretch}
+  .fstep{min-width:172px;max-width:172px;position:relative;padding-right:28px}
+  .fstep::after{content:"→";position:absolute;right:6px;top:44%;color:var(--ink-faint);font-family:"SF Mono",monospace}
+  .fstep:last-child::after{display:none}
+  .fstep .box{background:var(--surface);border:1px solid var(--line-strong);border-radius:10px;padding:.8rem .85rem;height:100%;box-shadow:var(--shadow)}
+  .fstep .tag2{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);margin-bottom:.3rem}
+  .fstep .tag2.money{color:var(--ochre)}
+  .fstep .t{font-weight:600;font-size:.92rem;line-height:1.3}
+  .fstep .d{font-size:.8rem;color:var(--ink-soft);line-height:1.45;margin-top:.3rem}
+  .flow-note{font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;color:var(--ink-faint);letter-spacing:.03em}
+
+  /* copy tables */
+  table.copy{width:100%;border-collapse:collapse;margin-top:1.4rem;font-size:.92rem}
+  table.copy th{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);text-align:left;font-weight:500;padding:.5rem .8rem;border-bottom:1px solid var(--line-strong)}
+  table.copy td{padding:.65rem .8rem;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.5}
+  table.copy td:first-child{font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.05em;color:var(--ink-soft);white-space:nowrap}
+  table.copy td.az{font-weight:600}
+  table.copy td.note{color:var(--ink-soft);font-size:.85rem}
+  .tblwrap{overflow-x:auto}
+
+  /* frames (wireframes + hifi) */
+  .shot{margin:1.8rem 0 0}
+  .shot .cap{font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.05em;color:var(--ink-faint);margin-top:.85rem;line-height:1.6;max-width:680px}
+  .shot .cap b{color:var(--ink-soft);font-weight:500}
+  .frame{aspect-ratio:16/10;border-radius:12px;overflow:hidden;position:relative;box-shadow:var(--shadow);border:1px solid var(--line-strong)}
+  .frame *{position:absolute}
+
+  /* wireframe vocabulary */
+  .wf{background:var(--wf-bg)}
+  .wf .bx{background:var(--wf-box);border-radius:4px}
+  .wf .bx2{background:var(--wf-box-2);border-radius:4px}
+  .wf .ln{background:var(--wf-line);height:2px}
+  .wf .dash{border:2px dashed var(--wf-line);border-radius:6px;background:transparent}
+  .wf .lb{position:absolute;font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.04em;color:var(--wf-ink);line-height:1.3}
+  .wf .pill{background:var(--wf-box-2);border-radius:999px}
+
+  /* hi-fi product vocabulary */
+  .hf{background:var(--p-bg);font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif}
+  .hf .top{left:0;right:0;top:0;height:44px;background:color-mix(in srgb,var(--p-bg) 82%,#fff);border-bottom:1px solid var(--p-line);display:flex;align-items:center;padding:0 16px;gap:10px}
+  .hf .top *{position:static}
+  .hf .logo{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:600;font-size:.85rem;color:var(--p-ink)}
+  .hf .crumb{font-size:.66rem;color:var(--p-faint)}
+  .hf .sp{flex:1}
+  .hf .btn{background:var(--p-accent);color:#fff;font-size:.66rem;font-weight:600;letter-spacing:.02em;padding:.42rem .8rem;border-radius:999px;box-shadow:0 2px 8px rgba(180,85,45,.35)}
+  .hf .btn.ghost{background:transparent;color:var(--p-soft);border:1px solid var(--p-line);box-shadow:none}
+  .hf .avatar{width:24px;height:24px;border-radius:50%;background:var(--p-sage);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:600}
+  .hf .dots{inset:44px 0 0 0;background-image:radial-gradient(color-mix(in srgb,var(--p-ink) 12%,transparent) 1px,transparent 1px);background-size:22px 22px}
+  .hf .card{background:var(--p-card);border:1px solid var(--p-line);border-radius:10px;box-shadow:var(--p-shadow)}
+  .hf .chip{font-size:.56rem;font-weight:600;padding:.18rem .5rem;border-radius:999px;white-space:nowrap}
+  .hf .chip.stage{background:var(--p-accent-soft);color:var(--p-accent)}
+  .hf .chip.ok{background:#E4EDE6;color:#3E6B4A}
+  .hf .chip.wait{background:#F0EBDF;color:#8A6D3B}
+  .hf .sw{border-radius:7px;box-shadow:0 2px 8px rgba(32,36,42,.18)}
+  .hf .note{background:#FBF6E7;border:1px solid #EFE4C2;border-radius:7px;font-size:.56rem;color:#6B5F3B;padding:.45rem .5rem;line-height:1.35;box-shadow:0 3px 10px rgba(32,36,42,.10)}
+  .hf .t-lg{font-weight:700;color:var(--p-ink)}
+  .hf .t-sm{font-size:.6rem;color:var(--p-soft)}
+  .hf .t-xs{font-size:.54rem;color:var(--p-faint)}
+  .hf .railbar{left:0;right:0;bottom:0;height:52px;background:color-mix(in srgb,var(--p-card) 92%,transparent);border-top:1px solid var(--p-line);display:flex;align-items:center;justify-content:center;gap:0;padding:0 12px}
+  .hf .railbar *{position:static}
+  .hf .rs{display:flex;align-items:center;gap:5px;padding:0 9px;font-size:.56rem;color:var(--p-faint);white-space:nowrap}
+  .hf .rs .d{width:8px;height:8px;border-radius:50%;background:var(--p-line)}
+  .hf .rs.done{color:var(--p-soft)}
+  .hf .rs.done .d{background:var(--p-sage)}
+  .hf .rs.cur{color:var(--p-accent);font-weight:600}
+  .hf .rs.cur .d{background:var(--p-accent);box-shadow:0 0 0 3px var(--p-accent-soft)}
+  .hf .rs.lock .d{background:transparent;border:1.5px solid var(--p-line)}
+  .hf .ai{background:#EDF0F4;border:1px solid #D8DEE7;color:#42606C;border-radius:8px;font-size:.58rem;padding:.5rem .6rem;line-height:1.4;box-shadow:var(--p-shadow)}
+  .hf .ai b{font-weight:700}
+
+  /* present mode + phone */
+  .present{background:#FAF8F4}
+  .present .ptitle{font-family:"Iowan Old Style",Palatino,Georgia,serif;color:#20242A}
+  .phone-row{display:flex;gap:2rem;align-items:flex-start;flex-wrap:wrap;margin-top:1.8rem}
+  .phone{width:300px;aspect-ratio:9/18.5;border-radius:28px;border:1px solid var(--line-strong);box-shadow:var(--shadow);overflow:hidden;position:relative;background:var(--p-bg);font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;flex:0 0 auto}
+  .phone *{position:absolute}
+
+  /* style guide */
+  .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:.7rem;margin-top:1.5rem}
+  @media (max-width:640px){.swatches{grid-template-columns:repeat(2,1fr)}}
+  .swatch .c{height:74px;border-radius:10px;border:1px solid var(--line);box-shadow:var(--shadow)}
+  .swatch .n{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.05em;color:var(--ink-soft);margin-top:.45rem;line-height:1.5}
+  .typerow{border-top:1px solid var(--line);padding:1rem 0;display:flex;align-items:baseline;gap:1.4rem;flex-wrap:wrap}
+  .typerow:first-child{border-top:none}
+  .typerow .spec{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;color:var(--ink-faint);min-width:150px}
+
+  .check{margin:1.2rem 0;padding:0;list-style:none}
+  .check li{padding:.5rem 0 .5rem 1.9rem;position:relative;border-bottom:1px solid var(--line);font-size:.98rem;line-height:1.5}
+  .check li::before{content:"";position:absolute;left:0;top:.72rem;width:15px;height:15px;border:1.5px solid var(--ink-faint);border-radius:4px}
+
+  footer{border-top:1px solid var(--line);padding:3rem 0 4rem;color:var(--ink-faint);font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem}
+  footer .fin{max-width:1100px;margin:0 auto;padding:0 1.5rem;display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+</style>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><b>Atelier</b><span class="tag mono">UX Prosesi</span></div>
+    <nav class="toc mono">
+      <a href="#f1">1 · Araşdırma</a>
+      <a href="#f2">2 · Müəyyənləşdirmə</a>
+      <a href="#f3">3 · Lo-fi</a>
+      <a href="#f4">4 · Hi-fi</a>
+    </nav>
+    <button class="toggle mono" id="tg" aria-label="Mövzunu dəyiş">◐ Mövzu</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="kicker mono">Dizayn sprinti · v0.1 · Araşdırmadan ekrana</div>
+      <h1>Atelier-in UX prosesi: dörd faza, bir yol.</h1>
+      <p class="sub">Problem artıq seçilib və real müşahidəyə söykənir. Bu sənəd qalan yolu gedir: istifadəçini danışdır, personaya çevir, axını çək, mətni yaz, boz karkası qur, sonra son ekranları geyindir.</p>
+    </div>
+    <div class="phases">
+      <a href="#f1"><div class="pn mono">Faza 01</div><div class="pt">Araşdır və hiss et</div><div class="pd">Problem · müsahibə kiti · rəqib axınları</div></a>
+      <a href="#f2"><div class="pn mono">Faza 02</div><div class="pt">Müəyyənləşdir</div><div class="pd">Personalar · user flow · mikrokopiya</div></a>
+      <a href="#f3"><div class="pn mono">Faza 03</div><div class="pt">Lo-fi karkas</div><div class="pd">Boz ekranlar · naviqasiya testi</div></a>
+      <a href="#f4"><div class="pn mono">Faza 04</div><div class="pt">Hi-fi dizayn</div><div class="pd">Üslub bələdçisi · son ekranlar</div></a>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section id="f1">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">Faza 01</span> Araşdır və hiss et</div>
+      <h2>Problem seçilib. İndi onu yoxlamaq lazımdır.</h2>
+      <p class="lead soft">Gündəlik frustrasiya: dizayner işinin yaradıcı hissəsini sevir, amma layihə xaosun içində idarə olunur — WhatsApp, Pinterest, dəftər, Excel. Təsdiqlər itir, reviziyalar sayılmır, avans istəməyə utanılır.</p>
+      <p><strong>Fərziyyə (hypothesis kimi yazılmış):</strong> «Vizual düşünən dizaynerlər cədvəl-əsaslı task alətlərini atırlar; kətan-əsaslı, ödəniş qapılı bir alət versək, ən azı bir layihəni başdan-sona orada aparacaqlar.» Müsahibələr bu cümləni ya təsdiqləyəcək, ya sındıracaq — ikisi də qələbədir.</p>
+
+      <div class="callout">
+        <p><strong>Bu hissə sənin ev tapşırığındır.</strong> Müsahibələri sənin yerinə edə bilmərəm — 3–5 real söhbət aparmalısan. Aşağıdakı kit hazırdır: kimi tap, nə soruş, nəyə qulaq as, cavabları hara yaz.</p>
+        <div class="who mono">Dürüst qeyd</div>
+      </div>
+
+      <h3 style="margin-top:2.6rem">Müsahibə kiti</h3>
+      <div class="grid three">
+        <div class="cell">
+          <div class="k mono">Kimi tap · 3–5 nəfər</div>
+          <ul>
+            <li><strong>2 solo dizayner</strong> — Instagram-dan klient tapan, 2+ il təcrübə</li>
+            <li><strong>1–2 studiya rəhbəri</strong> — 3–10 nəfərlik komanda</li>
+            <li><strong>1 klient</strong> — son 1 ildə dizaynerlə işləmiş şəxs (qarşı tərəfi görmək üçün)</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <div class="k mono">Qaydalar</div>
+          <ul>
+            <li>Məhsulu <strong>danışma</strong> — pitch yox, söhbət</li>
+            <li>«Nə istəyərdin?» yox — «sonuncu dəfə nə oldu?» soruş</li>
+            <li>Konkret hekayə, rəqəm, workaround axtar</li>
+            <li>45 dəq, səs yazısı ilə (icazə alaraq)</li>
+          </ul>
+        </div>
+        <div class="cell">
+          <div class="k mono">Qırmızı bayraq</div>
+          <ul>
+            <li>«Yaxşı olardı…» cavabları — arzudur, davranış deyil</li>
+            <li>Sənin sözünü təsdiq edən nəzakət cavabları</li>
+            <li>Problemi olan amma <em>heç nə etməyən</em> adam — ağrı azdır deməkdir</li>
+          </ul>
+        </div>
+      </div>
+
+      <h4 style="margin-top:2.2rem">Sual skripti (dizaynerlər üçün)</h4>
+      <ol class="qs">
+        <li>Ən son bitirdiyin layihəni başdan sona danış — klient necə gəldi, nə oldu, harada ilişdin?<em>→ bütün axını onun sözləri ilə eşidirsən; sənin 6 addımınla üst-üstə düşürmü?</em></li>
+        <li>Klientə təqdimatı necə hazırlayırsan, nə qədər vaxt gedir?<em>→ «bir klik təqdimat» fərziyyəsinin dəyərini ölçür</em></li>
+        <li>Sonuncu dəfə bir təsdiq itdi, qarışdı, «mən belə deməmişdim» oldu — danış.<em>→ təsdiq qapısı ağrısının sübutu</em></li>
+        <li>Reviziyaları necə sayırsan? Müqavilədə «pulsuz düzəliş» şərtin var? İşləyir?<em>→ revizor sayğacı funksiyası</em></li>
+        <li>Avansı nə vaxt, necə istəyirsən? Yubandığın, utandığın olub?<em>→ ödəniş qapısının emosional tərəfi</em></li>
+        <li>Hansı alətləri sınamısan? Hansını atmısan və niyə?<em>→ rəqib zəifliyi + davranış dəyişikliyi riski</em></li>
+        <li>Referans və materialları harada saxlayırsan? Köhnə layihədən nəsə tapmaq lazım olanda nə edirsən?<em>→ kitabxana modulu</em></li>
+        <li>Adi həftədə admin işə (yazışma, hesab, izləmə) təxminən neçə saat gedir?<em>→ dəyər təklifinin rəqəmi</em></li>
+        <li>Beynin necə işləyir — siyahı ilə, yoxsa şəkillə? İş masanın/dəftərinin şəklini göstərə bilərsən?<em>→ bubble thinking fərziyyəsi; dəftər şəkli qızıldır</em></li>
+        <li>Sehrli çubuq: işinin bir hissəsini birdəfəlik yox edə bilsən — hansı?<em>→ prioritet siqnalı</em></li>
+      </ol>
+
+      <div class="callout slate">
+        <p><strong>Sintez şablonu:</strong> hər müsahibədən sonra 15 dəqiqə — üç sütuna yaz: <strong>Ağrı</strong> (onun sözləri ilə sitat) · <strong>Tezlik</strong> (hər layihədə? hər həftə?) · <strong>İndiki həll yolu</strong> (workaround). 5 söhbətdən sonra ən azı 3 nəfərdə təkrarlanan ağrılar — MVP-nin siyahısıdır. Təkrarlanmayanlar — səs-küydür.</p>
+        <div class="who mono">Müsahibədən sonra</div>
+      </div>
+
+      <h3 style="margin-top:2.8rem">Rəqib axın analizi</h3>
+      <p class="soft" style="max-width:680px">Mobbin üslubunda baxış: hər rəqibin <em>axını</em> necə qurduğu — və bizim ondan götürdüyümüz dərs. (Mobbin-də «interior design», «canvas», «invoicing» axtarışları ilə ekranları özün də vərəqlə — 30 dəqiqəlik məşq.)</p>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div class="comp">
+        <div><div class="name">Studio Designer</div><div class="meta mono">ABŞ · ERP · dizayn firmaları</div></div>
+        <div><h5 class="mono">Axını necə qurub</h5><p>Mühasibat-birinci: layihə = ledger. Onboarding uzun, təlim tələb edir. Yaradıcı iş üçün ekran demək olar yoxdur — hər şey cədvəl və forma.</p></div>
+        <div class="lesson"><h5 class="mono">Dərs</h5><p>Pul tərəfinin dərinliyi real ehtiyacdır — amma yaradıcı sıfır olanda komanda aləti atır. Biz pul qapılarını götürürük, cədvəl paradiqmasını yox.</p></div>
+      </div>
+      <div class="comp">
+        <div><div class="name">Programa</div><div class="meta mono">AU · modern studio aləti</div></div>
+        <div><h5 class="mono">Axını necə qurub</h5><p>Ən yaxın rəqib: pipeline, spesifikasiya, təmiz UI. Amma «modern»i də cədvəldir — layihə görünüşü sütunlar və sıralardır; yaradıcı ideasiya kənar alətlərdə qalır.</p></div>
+        <div class="lesson"><h5 class="mono">Dərs</h5><p>Gözəl cədvəl yenə cədvəldir. Fərqimiz interfeys cilası deyil, paradiqmadır: kətan-birinci.</p></div>
+      </div>
+      <div class="comp">
+        <div><div class="name">Milanote</div><div class="meta mono">Kətan · yaradıcı qeydlər</div></div>
+        <div><h5 class="mono">Axını necə qurub</h5><p>Sərbəst lövhələr, drag-drop, sıfır məcburi struktur. Yaradıcılar sevir — bu, kətan paradiqmasının işlədiyinin <strong>sübutudur</strong>. Amma biznes təbəqəsi yoxdur: nə mərhələ, nə təsdiq, nə pul.</p></div>
+        <div class="lesson"><h5 class="mono">Dərs</h5><p>Kətan tək başına «gözəl oyuncaq»dır — pul ödətmir. Kətan + görünməz pipeline = bizim yer.</p></div>
+      </div>
+      <div class="comp">
+        <div><div class="name">Spoak</div><div class="meta mono">ABŞ · viz + icma</div></div>
+        <div><h5 class="mono">Axını necə qurub</h5><p>Oyunlu, yüngül vizualizasiya; həvəskar-yarıpro auditoriya. Onboarding şirin, amma biznes onurğası (müqavilə, ödəniş, təhvil) zəifdir.</p></div>
+        <div class="lesson"><h5 class="mono">Dərs</h5><p>Yüngüllük və «şirinlik» aktivasiya üçün işləyir — amma peşəkarın gündəlik onurğası olmaq üçün pul axını lazımdır.</p></div>
+      </div>
+      <div class="comp">
+        <div><div class="name">Houzz Pro</div><div class="meta mono">ABŞ · lead-gen + hər şey</div></div>
+        <div><h5 class="mono">Axını necə qurub</h5><p>Hər şeyi birdən edir: lead, CRM, smeta, marketpleys. Nəticə: şişkin, etibar problemli, dizaynerlər özlərini məhsul yox, mal kimi hiss edir.</p></div>
+        <div class="lesson"><h5 class="mono">Dərs</h5><p>«Hamısını birdən» = heç birini yaxşı. Fokus: bir studiyanın bir layihəni gözəl aparması. Marketpleys sonranın işidir.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section id="f2">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">Faza 02</span> Müəyyənləşdir və ideasiya et</div>
+      <h2>Personalar, axın, söz</h2>
+      <p class="soft">Aşağıdakı personalar bu sessiyadakı araşdırmaya və sənin öz müşahidələrinə söykənən <strong>ilkin fərziyyələrdir</strong> — müsahibələrdən sonra sitatlarla və real detallarla yenilənməlidir.</p>
+    </div>
+
+    <!-- persona 1 -->
+    <div class="persona">
+      <div class="id">
+        <div class="avatar" style="background:linear-gradient(135deg,#b98e6a,#8a5f3e)">N</div>
+        <div class="nm">Nigar, 29</div>
+        <div class="rl">Solo interyer dizayner · Bakı · 4 il təcrübə · klientlər Instagram-dan</div>
+        <div class="quote">«Mən dizayner olmaq istəyirdim — mühasib, katib və inkassator yox.»</div>
+      </div>
+      <div class="cols">
+        <div>
+          <h5 class="mono">Davranış</h5>
+          <ul>
+            <li>Eyni anda 4–6 layihə; gecə işləyir, vizual yaddaş</li>
+            <li>Dəftərdə bubble çəkir, sonra SketchUp + Photoshop</li>
+            <li>Klientlə hər şey WhatsApp-da — təsdiqlər də, küsmələr də</li>
+            <li>Siyahı alətləri sınayıb (Notion, Trello) — 2 həftəyə atıb</li>
+          </ul>
+          <h5 class="mono" style="margin-top:1rem">Alətləri</h5>
+          <ul><li>Pinterest · WhatsApp · SketchUp · Photoshop · dəftər · Instagram</li></ul>
+        </div>
+        <div>
+          <h5 class="mono">Ağrılar</h5>
+          <ul>
+            <li>«Bunu demişdim axı» — itən təsdiqlər, sübutsuz mübahisə</li>
+            <li>Reviziya 5-ə çatır, pulu 2-yə alıb</li>
+            <li>Avans istəməyə utanır, gecikdirir — pul axını əziyyət çəkir</li>
+            <li>Təqdimat yığmaq 3–4 saat — hər dəfə əl ilə</li>
+          </ul>
+          <h5 class="mono" style="margin-top:1rem">Uğur nədir</h5>
+          <ul><li>Layihə sayını artırmadan gəliri artırmaq; axşamları geri almaq</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- persona 2 -->
+    <div class="persona">
+      <div class="id">
+        <div class="avatar" style="background:linear-gradient(135deg,#5f7079,#3c4b52)">R</div>
+        <div class="nm">Rəşad, 38</div>
+        <div class="rl">Butik studiya qurucusu · 6 nəfər · yaşayış + kommersiya layihələri</div>
+        <div class="quote">«Alət alırıq, üç həftəyə atırıq. Komanda cədvəl doldurmur — iş görür.»</div>
+      </div>
+      <div class="cols">
+        <div>
+          <h5 class="mono">Davranış</h5>
+          <ul>
+            <li>Satış və klient münasibətləri onda; dizayn komandada</li>
+            <li>Status yığmaq üçün hər səhər «nə yerdəyik?» iclası</li>
+            <li>Studio Designer sınayıb — komanda istifadə etmədi</li>
+          </ul>
+          <h5 class="mono" style="margin-top:1rem">Uğur nədir</h5>
+          <ul><li>İclassız status görmək; verilən sözlərin sənədləşməsi; pul axınının proqnozu</li></ul>
+        </div>
+        <div>
+          <h5 class="mono">Ağrılar</h5>
+          <ul>
+            <li>Kim hansı mərhələdədir — heç kim dəqiq bilmir</li>
+            <li>Dizaynerin klientə «şifahi söz verdiyi» reviziyalar</li>
+            <li>Layihə gəlirliliyi ancaq sonda bilinir — gec olur</li>
+            <li>Yeni işçiyə prosesi öyrətmək — proses yazılı deyil</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- persona 3 -->
+    <div class="persona">
+      <div class="id">
+        <div class="avatar" style="background:linear-gradient(135deg,#7d8a80,#566258)">L</div>
+        <div class="nm">Leyla, 34</div>
+        <div class="rl">Klient (ikincil persona) · yeni mənzil · ilk dəfə dizaynerlə işləyir</div>
+        <div class="quote">«Layihəm haradadır, bilmirəm. 200 mesajın içində render axtarıram.»</div>
+      </div>
+      <div class="cols">
+        <div>
+          <h5 class="mono">Davranış</h5>
+          <ul>
+            <li>Telefonda yaşayır; hər şeyə WhatsApp-dan baxır</li>
+            <li>Ərinə/rəfiqəsinə göstərib fikir yığır — link paylaşmaq istəyir</li>
+          </ul>
+        </div>
+        <div>
+          <h5 class="mono">Ağrılar</h5>
+          <ul>
+            <li>Proses qara qutudur: nəyə pul verdiyini görməyəndə narahatdır</li>
+            <li>Hansı versiyanın «son» olduğu bilinmir</li>
+            <li>Ödənişi nağd/köçürmə xaosu ilə edir — qəbz yox</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:2rem">
+      <p>Leyla persona kimi «ikincil»dir, amma strateji olaraq birincidir: <strong>klientin gördüyü təqdimat linki bizim viral kanalımızdır.</strong> Leyla təcrübəni bəyənəndə növbəti dizaynerinə «bununla işlə» deyir.</p>
+      <div class="who mono">Strateji qeyd</div>
+    </div>
+
+    <!-- user flow -->
+    <div class="wrap" style="margin-top:3rem">
+      <h3>Əsas user flow: «Yeni klient → təsdiqlənmiş moodboard + avans»</h3>
+      <p class="soft">MVP-nin onurğa axını. Dizaynerin gördüyü ekranlar ardıcıllığı — yaradıcı iş 4-cü addımın <em>içində</em> qeyri-lineardır, amma qapılar nizamlıdır.</p>
+    </div>
+    <div class="flow">
+      <div class="fstep"><div class="box"><div class="tag2 mono">Giriş</div><div class="t">Gələn mesaj</div><div class="d">WhatsApp / IG / zəng → Atelier-də lid kartı yaranır</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 mono">Ekran · Lid</div><div class="t">Layihəyə çevir</div><div class="d">Bir toxunuş: lid → layihə klasteri kətanda doğulur</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 mono">Ekran · Brif</div><div class="t">Brif söhbəti</div><div class="d">Söhbət formasında suallar; AI cavabları strukturlaşdırır</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 mono">Ekran · Kətan</div><div class="t">Xaos işi</div><div class="d">Referans, swatch, qeyd — sərbəst. Sistem mərhələni özü tanıyır</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 mono">Keçid</div><div class="t">Təqdimata çevir</div><div class="d">Bir klik → auto-düzüm → önizləmə → düzəlt → göndər</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 mono">Klient</div><div class="t">Leyla baxır</div><div class="d">Linki açır, telefonda vərəqləyir → «Bəyəndim» və ya şərh</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 money mono">₼ Qapı</div><div class="t">Avans linki</div><div class="d">Təsdiq düşən an sistem soruşur: «Avans linki göndərilsin?»</div></div></div>
+      <div class="fstep"><div class="box"><div class="tag2 money mono">₼ Açılış</div><div class="t">Render açılır</div><div class="d">Ödəniş gələndə növbəti mərhələnin kilidi düşür</div></div></div>
+    </div>
+    <p class="flow-note mono">Budaq: klient şərh yazarsa → axın 4-cü addıma qayıdır (moodboard mərhələsində reviziya sayğacı işə düşmür — sayğac render mərhələsinin xüsusiyyətidir). Klient 48 saat cavabsızsa → dizaynerə xatırlatma, klientə nəzakətli ping.</p>
+
+    <!-- copy -->
+    <div class="wrap" style="margin-top:3rem">
+      <h3>Mətn və mikrokopiya — üslubdan əvvəl</h3>
+      <p class="soft">Söz interfeysdən əvvəl yazılır, çünki söz dizayndır. Səs tonu: <strong>isti, insani, qısa</strong> — «sistem dili» yox. Klientə «sən» yox, «siz»; dizaynerə «sən». Aşağıda əsas ekranların nüvə mətni:</p>
+    </div>
+    <div class="tblwrap">
+      <table class="copy">
+        <tr><th>Yer</th><th>Mətn (AZ)</th><th>Niyə belə</th></tr>
+        <tr><td class="mono">Boş kətan</td><td class="az">Bura sənin studiyandır. İlk layihəni at — qalanını biz izləyəcəyik.</td><td class="note">Boş kətan qorxusunu azaldır; «biz izləyəcəyik» = görünməz struktur vədi</td></tr>
+        <tr><td class="mono">Boş layihə</td><td class="az">Şəkil, material, qeyd — nə var, at bura. Səliqə lazım deyil.</td><td class="note">«Səliqə lazım deyil» — məhsulun fəlsəfəsi bir cümlədə</td></tr>
+        <tr><td class="mono">Əsas düymə</td><td class="az">Təqdimata çevir</td><td class="note">Feil + nəticə; «Export» kimi texniki söz yox</td></tr>
+        <tr><td class="mono">Təqdimat hazır</td><td class="az">Hazırdır. Bir də bax, sonra Leylaya göndər.</td><td class="note">İnsan adı ilə — sistem yox, münasibət</td></tr>
+        <tr><td class="mono">Klient · təsdiq</td><td class="az">Bəyəndim, davam edək</td><td class="note">Klientin öz səsi ilə — «Təsdiqlə» hüquqi və soyuqdur</td></tr>
+        <tr><td class="mono">Klient · şərh</td><td class="az">Dəyişiklik istəyirəm</td><td class="note">Dürüst, günahlandırmayan alternativ</td></tr>
+        <tr><td class="mono">₼ qapı bağlı</td><td class="az">Render mərhələsi avans gələndə açılacaq. Linki göndərmək bir kliklikdir.</td><td class="note">Qaydanı sistem deyir — dizayner «pis adam» olmur</td></tr>
+        <tr><td class="mono">₼ ödəniş düşdü</td><td class="az">Avans gəldi 🎉 Render mərhələsi açıldı.</td><td class="note">Qeyd olunmalı an — kiçik bayram</td></tr>
+        <tr><td class="mono">Reviziya çipi</td><td class="az">Reviziya 1/2 · pulsuz</td><td class="note">Sayğac hər iki tərəfə görünür — mübahisə əvvəldən ölür</td></tr>
+        <tr><td class="mono">Reviziya limiti</td><td class="az">Pulsuz reviziyalar bitdi. Növbətisi razılaşmaya görə ödənişlidir — Leylaya bildirim göndərilsin?</td><td class="note">Ağır söhbəti sistem açır, dizayner yox</td></tr>
+        <tr><td class="mono">Xəta · yükləmə</td><td class="az">Şəkil yüklənmədi — bağlantını yoxla, yenidən cəhd et. Faylın itmədi, qaralamada saxladıq.</td><td class="note">Nə oldu + nə etməli + ən böyük qorxunu («itdi?») söndür</td></tr>
+        <tr><td class="mono">Bildirim</td><td class="az">Leyla moodboard-a baxdı, hələ cavab yazmayıb.</td><td class="note">«Görüldü» məlumatı — dizaynerin ən çox istədiyi siqnal</td></tr>
+        <tr><td class="mono">AI təklifi</td><td class="az">3 yeni referans atdın — onlardan lövhə yığım?</td><td class="note">AI soruşur, əmr etmir; nəticə həmişə redaktə olunandır</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section id="f3">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">Faza 03</span> Lo-fi karkas</div>
+      <h2>Boz ekranlar: rəngsiz, şriftsiz, yalnız quruluş</h2>
+      <p class="soft">Kağız eskizin rəqəmsal qarşılığı. Məqsəd: məlumatın yeri və naviqasiya təbii hiss olunurmu — bunu rəng müdaxilə etmədən yoxlamaq. (Bunları Figma-da təkrar qurmaq üçün hazır referansdır.)</p>
+    </div>
+
+    <!-- WF 1: studio -->
+    <div class="shot">
+      <div class="frame wf">
+        <div class="bx" style="left:0;right:0;top:0;height:9%"></div>
+        <div class="lb" style="left:2%;top:3%">LOQO</div>
+        <div class="pill" style="right:14%;top:2.6%;width:16%;height:4%"></div>
+        <div class="lb" style="right:15.5%;top:3.4%">axtarış</div>
+        <div class="bx2" style="right:2.5%;top:2.4%;width:4.5%;height:4.5%;border-radius:50%"></div>
+        <div class="dash" style="left:6%;top:18%;width:24%;height:34%"></div>
+        <div class="lb" style="left:7.5%;top:20%">layihə klasteri A<br>şəkil yığını + ad + mərhələ çipi</div>
+        <div class="bx" style="left:9%;top:30%;width:8%;height:14%"></div>
+        <div class="bx2" style="left:15%;top:34%;width:8%;height:14%;transform:rotate(6deg)"></div>
+        <div class="dash" style="left:44%;top:30%;width:22%;height:30%"></div>
+        <div class="lb" style="left:45.5%;top:32%">klaster B</div>
+        <div class="bx" style="left:47%;top:40%;width:7%;height:13%;transform:rotate(-4deg)"></div>
+        <div class="bx2" style="left:53%;top:42%;width:7%;height:13%"></div>
+        <div class="dash" style="right:6%;top:16%;width:20%;height:26%"></div>
+        <div class="lb" style="right:8%;top:18%">klaster C</div>
+        <div class="bx2" style="right:9%;top:24%;width:7%;height:12%;transform:rotate(5deg)"></div>
+        <div class="pill" style="left:44%;bottom:6%;width:12%;height:5%"></div>
+        <div class="lb" style="left:45.5%;bottom:7.2%">zoom − / +</div>
+        <div class="lb" style="left:6%;bottom:7%">boş sahə = yeni layihə üçün yer<br>(iki klik → yeni klaster)</div>
+      </div>
+      <div class="cap mono"><b>WF-01 · Studiya (ana kətan).</b> Siyahı yoxdur — layihələr məkanda klasterlərdir. Suallar: klaster çoxalanda (10+) tapmaq çətinləşirmi? Axtarış nə qədər önə çıxmalıdır?</div>
+    </div>
+
+    <!-- WF 2: project canvas -->
+    <div class="shot">
+      <div class="frame wf">
+        <div class="bx" style="left:0;right:0;top:0;height:9%"></div>
+        <div class="lb" style="left:2%;top:3%">← Studiya / Layihə adı</div>
+        <div class="pill" style="right:2.5%;top:2.2%;width:15%;height:5%"></div>
+        <div class="lb" style="right:4%;top:3.4%">TƏQDİMATA ÇEVİR</div>
+        <div class="bx" style="left:8%;top:16%;width:11%;height:20%;transform:rotate(-5deg)"></div>
+        <div class="bx2" style="left:17%;top:26%;width:11%;height:20%;transform:rotate(4deg)"></div>
+        <div class="bx" style="left:31%;top:14%;width:14%;height:24%"></div>
+        <div class="lb" style="left:32.5%;top:16%">referans şəkli</div>
+        <div class="dash" style="left:52%;top:20%;width:14%;height:16%"></div>
+        <div class="lb" style="left:53.5%;top:22%">qeyd stikeri</div>
+        <div class="bx2" style="right:8%;top:14%;width:12%;height:22%;transform:rotate(6deg)"></div>
+        <div class="bx" style="right:14%;top:40%;width:10%;height:18%;transform:rotate(-3deg)"></div>
+        <div class="dash" style="left:30%;top:46%;width:17%;height:14%"></div>
+        <div class="lb" style="left:31.5%;top:48%">AI təklif kartı</div>
+        <div class="bx" style="left:0;right:0;bottom:0;height:12%"></div>
+        <div class="lb" style="left:6%;bottom:4.2%">● brif — ● moodboard (BURDAYIQ) — ○ ₼ render — ○ reviziya — ○ ₼ təhvil</div>
+      </div>
+      <div class="cap mono"><b>WF-02 · Layihə kətanı.</b> Üstdə xaos, altda axın relsi. Sual: rels nə qədər görünməli? Çox görünsə — cədvəl hissi; az görünsə — struktur itir. Test: istifadəçi relsi ilk 30 saniyədə görməlidir, amma «doldurmalı forma» kimi qavramamalıdır.</div>
+    </div>
+
+    <!-- WF 3: present -->
+    <div class="shot">
+      <div class="frame wf">
+        <div class="ln" style="left:30%;right:30%;top:10%"></div>
+        <div class="lb" style="left:30%;top:12%;right:30%;text-align:center">LAYİHƏ ADI — SERIF BAŞLIQ<br>alt sətir: konsept nömrəsi</div>
+        <div class="bx" style="left:12%;top:26%;width:34%;height:38%"></div>
+        <div class="lb" style="left:14%;top:28%">əsas render / hero şəkil</div>
+        <div class="bx2" style="left:50%;top:26%;width:17%;height:18%"></div>
+        <div class="bx2" style="left:70%;top:26%;width:17%;height:18%"></div>
+        <div class="bx2" style="left:50%;top:47%;width:17%;height:17%"></div>
+        <div class="bx2" style="left:70%;top:47%;width:17%;height:17%"></div>
+        <div class="lb" style="left:52%;top:29%">material grid</div>
+        <div class="dash" style="left:64%;top:36%;width:10%;height:9%"></div>
+        <div class="lb" style="left:65%;top:38%">şərh pini</div>
+        <div class="bx" style="left:0;right:0;bottom:0;height:11%"></div>
+        <div class="pill" style="left:30%;bottom:3%;width:18%;height:5.5%"></div>
+        <div class="lb" style="left:33%;bottom:4.6%">BƏYƏNDİM</div>
+        <div class="pill" style="left:52%;bottom:3%;width:18%;height:5.5%"></div>
+        <div class="lb" style="left:54%;bottom:4.6%">DƏYİŞİKLİK…</div>
+      </div>
+      <div class="cap mono"><b>WF-03 · Təqdimat rejimi (klient görür).</b> Dizaynerin xaosundan avtomatik doğulan səliqəli səhifə. İki əsas hərəkət altda, həmişə görünür. Sual: şərh pini şəklin üstündə intuitivdir, yoxsa ayrıca şərh paneli lazımdır?</div>
+    </div>
+
+    <!-- WF 4: client phone -->
+    <div class="phone-row">
+      <div class="phone wf">
+        <div class="bx" style="left:0;right:0;top:0;height:7%"></div>
+        <div class="lb" style="left:6%;top:2.4%">Studiya adı · loqo</div>
+        <div class="ln" style="left:6%;right:6%;top:11%"></div>
+        <div class="lb" style="left:6%;top:13%">Mərhələ 3/6 — Moodboard<br>proqres xətti</div>
+        <div class="bx" style="left:6%;top:21%;width:88%;height:34%"></div>
+        <div class="lb" style="left:9%;top:24%">təqdimat kartı<br>(toxun → tam ekran)</div>
+        <div class="dash" style="left:6%;top:58%;width:88%;height:15%"></div>
+        <div class="lb" style="left:9%;top:60.5%">₼ ödəniş kartı: «Avans 40% — ...»<br>ÖDƏ düyməsi</div>
+        <div class="pill" style="left:6%;bottom:9%;width:88%;height:6%"></div>
+        <div class="lb" style="left:30%;bottom:10.6%">BƏYƏNDİM, DAVAM EDƏK</div>
+        <div class="lb" style="left:6%;bottom:3.4%">tarixçə: bütün təsdiqlər siyahısı →</div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div class="cap mono" style="margin-top:0"><b>WF-04 · Klient pəncərəsi (mobil).</b> Leyla üçün: harada olduğumuz + nə baxmalı + nə ödəməli — bir ekranda. Qeydiyyat tələb olunmur: link + SMS kod.</div>
+        <h4 style="margin-top:1.6rem">Karkas testi — Figma-dan əvvəl özünə ver:</h4>
+        <ul class="check sans" style="font-size:.92rem">
+          <li>5 saniyə testi: WF-02-yə ilk baxan adam «bura nə üçündür?» sualına cavab verə bilirmi?</li>
+          <li>Naviqasiya: Studiya → layihə → təqdimat → geriyə yol həmişə görünürmü?</li>
+          <li>Rels «forma» kimi yox, «yol» kimi oxunurmu?</li>
+          <li>Klient ekranında ilk görünən şey təqdimatdır, ödəniş yox?</li>
+          <li>Hər ekranın boş halı, xəta halı, yüklənmə halı düşünülübmü?</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 4 ============ -->
+  <section id="f4">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">Faza 04</span> Hi-fi dizayn</div>
+      <h2>Üslub bələdçisi və son ekranlar</h2>
+      <p class="soft"><strong>Moodboard istiqaməti:</strong> memar atelyesinin masası — isti gips divar, palıd taxta, kağız üzərində mürəkkəb, gün işığında material nümunələri. Rəqəmsal deyil, əl ilə toxunulan hiss. Tətbiqin özü «səhnə»dir: interfeys sakit qalır ki, dizaynerin şəkilləri parlasın.</p>
+    </div>
+
+    <div class="swatches">
+      <div class="swatch"><div class="c" style="background:#F6F4EF"></div><div class="n mono">Kətan<br>#F6F4EF · fon</div></div>
+      <div class="swatch"><div class="c" style="background:#20242A"></div><div class="n mono">Mürəkkəb<br>#20242A · mətn</div></div>
+      <div class="swatch"><div class="c" style="background:#B4552D"></div><div class="n mono">Terrakota<br>#B4552D · vurğu/CTA</div></div>
+      <div class="swatch"><div class="c" style="background:#7D8A80"></div><div class="n mono">Adaçayı<br>#7D8A80 · uğur/sakit</div></div>
+      <div class="swatch"><div class="c" style="background:#E3E0D7"></div><div class="n mono">Xətt<br>#E3E0D7 · sərhədlər</div></div>
+    </div>
+
+    <div class="wrap" style="margin-top:2.2rem">
+      <h4>Tipoqrafiya — iki səs</h4>
+      <div class="typerow"><span class="spec mono">Təqdimat · serif · 28–40px</span><span style="font-size:1.7rem;font-weight:600">Nəsimi mənzili — Konsept 01</span></div>
+      <div class="typerow"><span class="spec mono">İnterfeys · sans · 15px</span><span class="sans" style="font-size:1rem">Layihə adları, düymələr, çiplər — səssiz və aydın</span></div>
+      <div class="typerow"><span class="spec mono">Meta · sans · 12px</span><span class="sans" style="font-size:.8rem;color:var(--ink-soft)">Tarixlər, mərhələ çipləri, köməkçi mətn</span></div>
+      <p class="soft" style="font-size:.95rem;margin-top:1rem">Qayda: <strong>serif yalnız klientə baxan səthlərdə</strong> (təqdimat, loqo) — «qonaq otağı səsi». İnterfeysin iş hissəsi sans — «emalatxana səsi». 8pt grid; künclər: kart 10px, çip 999px; kölgələr yumşaq və az.</p>
+    </div>
+
+    <!-- HF 1: studio -->
+    <div class="shot">
+      <div class="frame hf">
+        <div class="top"><span class="logo">Atelier</span><span class="crumb">Studiya</span><span class="sp"></span><span class="btn ghost">Axtar ⌘K</span><span class="btn">+ Yeni layihə</span><span class="avatar">N</span></div>
+        <div class="dots"></div>
+        <!-- cluster A -->
+        <div class="sw" style="left:9%;top:24%;width:9%;aspect-ratio:1/1.2;background:linear-gradient(135deg,#c9b79c,#a98a63);transform:rotate(-6deg)"></div>
+        <div class="sw" style="left:15%;top:32%;width:9%;aspect-ratio:1/1.2;background:linear-gradient(135deg,#8a9a8e,#5d6b60);transform:rotate(4deg)"></div>
+        <div class="card" style="left:9.5%;top:57%;width:17%;padding:.5rem .65rem">
+          <span class="t-lg" style="font-size:.68rem;position:static;display:block">Nəsimi mənzili</span>
+          <span class="t-xs" style="position:static;display:block;margin:.15rem 0 .3rem">Leyla M. · 6 gündür</span>
+          <span class="chip stage" style="position:static">Moodboard · təsdiq gözlənilir</span>
+        </div>
+        <!-- cluster B -->
+        <div class="sw" style="left:43%;top:20%;width:9%;aspect-ratio:1/1.2;background:linear-gradient(135deg,#b98e6a,#8a5f3e);transform:rotate(5deg)"></div>
+        <div class="sw" style="left:49%;top:27%;width:9%;aspect-ratio:1/1.2;background:linear-gradient(135deg,#5f7079,#3c4b52);transform:rotate(-4deg)"></div>
+        <div class="card" style="left:43.5%;top:52%;width:17%;padding:.5rem .65rem">
+          <span class="t-lg" style="font-size:.68rem;position:static;display:block">Port Baku ofisi</span>
+          <span class="t-xs" style="position:static;display:block;margin:.15rem 0 .3rem">Rəşad K. · bu gün</span>
+          <span class="chip ok" style="position:static">Render · avans gəldi</span>
+        </div>
+        <!-- cluster C -->
+        <div class="sw" style="right:13%;top:26%;width:8.5%;aspect-ratio:1/1.2;background:linear-gradient(135deg,#cdc6bb,#a49c8d);transform:rotate(7deg)"></div>
+        <div class="card" style="right:8%;top:52%;width:16%;padding:.5rem .65rem">
+          <span class="t-lg" style="font-size:.68rem;position:static;display:block">Bağ evi — İcra</span>
+          <span class="t-xs" style="position:static;display:block;margin:.15rem 0 .3rem">Aynur H. · 2 həftə</span>
+          <span class="chip wait" style="position:static">Reviziya 2/2</span>
+        </div>
+        <div class="card" style="left:44%;bottom:5%;padding:.3rem .7rem;border-radius:999px"><span class="t-sm" style="position:static">− &nbsp;100%&nbsp; +</span></div>
+      </div>
+      <div class="cap mono"><b>HF-01 · Studiya.</b> WF-01-in geyindirilmiş halı: nöqtəli kətan, klaster = şəkil yığını + status çipi. Statuslar rənglə YANAŞI sözlə verilir (əlçatanlıq). Tək CTA terrakotadır.</div>
+    </div>
+
+    <!-- HF 2: project canvas -->
+    <div class="shot">
+      <div class="frame hf">
+        <div class="top"><span class="logo">Atelier</span><span class="crumb">Studiya → Nəsimi mənzili</span><span class="sp"></span><span class="btn ghost">Paylaş</span><span class="btn">Təqdimata çevir</span></div>
+        <div class="dots" style="bottom:52px"></div>
+        <div class="sw" style="left:7%;top:16%;width:9%;aspect-ratio:1;background:linear-gradient(135deg,#c9b79c,#a98a63);transform:rotate(-5deg)"></div>
+        <div class="t-xs" style="left:7.5%;top:37%">Palıd parket</div>
+        <div class="sw" style="left:17%;top:24%;width:9%;aspect-ratio:1;background:linear-gradient(135deg,#8a9a8e,#5d6b60);transform:rotate(3deg)"></div>
+        <div class="t-xs" style="left:18%;top:45%">Sage mat divar</div>
+        <div class="sw" style="left:30%;top:13%;width:15%;aspect-ratio:4/3;background:linear-gradient(160deg,#d8cfc2,#9a8f7e);transform:rotate(-2deg)"></div>
+        <div class="t-xs" style="left:31%;top:41%">Ref · japandi qonaq otağı</div>
+        <div class="note" style="left:52%;top:18%;width:16%;transform:rotate(2deg)">klient isti ton istəyir — mətbəxi böyüdək, adaya yer var</div>
+        <div class="sw" style="right:9%;top:14%;width:10%;aspect-ratio:1;background:linear-gradient(135deg,#ded8cd,#b8afa0);transform:rotate(6deg)"></div>
+        <div class="t-xs" style="right:10%;top:37%">Travertin</div>
+        <div class="sw" style="right:17%;top:44%;width:9%;aspect-ratio:1;background:linear-gradient(135deg,#5f7079,#3c4b52);transform:rotate(-4deg)"></div>
+        <div class="ai" style="left:31%;top:52%;width:24%"><b>AI:</b> 3 yeni referans atdın — onlardan lövhə yığım? <u>Yığ</u> · Sonra</div>
+        <div class="railbar">
+          <span class="rs done"><span class="d"></span>Brif</span>
+          <span class="rs cur"><span class="d"></span>Moodboard</span>
+          <span class="rs lock"><span class="d"></span>₼ Render</span>
+          <span class="rs lock"><span class="d"></span>Reviziya</span>
+          <span class="rs lock"><span class="d"></span>₼ Təhvil</span>
+        </div>
+      </div>
+      <div class="cap mono"><b>HF-02 · Layihə kətanı.</b> Xaos yuxarıda yaşayır; rels altda sakitdir — doldurulmalı forma yox, yol xəritəsi. Kilidli mərhələlər boş dairə ilə: ₼ qapısı görünür amma qışqırmır. AI kartı slate rəngdədir — vurğu (terrakota) yalnız insan hərəkətinə aiddir.</div>
+    </div>
+
+    <!-- HF 3: present -->
+    <div class="shot">
+      <div class="frame hf present">
+        <div class="ptitle" style="left:0;right:0;top:9%;text-align:center;font-size:1.5rem;font-weight:600">Nəsimi mənzili — Konsept 01</div>
+        <div class="t-sm" style="left:0;right:0;top:21%;text-align:center;color:#9B9E95">Moodboard · Studio Nigar · 26 iyul 2026</div>
+        <div class="sw" style="left:10%;top:30%;width:36%;height:44%;background:linear-gradient(150deg,#cfc4b2,#8f8272);border-radius:6px"></div>
+        <div class="sw" style="left:50.5%;top:30%;width:17%;height:20.5%;background:linear-gradient(135deg,#c9b79c,#a98a63);border-radius:6px"></div>
+        <div class="sw" style="left:70%;top:30%;width:17%;height:20.5%;background:linear-gradient(135deg,#8a9a8e,#5d6b60);border-radius:6px"></div>
+        <div class="sw" style="left:50.5%;top:53.5%;width:17%;height:20.5%;background:linear-gradient(135deg,#ded8cd,#b8afa0);border-radius:6px"></div>
+        <div class="sw" style="left:70%;top:53.5%;width:17%;height:20.5%;background:linear-gradient(135deg,#5f7079,#3c4b52);border-radius:6px"></div>
+        <div class="card" style="left:60%;top:47%;padding:.35rem .55rem;border-radius:999px"><span class="t-xs" style="position:static;color:#B4552D;font-weight:700">● Leyla: «bu tonu çox bəyəndim»</span></div>
+        <div class="railbar" style="height:56px">
+          <span class="btn" style="font-size:.7rem;padding:.55rem 1.1rem">Bəyəndim, davam edək</span>
+          <span class="btn ghost" style="font-size:.7rem;margin-left:10px">Dəyişiklik istəyirəm</span>
+        </div>
+      </div>
+      <div class="cap mono"><b>HF-03 · Təqdimat rejimi.</b> Serif səsi burada danışır. Dizaynerin xaosu → redaksiya səliqəsi. Klientin şərhi pin kimi şəklin üstündə. İki hərəkət — biri isti (irəli), biri neytral (dəyişiklik) — «rədd et» sözü heç yerdə yoxdur.</div>
+    </div>
+
+    <!-- HF 4: client phone -->
+    <div class="phone-row">
+      <div class="phone">
+        <div style="left:0;right:0;top:0;height:52px;background:#fff;border-bottom:1px solid var(--p-line);display:flex;align-items:center;padding:0 16px;gap:8px">
+          <span class="logo" style="position:static;font-family:'Iowan Old Style',Palatino,Georgia,serif;font-weight:600;font-size:.8rem;color:var(--p-ink)">Studio Nigar</span>
+          <span class="t-xs" style="position:static;margin-left:auto">Nəsimi mənzili</span>
+        </div>
+        <div class="t-sm" style="left:16px;top:66px;color:var(--p-soft)">Mərhələ 3/6 · Moodboard</div>
+        <div style="left:16px;right:16px;top:92px;height:5px;background:var(--p-line);border-radius:999px"></div>
+        <div style="left:16px;top:92px;width:44%;height:5px;background:var(--p-sage);border-radius:999px"></div>
+        <div class="card" style="left:16px;right:16px;top:112px;height:34%;overflow:hidden">
+          <div style="position:absolute;inset:0;background:linear-gradient(150deg,#cfc4b2,#8f8272)"></div>
+          <div style="position:absolute;left:10px;bottom:10px;background:rgba(255,255,255,.92);border-radius:6px;padding:.3rem .55rem;font-size:.6rem;font-weight:600;color:#20242A">Konsept 01 · 12 şəkil →</div>
+        </div>
+        <div class="card" style="left:16px;right:16px;top:calc(112px + 34% + 12px);padding:.7rem .8rem">
+          <span class="t-xs" style="position:static;display:block;letter-spacing:.06em;text-transform:uppercase">Avans · 40%</span>
+          <span class="t-lg" style="position:static;display:block;font-size:1.05rem;margin:.15rem 0;font-variant-numeric:tabular-nums">1 200 ₼</span>
+          <span class="t-xs" style="position:static;display:block;margin-bottom:.5rem">Təsdiqdən sonra render mərhələsi başlayır</span>
+          <span class="btn ghost" style="position:static;display:inline-block;font-size:.62rem">Ödəniş üsulları →</span>
+        </div>
+        <div class="btn" style="left:16px;right:16px;bottom:52px;text-align:center;padding:.7rem;font-size:.72rem;border-radius:12px">Bəyəndim, davam edək</div>
+        <div class="t-xs" style="left:0;right:0;bottom:22px;text-align:center">Bütün təsdiqlərin tarixçəsi →</div>
+      </div>
+      <div style="flex:1;min-width:260px">
+        <div class="cap mono" style="margin-top:0"><b>HF-04 · Klient pəncərəsi.</b> Qeydiyyatsız: link + SMS. Sıra bilərəkdən belədir: əvvəl gözəllik (təqdimat), sonra proqres, sonra pul. Ödəniş kartı təsdiq düyməsindən <em>ayrıdır</em> — «bəyənmək» pulsuz hərəkətdir, təzyiq hissi yaratmır.</div>
+        <h4 style="margin-top:1.5rem">Hi-fi qaydaları — bir baxışda</h4>
+        <ul class="clean sans" style="font-size:.92rem">
+          <li>Bir vurğu rəngi (terrakota) = yalnız əsas insan hərəkəti. AI — slate, uğur — adaçayı.</li>
+          <li>Serif = klientə baxan üz; sans = iş aləti.</li>
+          <li>İnterfeys neytral qalır — rəngli olan, dizaynerin öz materiallarıdır.</li>
+          <li>Status heç vaxt yalnız rənglə verilmir — həmişə söz + rəng.</li>
+          <li>Hər ekranın boş / yüklənmə / xəta halı Faza 2-dəki mikrokopiya ilə yazılır.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:2.6rem">
+      <p><strong>Növbəti addımlar:</strong> ① 3–5 müsahibəni apar, sintez şablonunu doldur → personaları yenilə. ② WF ekranlarını Figma-da təkrar qur, 2–3 nəfərə kağız-prototip testi ver («moodboard-ı klientə göndər» tapşırığı). ③ Testdən sağ çıxan karkas üzərinə bu üslub bələdçisini geyindir. ④ İstəsən, mən bu hi-fi ekranları <em>işləyən interaktiv klik-prototipə</em> çevirim — kətanda sürüklə, «Təqdimata çevir»in işlədiyi versiya.</p>
+      <div class="who mono">Yol xəritəsi</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="fin">
+    <span>Atelier · UX prosesi · işçi sənəd v0.1</span>
+    <span>Personalar müsahibələrdən sonra yenilənməlidir</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn=document.getElementById('tg');
+    function cur(){
+      var a=document.documentElement.getAttribute('data-theme');
+      if(a) return a;
+      return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+    }
+    btn.addEventListener('click',function(){
+      var next=cur()==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',next);
+    });
+  })();
+</script>

@@ -1,0 +1,517 @@
+<title>Atelier — Studiya üçün Əməliyyat Sistemi</title>
+<style>
+  :root{
+    /* light — "plaster & drafting ink" */
+    --paper:#E9E5DC;
+    --surface:#F3F0E9;
+    --surface-2:#EFEBE2;
+    --ink:#23272C;
+    --ink-soft:#5C5E5C;
+    --ink-faint:#8A8B84;
+    --line:rgba(35,39,44,.14);
+    --line-strong:rgba(35,39,44,.28);
+    --ochre:#AE7233;      /* the warm creative layer */
+    --ochre-soft:rgba(174,114,51,.12);
+    --slate:#42606C;      /* the cool ordered layer */
+    --slate-soft:rgba(66,96,108,.12);
+    --shadow:0 1px 2px rgba(35,39,44,.06),0 8px 30px rgba(35,39,44,.08);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#181B1E;
+      --surface:#212528;
+      --surface-2:#1D2124;
+      --ink:#E8E4DA;
+      --ink-soft:#A6A39A;
+      --ink-faint:#71736C;
+      --line:rgba(232,228,218,.14);
+      --line-strong:rgba(232,228,218,.26);
+      --ochre:#CE9A57;
+      --ochre-soft:rgba(206,154,87,.15);
+      --slate:#7EA0AC;
+      --slate-soft:rgba(126,160,172,.14);
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.34);
+    }
+  }
+  :root[data-theme="light"]{
+    --paper:#E9E5DC;--surface:#F3F0E9;--surface-2:#EFEBE2;--ink:#23272C;--ink-soft:#5C5E5C;--ink-faint:#8A8B84;
+    --line:rgba(35,39,44,.14);--line-strong:rgba(35,39,44,.28);--ochre:#AE7233;--ochre-soft:rgba(174,114,51,.12);
+    --slate:#42606C;--slate-soft:rgba(66,96,108,.12);--shadow:0 1px 2px rgba(35,39,44,.06),0 8px 30px rgba(35,39,44,.08);
+  }
+  :root[data-theme="dark"]{
+    --paper:#181B1E;--surface:#212528;--surface-2:#1D2124;--ink:#E8E4DA;--ink-soft:#A6A39A;--ink-faint:#71736C;
+    --line:rgba(232,228,218,.14);--line-strong:rgba(232,228,218,.26);--ochre:#CE9A57;--ochre-soft:rgba(206,154,87,.15);
+    --slate:#7EA0AC;--slate-soft:rgba(126,160,172,.14);--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 34px rgba(0,0,0,.34);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Hoefler Text",Georgia,serif;
+    font-size:18px;line-height:1.68;-webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono","Roboto Mono",Menlo,Consolas,monospace}
+
+  /* ---- top bar ---- */
+  header.bar{
+    position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line);
+  }
+  .bar-inner{max-width:1080px;margin:0 auto;padding:.7rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{display:flex;align-items:baseline;gap:.55rem}
+  .brand b{font-weight:600;letter-spacing:.01em}
+  .brand .tag{font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-faint)}
+  nav.toc{display:flex;gap:1.1rem;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase}
+  nav.toc a{color:var(--ink-soft);text-decoration:none}
+  nav.toc a:hover{color:var(--ochre)}
+  @media (max-width:760px){nav.toc{display:none}}
+  .toggle{
+    font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;
+    background:transparent;border:1px solid var(--line-strong);color:var(--ink-soft);
+    padding:.4rem .6rem;border-radius:999px;cursor:pointer;white-space:nowrap;
+  }
+  .toggle:hover{color:var(--ink);border-color:var(--ink-soft)}
+  .toggle:focus-visible,a:focus-visible{outline:2px solid var(--ochre);outline-offset:3px;border-radius:2px}
+
+  /* ---- layout ---- */
+  main{max-width:1080px;margin:0 auto;padding:0 1.5rem}
+  .wrap{max-width:680px}
+  section{padding:4.4rem 0;border-top:1px solid var(--line)}
+  section:first-of-type{border-top:none}
+  .eyebrow{font-family:"SF Mono",ui-monospace,monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ochre);display:flex;align-items:center;gap:.7rem;margin:0 0 1.1rem}
+  .eyebrow .n{color:var(--ink-faint)}
+  h1{font-weight:600;letter-spacing:-.015em;line-height:1.05;text-wrap:balance;font-size:clamp(2.6rem,6.5vw,4.4rem);margin:.2rem 0 0}
+  h2{font-weight:600;letter-spacing:-.01em;line-height:1.12;text-wrap:balance;font-size:clamp(1.7rem,3.6vw,2.5rem);margin:0 0 1rem}
+  h3{font-weight:600;font-size:1.2rem;letter-spacing:-.005em;margin:0 0 .4rem}
+  p{margin:0 0 1.1rem;color:var(--ink)}
+  .lead{font-size:1.32rem;line-height:1.55;color:var(--ink)}
+  .soft{color:var(--ink-soft)}
+  strong{font-weight:600}
+  a.inline{color:var(--ochre);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+  .divider-note{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.04em;color:var(--ink-faint)}
+
+  /* ---- hero ---- */
+  .hero{padding:5.5rem 0 4.6rem}
+  .hero .kicker{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:1.4rem}
+  .hero .sub{font-size:1.34rem;line-height:1.5;color:var(--ink-soft);max-width:600px;margin-top:1.6rem}
+  .hero .meta{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2.2rem}
+  .chip{font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line-strong);border-radius:999px;padding:.4rem .8rem}
+
+  /* ---- two-layer diagram ---- */
+  figure{margin:2.4rem 0 0}
+  figcaption{font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.04em;color:var(--ink-faint);margin-top:1rem;text-align:center}
+  .stage{
+    position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:1.6rem;box-shadow:var(--shadow);overflow:hidden;
+  }
+  .layer-label{position:absolute;top:14px;right:16px;font-family:"SF Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+  /* chaos zone */
+  .chaos{position:relative;height:230px;border-bottom:1px dashed var(--line-strong);margin-bottom:0}
+  .card{position:absolute;border-radius:9px;box-shadow:var(--shadow);font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.04em;color:var(--ink-soft);display:flex;align-items:flex-end;padding:.5rem .6rem;line-height:1.2}
+  .card.sw{width:104px;height:88px}
+  .card.n{background:var(--surface-2);border:1px solid var(--line-strong);width:150px;height:70px;align-items:flex-start;color:var(--ink)}
+  .sw1{left:2%;top:26px;transform:rotate(-6deg);background:linear-gradient(135deg,#c9b79c,#a98a63)}
+  .sw2{left:20%;top:96px;transform:rotate(4deg);background:linear-gradient(135deg,#7d8a80,#566258)}
+  .sw3{left:37%;top:20px;transform:rotate(-3deg);background:linear-gradient(135deg,#b98e6a,#8a5f3e)}
+  .sw4{right:20%;top:104px;transform:rotate(7deg);background:linear-gradient(135deg,#cdc6bb,#a49c8d)}
+  .sw5{right:3%;top:30px;transform:rotate(-5deg);background:linear-gradient(135deg,#5f7079,#3c4b52)}
+  .note1{left:9%;top:132px;transform:rotate(3deg)}
+  .note2{right:6%;top:128px;transform:rotate(-4deg)}
+  .card .lbl{background:rgba(0,0,0,.28);color:#fff;padding:.1rem .35rem;border-radius:4px;font-size:.56rem}
+  .present-btn{position:absolute;left:50%;top:200px;transform:translateX(-50%);z-index:3;background:var(--ochre);color:#fff;font-family:"SF Mono",ui-monospace,monospace;font-size:.64rem;letter-spacing:.1em;text-transform:uppercase;padding:.5rem .9rem;border-radius:999px;box-shadow:var(--shadow);white-space:nowrap}
+  /* order zone */
+  .order{padding-top:2rem}
+  .rail{display:flex;align-items:stretch;gap:0;flex-wrap:wrap}
+  .step{flex:1 1 0;min-width:88px;position:relative;padding:.2rem .5rem;text-align:center}
+  .step .dot{width:12px;height:12px;border-radius:50%;background:var(--slate);margin:0 auto .55rem;position:relative}
+  .step .dot::before{content:"";position:absolute;top:50%;left:50%;width:100%;height:2px;background:var(--line-strong);transform:translateY(-50%)}
+  .step:last-child .dot::before{display:none}
+  .step .st{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.02em;color:var(--ink);line-height:1.25;display:block}
+  .step .gate{margin-top:.4rem;display:inline-block;font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.03em;color:var(--ochre);border:1px solid var(--ochre-soft);background:var(--ochre-soft);border-radius:5px;padding:.12rem .3rem}
+  @media (max-width:640px){.chaos{height:250px}.card.sw{width:84px;height:72px}.card.n{width:120px}}
+
+  /* ---- generic cards / grids ---- */
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1.8rem}
+  .grid.two{grid-template-columns:1fr 1fr}
+  .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:720px){.grid.two,.grid.three{grid-template-columns:1fr}}
+  .cell{background:var(--surface);padding:1.5rem 1.4rem}
+  .cell .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ochre);margin-bottom:.6rem}
+  .cell p{font-size:.98rem;line-height:1.55;color:var(--ink-soft);margin:0}
+  .cell h3{margin-bottom:.5rem}
+
+  /* module list */
+  .mod{border-top:1px solid var(--line);padding:1.7rem 0;display:grid;grid-template-columns:52px 1fr;gap:1.3rem}
+  .mod:first-child{border-top:none}
+  .mod .num{font-family:"SF Mono",ui-monospace,monospace;font-size:.9rem;color:var(--ink-faint);padding-top:.25rem}
+  .mod h3{margin-bottom:.5rem}
+  .mod p{font-size:1rem;line-height:1.6;color:var(--ink-soft);margin:0 0 .5rem}
+  .mod .ai{display:inline-block;font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:var(--slate);background:var(--slate-soft);border-radius:5px;padding:.16rem .45rem;margin-top:.3rem}
+  @media (max-width:560px){.mod{grid-template-columns:1fr;gap:.4rem}.mod .num{padding-top:0}}
+
+  /* two-col compare */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1.8rem}
+  @media (max-width:640px){.vs{grid-template-columns:1fr}}
+  .vs>div{background:var(--surface);padding:1.5rem}
+  .vs .head{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.9rem}
+  .vs .them .head{color:var(--ink-faint)}
+  .vs .us .head{color:var(--ochre)}
+  .vs ul{margin:0;padding-left:1.1rem}
+  .vs li{font-size:.96rem;line-height:1.5;color:var(--ink-soft);margin-bottom:.55rem}
+  .vs .us li{color:var(--ink)}
+
+  /* callout */
+  .callout{border-left:3px solid var(--ochre);background:var(--surface-2);padding:1.2rem 1.4rem;border-radius:0 10px 10px 0;margin:1.8rem 0}
+  .callout p{margin:0;font-size:1.06rem;line-height:1.55}
+  .callout .who{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-top:.6rem}
+
+  /* out of scope */
+  .not{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem}
+  .not span{font-size:.95rem;color:var(--ink-soft);border:1px solid var(--line);border-radius:8px;padding:.5rem .8rem;position:relative}
+  .not span::before{content:"×";color:var(--ink-faint);margin-right:.5rem;font-family:"SF Mono",ui-monospace,monospace}
+
+  /* metrics */
+  .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:1.8rem}
+  @media (max-width:640px){.metrics{grid-template-columns:1fr 1fr}}
+  .metrics>div{background:var(--surface);padding:1.3rem 1.2rem}
+  .metrics .v{font-size:1.9rem;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+  .metrics .l{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin-top:.35rem;line-height:1.35}
+
+  ul.clean{margin:1rem 0 1.1rem;padding-left:1.2rem}
+  ul.clean li{margin-bottom:.55rem;padding-left:.2rem}
+  ul.clean li::marker{color:var(--ochre)}
+
+  footer{border-top:1px solid var(--line);padding:3rem 0 4rem;color:var(--ink-faint);font-family:"SF Mono",ui-monospace,monospace;font-size:.72rem;letter-spacing:.04em}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem}
+</style>
+
+<header class="bar">
+  <div class="bar-inner">
+    <div class="brand"><b>Atelier</b><span class="tag mono">İşçi ad</span></div>
+    <nav class="toc">
+      <a href="#ide">İdeya</a>
+      <a href="#axin">İş axını</a>
+      <a href="#modul">Modullar</a>
+      <a href="#ferq">Fərq</a>
+      <a href="#mvp">MVP</a>
+    </nav>
+    <button class="toggle mono" id="tg" aria-label="Mövzunu dəyiş">◐ Mövzu</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="kicker mono">Məhsul baxışı · v0.1 · 2026</div>
+      <h1>Siyahı ilə deyil, şəkillə düşünən studiyalar üçün əməliyyat sistemi.</h1>
+      <p class="sub">Atelier — interyer dizaynerləri və memarlar üçün iş idarəetmə alətidir. Amma cədvəl deyil. Üzdə dizaynerin beyni kimi işləyən xaotik yaradıcı kətan; altda isə səssizcə layihəni, təsdiqləri və ödənişləri izləyən nizamlı axın.</p>
+      <div class="meta">
+        <span class="chip mono">Solo dizaynerlər</span>
+        <span class="chip mono">2–10 nəfərlik studiyalar</span>
+        <span class="chip mono">Vizual · qeyri-linear düşüncə</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CORE IDEA -->
+  <section id="ide">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">01</span> Əsas ideya</div>
+      <h2>Bir məhsulun içində iki təbəqə var</h2>
+      <p class="lead soft">Bazardakı alətlərin səhvi budur: onlar yaradıcı işi də, biznes işini də <em>eyni cədvələ</em> soxurlar. Dizayner boğulur və alətdən qaçır.</p>
+      <p>Reallıqda dizaynerin işi iki ayrı beyinlə gedir. Biri <strong>yaradıcı və xaotik</strong> — moodboard, referanslar, materiallar, «bu rəng, yox o rəng». Digəri <strong>nizamlı və biznes</strong> — mərhələ, təsdiq, avans, son ödəniş. Atelier bu ikisini bir-birindən ayırır, sonra görünməz bir tellə birləşdirir.</p>
+    </div>
+
+    <figure>
+      <div class="stage">
+        <span class="layer-label mono">Bir ekran</span>
+
+        <div class="chaos">
+          <div class="card sw sw1"><span class="lbl">Palıd parket</span></div>
+          <div class="card sw sw2"><span class="lbl">Sage divar</span></div>
+          <div class="card sw sw3"><span class="lbl">Travertin</span></div>
+          <div class="card sw sw4"><span class="lbl">Kətan</span></div>
+          <div class="card sw sw5"><span class="lbl">Mərmər</span></div>
+          <div class="card n note1">« klient isti ton istəyir — mətbəxi böyüdək »</div>
+          <div class="card n note2">Ref: japandi qonaq otağı ↓</div>
+          <div class="present-btn mono">↓ Bir klik → təqdimat</div>
+        </div>
+
+        <div class="order">
+          <div class="rail">
+            <div class="step"><span class="dot"></span><span class="st mono">Müraciət</span></div>
+            <div class="step"><span class="dot"></span><span class="st mono">Brif</span></div>
+            <div class="step"><span class="dot"></span><span class="st mono">Moodboard</span><span class="gate mono">₼ avans ola bilər</span></div>
+            <div class="step"><span class="dot"></span><span class="st mono">Render</span><span class="gate mono">₼ avans məcburi</span></div>
+            <div class="step"><span class="dot"></span><span class="st mono">Revizor</span></div>
+            <div class="step"><span class="dot"></span><span class="st mono">Təhvil</span><span class="gate mono">₼ qalan ödəniş</span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption class="mono">Üstdə «Studiya» (xaos, dizayner burada yaşayır) · Altda «Axın» (nizam, sistem özü izləyir)</figcaption>
+    </figure>
+
+    <div class="wrap">
+      <div class="grid two">
+        <div class="cell">
+          <div class="k mono">Studiya — üst təbəqə</div>
+          <h3>Xaosa icazə var</h3>
+          <p>Sonsuz kətan. Sıra yoxdur. İstədiyini istədiyin yerə at — swatch, referans şəkli, səsli qeyd, eskiz. Heç nə səni forma doldurmağa məcbur etmir. Bu, «bubble thinking»in rəqəmsal qarşılığıdır.</p>
+        </div>
+        <div class="cell">
+          <div class="k mono">Axın — alt təbəqə</div>
+          <h3>Nizam səssiz gəlir</h3>
+          <p>Sən kətana klient şəkli əlavə edəndə sistem «aha, Moodboard mərhələsindəyik» deyir. Sən mərhələni doldurmursan — <strong>o səni izləyir</strong>. Deadline, avans, kimə nə söz verdiyin heç vaxt itmir.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <p>«Xaosa icazə ver, amma altdan səssiz struktur ver.» Yaradıcı beyinlər — çoxu vizual-məkani düşünür, bir qismində DEQ (ADHD) müşahidə olunur — məhz strukturu itirdiyi üçün mövcud alətlərdən qaçır. Atelier-in dizayn prinsipi budur: <strong>daxildə azadlıq, kənardan struktur.</strong></p>
+        <div class="who mono">Dizayn prinsipi</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHO -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">02</span> Kimin üçün</div>
+      <h2>Studiyanı tək və ya kiçik komanda ilə aparanlar</h2>
+    </div>
+    <div class="grid three">
+      <div class="cell">
+        <div class="k mono">Solo dizayner</div>
+        <h3>«Mən özüm bütün studiyayam»</h3>
+        <p>Eyni anda 4–6 layihə, hər birində klient, render, material və ödəniş. Excel + WhatsApp + notebook + Pinterest — hamısı ayrı. İtən təsdiqlər pula başa gəlir.</p>
+      </div>
+      <div class="cell">
+        <div class="k mono">Butik studiya · 2–10</div>
+        <h3>Kiçik komanda, böyük iş</h3>
+        <p>Bir neçə dizayner, vizualizator, layihə rəhbəri. Kim hansı mərhələdədir, klientə nə söz verilib — heç kim tam bilmir. Studio Designer kimi ağır ERP-lər onlara böyük gəlir.</p>
+      </div>
+      <div class="cell">
+        <div class="k mono">Yaradıcı beyin</div>
+        <h3>Vizual, qeyri-linear</h3>
+        <p>Kağızda bubble çəkir, moodboard-la fikirləşir. Linear checklist onu boğur. Alət onun beyninə uyğun olmalıdır — əksi yox.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section id="axin">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">03</span> İş axını</div>
+      <h2>Studiyanın 6 mərhələsi — məhsula çevrilmiş</h2>
+      <p class="soft">Bu axın real interyer studiyasının iş prosesindən çıxarılıb. Diqqət: yaradıcı iş hər mərhələnin <em>içində</em> qeyri-linear gedir, amma mərhələlərin <em>özü</em> — pul və təsdiq qapıları — nizamlıdır.</p>
+    </div>
+    <div class="wrap" style="max-width:720px">
+      <div class="mod">
+        <div class="num mono">01</div>
+        <div>
+          <h3>Müraciət və razılaşma</h3>
+          <p>Klient telefon, Telegram, WhatsApp, e‑poçt və ya sosial mediadan gəlir. Razılaşma → ofisdə görüş. Bütün kanallar bir yerə düşür; heç bir müraciət itmir.</p>
+          <span class="ai mono">AI · gələn mesajları avtomatik lidə çevirir</span>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="num mono">02</div>
+        <div>
+          <h3>Ehtiyacların anlaşılması (brif)</h3>
+          <p>Klient nə istəyir, büdcə, məkanın planı, üslub meyli. Strukturlaşmış brif — amma anket kimi yox, söhbət kimi. Cavablar birbaşa kətana material olur.</p>
+          <span class="ai mono">AI · səsli/mətn brifi strukturlaşdırır</span>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="num mono">03</div>
+        <div>
+          <h3>Moodboard və üslub təsdiqi</h3>
+          <p>Referanslar, materiallar, palitra kətanda toplanır (SketchUp, materiallar, şəkillər). Klientdən üslub təsdiqi alınır. <strong>Bu mərhələ pulsuz ola bilər — və ya avansdan sonra</strong> (faiz dəyişkəndir).</p>
+          <span class="ai mono">AI · referanslardan avtomatik moodboard yığır</span>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="num mono">04</div>
+        <div>
+          <h3>Render və post-production</h3>
+          <p>3D render, Photoshop və ya AI ilə emal, təqdimat hazırlanır. <strong>Bu mərhələyə keçmək üçün avans məcburidir</strong> — sistem qapını bağlı saxlayır, ödəniş gələnə qədər.</p>
+          <span class="ai mono">AI · render post-pro · avtomatik təqdimat düzümü</span>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="num mono">05</div>
+        <div>
+          <h3>Reviziyalar</h3>
+          <p>Revizor 1, lazım olsa revizor 2. Materiallar, detallar, renderlər, foto­lar dəqiqləşir. Hər revizor sayılır — «neçə pulsuz düzəliş» şərti sistemə yazılır ki, dizayner sonsuz düzəliş tələsinə düşməsin.</p>
+          <span class="ai mono">AI · dəyişikliyi materiallara/renderə yayır</span>
+        </div>
+      </div>
+      <div class="mod">
+        <div class="num mono">06</div>
+        <div>
+          <h3>Son təsdiq və təhvil</h3>
+          <p>Klientdən yekun təsdiq. Bütün materiallar — renderlər, material siyahısı, texniki cizgilər — bir yerdə təhvil verilir. <strong>Qalan ödəniş bu qapıda alınır.</strong></p>
+          <span class="ai mono">AI · təhvil paketini avtomatik yığır</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MODULES -->
+  <section id="modul">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">04</span> Əsas modullar</div>
+      <h2>Məhsulun altı əsas hissəsi</h2>
+    </div>
+    <div class="grid two">
+      <div class="cell"><div class="k mono">01 · Kətan</div><h3>Studiya (sonsuz kətan)</h3><p>Ana iş sahəsi. Hər layihə məkanda bir «klaster»dir; zoom edib içinə girirsən. İçində moodboard, materiallar, qeydlər sərbəst üzür. Bu, məhsulun ürəyidir.</p></div>
+      <div class="cell"><div class="k mono">02 · Kitabxana</div><h3>Material və məhsul kitabxanası</h3><p>Parket, plitə, mərmər, mebel, işıq — hamısı bir yerdə, təkrar istifadə olunan swatch-lar. Zamanla studiyanın öz kolleksiyası yaranır (data effekti = moat).</p></div>
+      <div class="cell"><div class="k mono">03 · Təqdimat</div><h3>Dağınıqlıqdan → təqdimata</h3><p>Bir klik: xaotik kətan klient üçün təmiz, gözəl təqdimata çevrilir. Xaos dizaynerdə qalır, klient gözəllik görür. Bu, əsas «vау» anıdır.</p></div>
+      <div class="cell"><div class="k mono">04 · Təsdiq</div><h3>Təsdiq və revizor döngəsi</h3><p>Klient birbaşa təqdimatın üstündə şərh yazır, təsdiqləyir. Hər revizor sayılır və sənədləşir. Söz verilən heç nə itmir.</p></div>
+      <div class="cell"><div class="k mono">05 · Ödəniş</div><h3>Ödəniş qapıları</h3><p>Avans və son ödəniş axına hörülüb. Sistem lazım olan yerdə ödəniş linki yaradır. Admin ayrı yer deyil — axının bir hissəsidir.</p></div>
+      <div class="cell"><div class="k mono">06 · Klient</div><h3>Klient pəncərəsi</h3><p>Klient üçün sadə, gözəl bir görünüş: harada olduğumuzu görür, təsdiqləyir, ödəyir. Klient WhatsApp xaosundan çıxır — və studiyanı peşəkar görür.</p></div>
+    </div>
+  </section>
+
+  <!-- AI -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">05</span> AI təbəqəsi</div>
+      <h2>AI burada bəzək deyil — yorucu işi götürür</h2>
+      <p class="soft">«Why now» budur: AI (vision, OCR, generativ) nəhayət dizaynerin ən çox nifrət etdiyi işi görə bilir. AI hər yerdə yox — yalnız vaxt yeyən yerlərdə.</p>
+      <ul class="clean">
+        <li><strong>Moodboard yığımı</strong> — bir neçə referansdan avtomatik təmiz lövhə düzür.</li>
+        <li><strong>Render post-production</strong> — işıq, ton, təmizləmə; Photoshop-da saatlarla gedən iş dəqiqələrə.</li>
+        <li><strong>Təqdimat düzümü</strong> — dağınıq kətandan strukturlu klient təqdimatı.</li>
+        <li><strong>Material tanıma</strong> — şəkildən materialı tanıyıb kitabxanaya bağlayır.</li>
+        <li><strong>Brif strukturlaşdırması</strong> — səsli/mətn söhbətini strukturlu tələbə çevirir.</li>
+        <li><strong>Gələn mesaj → lid</strong> — kanallardan gələni avtomatik layihəyə çevirir.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- DIFFERENTIATION -->
+  <section id="ferq">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">06</span> Fərqləndirici</div>
+      <h2>«Sadəcə UI/UX deyil» — iş modelinin özü</h2>
+      <p class="soft">UI kopyalana bilər; ona görə əsl moat interfeys deyil. Moat budur: rəqib bunu təkrarlamaq üçün öz məhsulunun <em>bütün fəlsəfəsini</em> dəyişməlidir. Linear məntiqlə qurulmuş alət «bubble thinking»ə çevrilə bilməz — o, kökündən yenidən yazılmalıdır.</p>
+      <div class="vs">
+        <div class="them">
+          <div class="head mono">Bazardakı alətlər</div>
+          <ul>
+            <li>Hər şeyi cədvələ/siyahıya soxur — yaradıcı iş də daxil</li>
+            <li>Ya ağır ERP (Studio Designer), ya sadə moodboard (Milanote) — ikisi bir yerdə yox</li>
+            <li>Admin ayrı, yaradıcılıq ayrı — dizayner iki alət arasında qaçır</li>
+            <li>Qərb bazarına qurulub; yerli ödəniş və dil yoxdur</li>
+          </ul>
+        </div>
+        <div class="us">
+          <div class="head mono">Atelier</div>
+          <ul>
+            <li>Kətan birinci — dizaynerin beyni kimi qeyri-linear</li>
+            <li>Yaradıcı kətan + biznes axını + ödəniş, bir məhsulda</li>
+            <li>Admin görünməzdir — sistem izləyir, dizayner yaradır</li>
+            <li>Yerli kontekst: dil, ödəniş qapıları, real studiya axını</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OUT OF SCOPE -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">07</span> Fokus</div>
+      <h2>Nə DEYİL (ən azı əvvəldə)</h2>
+      <p class="soft">Ən çətin məhsul qərarı — nə qurmamaq. Bunlar sonra gələ bilər, amma MVP-ni ağırlaşdırmamalıdır.</p>
+      <div class="not">
+        <span>Tam mühasibatlıq / vergi</span>
+        <span>3D render mühərriki (SketchUp-ı əvəz etmək)</span>
+        <span>CAD / texniki cizgi redaktoru</span>
+        <span>Tikinti/inşaat idarəetməsi</span>
+        <span>Mebel e-ticarət mağazası</span>
+        <span>Komanda HR / maaş</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MVP -->
+  <section id="mvp">
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">08</span> İlk versiya</div>
+      <h2>MVP — ən kiçik doğru məhsul</h2>
+      <p class="soft">Məqsəd «utanmadan buraxıla bilən minimum» deyil — <strong>öyrənməyə imkan verən minimum</strong>. Bir solo dizaynerin bir layihəni başdan-sona apara biləcəyi ən kiçik dəst:</p>
+      <ul class="clean">
+        <li><strong>Kətan + layihə klasterləri</strong> — swatch, şəkil, qeyd at.</li>
+        <li><strong>Material kitabxanası</strong> — sadə, təkrar istifadə.</li>
+        <li><strong>Bir klik təqdimat</strong> — kətandan klient görünüşü (bu, əsas silahdır).</li>
+        <li><strong>Klient təsdiqi + revizor sayğacı.</strong></li>
+        <li><strong>Ödəniş qapıları</strong> — avans/son ödəniş qeydi (ödəniş inteqrasiyası 2-ci mərhələ).</li>
+        <li><strong>Bir AI funksiyası</strong> — moodboard yığımı <em>və ya</em> render post-pro. İkisindən biri, yaxşı.</li>
+      </ul>
+      <p class="divider-note mono">Roadmap: MVP → self-serve qeydiyyat → ödəniş inteqrasiyası → sifariş/procurement izləmə.</p>
+    </div>
+  </section>
+
+  <!-- BUSINESS + METRICS -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">09</span> Biznes və uğur</div>
+      <h2>Necə pul qazanır, uğuru necə ölçürük</h2>
+      <p class="soft"><strong>Model:</strong> aylıq abunə (SaaS) girişdir — dizayner/studiya başına. Sonra ödəniş axını üzərindən komissiya, daha sonra material/mebel sifarişində procurement marjası. (Toast/Shopify modeli: alətlə gir, əməliyyatla böyü.)</p>
+      <div class="metrics">
+        <div><div class="v">Aktivləşmə</div><div class="l mono">İlk layihəni təqdimata çatdıran dizayner %</div></div>
+        <div><div class="v">Saxlanma</div><div class="l mono">3-cü ayda hələ aktiv studiya %</div></div>
+        <div><div class="v">Döngə</div><div class="l mono">Klientin gördüyü təqdimat → yeni dizayner</div></div>
+        <div><div class="v">Dəyər</div><div class="l mono">Studiya başına idarə olunan layihə sayı</div></div>
+      </div>
+      <p style="margin-top:1.6rem" class="soft"><strong>Şimal ulduzu:</strong> həftədə Atelier vasitəsilə klientə göndərilən <em>təsdiqlənmiş təqdimat</em> sayı — çünki bu, həm dizaynerə dəyər verildiyini, həm də viral döngənin işlədiyini göstərir.</p>
+    </div>
+  </section>
+
+  <!-- RISKS -->
+  <section>
+    <div class="wrap">
+      <div class="eyebrow mono"><span class="n">10</span> Dürüst baxış</div>
+      <h2>Risklər və açıq suallar</h2>
+      <ul class="clean">
+        <li><strong>«Sadəcə UI» tələsi:</strong> fərqi interfeysdə deyil, iş modelində saxlamaq lazımdır — yoxsa kopyalanar.</li>
+        <li><strong>Davranış dəyişikliyi:</strong> dizaynerlər Pinterest + WhatsApp-a öyrəşib. Bir alətə keçmək üçün «bir klik təqdimat» kimi güclü bir səbəb lazımdır.</li>
+        <li><strong>Boş kətan problemi:</strong> sonsuz kətan yeni istifadəçini qorxuda bilər — ağıllı şablonlar/başlanğıc nöqtələri lazımdır.</li>
+        <li><strong>Bazar ölçüsü:</strong> yerli bazar kiçikdir; hekayə «yerlidən başla, bölgəyə/qlobala çıx» olmalıdır.</li>
+        <li><strong>Ödəniş inteqrasiyası:</strong> yerli ödəniş provayderləri əsas texniki/hüquqi sual.</li>
+      </ul>
+      <div class="callout">
+        <p>Növbəti addım — bunu <strong>danışmaq yox, göstərmək</strong>: sonsuz kətan + layihə bubble-ları + «dağınıqlıqdan → təqdimata» düyməsinin interaktiv klik-maketini qurmaq. Sən onu görəndə hansı hissənin doğru, hansının səhv olduğunu dərhal biləcəksən.</p>
+        <div class="who mono">Tövsiyə</div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap" style="max-width:1080px;margin:0 auto;padding:0 1.5rem">
+    <span>Atelier · məhsul baxışı · işçi sənəd</span>
+    <span>Ad, rəqəmlər və funksiyalar dəyişkəndir — müzakirə üçün</span>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var btn=document.getElementById('tg');
+    function cur(){
+      var a=document.documentElement.getAttribute('data-theme');
+      if(a) return a;
+      return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+    }
+    btn.addEventListener('click',function(){
+      var next=cur()==='dark'?'light':'dark';
+      document.documentElement.setAttribute('data-theme',next);
+    });
+  })();
+</script>
