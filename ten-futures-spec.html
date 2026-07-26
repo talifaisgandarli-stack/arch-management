@@ -1,0 +1,784 @@
+<title>Ten Futures — Build Specifications</title>
+<style>
+  :root{
+    --bg:#F5F1EA;--card:#FFFFFF;--bone:#FBF8F3;--ink:#1C1A17;--soft:#5F594F;--faint:#A79E92;
+    --hair:#E2DCD1;--line:#C4BAA9;--terr:#B4573A;--terrS:#F2E2DA;--sage:#79876F;--sageS:#E4E9DF;--brass:#A4823C;
+    --shadow:0 1px 2px rgba(28,26,23,.05),0 10px 30px rgba(28,26,23,.07);
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#1A1917;--card:#232220;--bone:#1F1E1C;--ink:#EDE8DE;--soft:#A9A296;--faint:#736C61;
+      --hair:#302E2A;--line:#413D37;--terr:#D07352;--terrS:#33241E;--sage:#9AAB90;--sageS:#232A21;--brass:#C6A055;
+      --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+  }
+  :root[data-theme="light"]{--bg:#F5F1EA;--card:#FFFFFF;--bone:#FBF8F3;--ink:#1C1A17;--soft:#5F594F;--faint:#A79E92;
+    --hair:#E2DCD1;--line:#C4BAA9;--terr:#B4573A;--terrS:#F2E2DA;--sage:#79876F;--sageS:#E4E9DF;--brass:#A4823C;
+    --shadow:0 1px 2px rgba(28,26,23,.05),0 10px 30px rgba(28,26,23,.07)}
+  :root[data-theme="dark"]{--bg:#1A1917;--card:#232220;--bone:#1F1E1C;--ink:#EDE8DE;--soft:#A9A296;--faint:#736C61;
+    --hair:#302E2A;--line:#413D37;--terr:#D07352;--terrS:#33241E;--sage:#9AAB90;--sageS:#232A21;--brass:#C6A055;
+    --shadow:0 1px 2px rgba(0,0,0,.35),0 12px 34px rgba(0,0,0,.4)}
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;font-size:17px;line-height:1.65;
+    -webkit-font-smoothing:antialiased}
+  .sans{font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif}
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
+
+  header.bar{position:sticky;top:0;z-index:60;background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+  .bar-in{max-width:1120px;margin:0 auto;padding:.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+  .brand{font-weight:600;letter-spacing:-.01em;white-space:nowrap}
+  .brand span{color:var(--faint);font-weight:400}
+  nav.toc{display:flex;gap:.75rem;overflow-x:auto}
+  nav.toc a{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;color:var(--soft);text-decoration:none;white-space:nowrap}
+  nav.toc a:hover{color:var(--terr)}
+  @media (max-width:900px){nav.toc{display:none}}
+  .tg{font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:transparent;border:1px solid var(--line);color:var(--soft);padding:.35rem .6rem;border-radius:999px;cursor:pointer;white-space:nowrap}
+  .tg:hover{color:var(--ink)} .tg:focus-visible,a:focus-visible{outline:2px solid var(--terr);outline-offset:3px}
+
+  main{max-width:1120px;margin:0 auto;padding:0 1.5rem}
+  section{padding:3.6rem 0;border-top:1px solid var(--hair)}
+  section:first-of-type{border-top:none}
+  h1{font-weight:400;letter-spacing:-.03em;line-height:1;font-size:clamp(2.6rem,7.5vw,5rem);margin:.4rem 0 0;text-wrap:balance}
+  h2{font-weight:400;letter-spacing:-.02em;line-height:1.1;font-size:clamp(1.7rem,3.6vw,2.6rem);margin:0 0 .6rem;text-wrap:balance}
+  h3{font-weight:600;font-size:1.05rem;margin:0 0 .4rem;letter-spacing:-.005em}
+  p{margin:0 0 1rem}
+  .lead{font-size:1.22rem;line-height:1.5;color:var(--soft);max-width:700px}
+  .soft{color:var(--soft)} .wrap{max-width:720px}
+  .kicker{font-family:"SF Mono",ui-monospace,monospace;font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0 0 .8rem}
+  .kicker b{color:var(--terr);font-weight:500}
+
+  .status{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:1.6rem}
+  @media (max-width:700px){.status{grid-template-columns:1fr}}
+  .status>div{background:var(--card);padding:1.2rem 1.3rem}
+  .status .h{font-family:"SF Mono",ui-monospace,monospace;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.6rem}
+  .status .built .h{color:var(--sage)} .status .spec .h{color:var(--brass)}
+  .status ul{margin:0;padding-left:1.05rem} .status li{font-size:.95rem;margin-bottom:.35rem;color:var(--soft)}
+  .status li b{color:var(--ink);font-weight:600}
+
+  /* concept blocks */
+  .concept{border-top:1px solid var(--hair);padding-top:2.6rem;margin-top:2.6rem}
+  .concept:first-of-type{border-top:none;margin-top:0;padding-top:0}
+  .chead{display:flex;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}
+  .cnum{font-family:"SF Mono",ui-monospace,monospace;font-size:.8rem;color:var(--terr);font-weight:600}
+  .cstate{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;padding:.2rem .5rem;border-radius:999px}
+  .cstate.b{background:var(--sageS);color:var(--sage)} .cstate.s{background:var(--terrS);color:var(--brass)}
+  .thesis{font-size:1.12rem;color:var(--soft);max-width:720px;margin-bottom:1.4rem}
+
+  .grid{display:grid;gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:1.2rem}
+  .grid.two{grid-template-columns:1fr 1fr} .grid.three{grid-template-columns:1fr 1fr 1fr}
+  @media (max-width:820px){.grid.two,.grid.three{grid-template-columns:1fr}}
+  .cell{background:var(--card);padding:1.15rem 1.2rem}
+  .cell .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:.5rem}
+  .cell p{font-size:.93rem;line-height:1.55;color:var(--soft);margin:0 0 .5rem}
+  .cell p:last-child{margin:0}
+  .cell p b,.cell li b{color:var(--ink);font-weight:600}
+  .cell ul{margin:.2rem 0 0;padding-left:1rem}
+  .cell li{font-size:.9rem;line-height:1.5;color:var(--soft);margin-bottom:.35rem}
+
+  .specbox{background:var(--bone);border:1px solid var(--hair);border-radius:12px;padding:1.2rem 1.3rem;margin-top:1.2rem}
+  .specbox .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:.7rem}
+  .specbox dl{margin:0;display:grid;grid-template-columns:132px 1fr;gap:.35rem 1rem;font-size:.87rem}
+  @media (max-width:640px){.specbox dl{grid-template-columns:1fr;gap:.1rem .5rem}.specbox dt{margin-top:.5rem}}
+  .specbox dt{font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;color:var(--faint);letter-spacing:.04em;padding-top:.15rem}
+  .specbox dd{margin:0;color:var(--soft);line-height:1.5}
+  .specbox dd b{color:var(--ink);font-weight:600}
+
+  .screens{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--hair);border:1px solid var(--hair);border-radius:12px;overflow:hidden;margin-top:1.2rem}
+  @media (max-width:820px){.screens{grid-template-columns:1fr}}
+  .screens>div{background:var(--card);padding:1.1rem 1.15rem}
+  .screens .sn{font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:var(--terr);margin-bottom:.4rem}
+  .screens h4{margin:0 0 .35rem;font-size:.98rem;font-weight:600}
+  .screens p{margin:0;font-size:.89rem;line-height:1.5;color:var(--soft)}
+
+  table{width:100%;border-collapse:collapse;font-size:.88rem;background:var(--card);margin-top:1.2rem;border:1px solid var(--hair);border-radius:12px;overflow:hidden}
+  th{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:left;font-weight:500;padding:.6rem .8rem;border-bottom:1px solid var(--line)}
+  td{padding:.55rem .8rem;border-bottom:1px solid var(--hair);color:var(--soft);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.n{font-family:"SF Mono",ui-monospace,monospace;font-size:.78rem;color:var(--ink);white-space:nowrap}
+  .tblwrap{overflow-x:auto}
+
+  .callout{border-left:3px solid var(--terr);background:var(--card);padding:1.1rem 1.3rem;border-radius:0 10px 10px 0;margin:1.6rem 0;box-shadow:var(--shadow)}
+  .callout p{margin:0 0 .5rem;font-size:1rem;line-height:1.55}
+  .callout p:last-child{margin:0}
+  .callout .who{font-family:"SF Mono",ui-monospace,monospace;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:.5rem}
+
+  .swatches{display:grid;grid-template-columns:repeat(8,1fr);gap:.6rem;margin-top:1.2rem}
+  @media (max-width:760px){.swatches{grid-template-columns:repeat(4,1fr)}}
+  .sw .c{height:56px;border-radius:8px;border:1px solid var(--hair)}
+  .sw .n{font-family:"SF Mono",ui-monospace,monospace;font-size:.56rem;color:var(--soft);margin-top:.35rem;line-height:1.45}
+
+  ul.clean{margin:.8rem 0;padding-left:1.15rem}
+  ul.clean li{margin-bottom:.45rem;line-height:1.55;color:var(--soft)}
+  ul.clean li b{color:var(--ink);font-weight:600}
+  ul.clean li::marker{color:var(--terr)}
+
+  footer{border-top:1px solid var(--hair);padding:2.4rem 0 3.4rem;color:var(--faint);font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;line-height:1.7}
+  footer .f{max-width:1120px;margin:0 auto;padding:0 1.5rem}
+  a.link{color:var(--terr)}
+</style>
+
+<header class="bar">
+  <div class="bar-in">
+    <div class="brand">Ten Futures <span>/ build specifications</span></div>
+    <nav class="toc">
+      <a href="#sys">System</a><a href="#c1">01</a><a href="#c2">02</a><a href="#c3">03</a><a href="#c4">04</a><a href="#c5">05</a><a href="#c6">06</a><a href="#c7">07</a><a href="#c8">08</a><a href="#c9">09</a><a href="#c10">10</a>
+    </nav>
+    <button class="tg mono" id="tg" aria-label="Toggle theme">◐ Theme</button>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <div class="kicker mono">Ten operating systems for architecture &amp; interior practice · <b>1440 × 900</b> · v1.0</div>
+  <h1>Ten futures,<br>one visual language.</h1>
+  <p class="lead" style="margin-top:1.4rem">Ten product philosophies for the same industry — each with a different primitive, a different interface grammar, and a different mental model of what work <em>is</em>. Not variations. Placed side by side they should feel like ten different companies.</p>
+
+  <div class="status">
+    <div class="built">
+      <div class="h mono">Built in Figma — live now</div>
+      <ul>
+        <li><b>Foundations</b> — 16 colour variables, 8pt space + radius variables, 10 text styles</li>
+        <li><b>01 Decision Graph</b> — full workspace</li>
+        <li><b>02 Living Rooms</b> — full workspace</li>
+        <li><b>03 Object Journey</b> — full workspace</li>
+        <li><b>04 Confidence Engine</b> — full workspace</li>
+        <li><b>05 Ambient Memory</b> — workspace (minor bottom-margin fix pending)</li>
+      </ul>
+    </div>
+    <div class="spec">
+      <div class="h mono">Specified here — build blocked by plan quota</div>
+      <ul>
+        <li><b>06 Versioned World</b> · <b>07 Intent Network</b> · <b>08 Promise Ledger</b> · <b>09 Studio Wall</b> · <b>10 Uncertainty Map</b></li>
+        <li>Supporting screens for all ten concepts (2–3 each)</li>
+        <li>Every screen below is specified to build-level detail: frame, grid, coordinates, type, colour, radius, shadow, states</li>
+      </ul>
+    </div>
+  </div>
+  <div class="callout">
+    <p>The Figma MCP hit the <b>Starter-plan tool-call limit</b> partway through concept 05. Nothing is lost — the file, its design system and five workspaces are intact, and this document carries every remaining screen at build fidelity. The build resumes the moment the quota resets or the plan is upgraded.</p>
+    <div class="who mono">Status note</div>
+  </div>
+</section>
+
+<!-- DESIGN SYSTEM -->
+<section id="sys">
+  <div class="kicker mono">The shared language</div>
+  <h2>One design system, ten dialects</h2>
+  <p class="soft wrap">Every concept draws from the same warm editorial palette, type ramp and 8pt grid. What differs is <em>grammar</em> — how space is organised, what the primary object is, and where the eye is asked to go. That constraint is what makes the ten read as one studio's thinking rather than ten unrelated mockups.</p>
+
+  <div class="swatches">
+    <div class="sw"><div class="c" style="background:#F5F1EA"></div><div class="n mono">ivory<br>F5F1EA</div></div>
+    <div class="sw"><div class="c" style="background:#FBF8F3"></div><div class="n mono">bone<br>FBF8F3</div></div>
+    <div class="sw"><div class="c" style="background:#EAE4DA"></div><div class="n mono">stone<br>EAE4DA</div></div>
+    <div class="sw"><div class="c" style="background:#DDD5C8"></div><div class="n mono">hairline<br>DDD5C8</div></div>
+    <div class="sw"><div class="c" style="background:#26241F"></div><div class="n mono">charcoal<br>26241F</div></div>
+    <div class="sw"><div class="c" style="background:#B4573A"></div><div class="n mono">terracotta<br>B4573A</div></div>
+    <div class="sw"><div class="c" style="background:#79876F"></div><div class="n mono">sage<br>79876F</div></div>
+    <div class="sw"><div class="c" style="background:#A4823C"></div><div class="n mono">brass<br>A4823C</div></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Foundations — exactly as built</div>
+    <dl>
+      <dt>Frame</dt><dd><b>1440 × 900</b>, 8pt spacing system, 12-column grid, 40px outer margin, 24px gutter</dd>
+      <dt>Serif</dt><dd><b>Newsreader</b> — Light for display/headline, Regular for titles. Display 72/-2%, Headline 48/-2%, Title 32/-1%, Subtitle 22/-1%</dd>
+      <dt>Sans</dt><dd><b>Inter</b> — Regular 16/160%, Regular 14/155%, Medium 13/140%, Medium 11/140%+2%</dd>
+      <dt>Mono</dt><dd><b>IBM Plex Mono</b> — Regular 11 with 12–16% tracking, uppercase. All system speech, counters, states, stage names</dd>
+      <dt>Ink scale</dt><dd>900 #1C1A17 · 800 #3C3833 · 600 #7A7166 · 400 #A79E92</dd>
+      <dt>Radius</dt><dd>sm 4 · md 10 · lg 18 · pill 999</dd>
+      <dt>Shadow</dt><dd>Cards: <b>0 3 14 rgba(28,26,23,.07)</b>. Floating chips: 0 2 6 rgba(28,26,23,.12). Never heavier</dd>
+      <dt>Chrome rule</dt><dd>1px hairlines only; no borders on cards; no filled buttons except one primary per screen</dd>
+      <dt>Accent law</dt><dd><b>Terracotta = attention/risk only. Sage = health. Brass = money committed.</b> Never decorative</dd>
+    </dl>
+  </div>
+
+  <div class="grid three">
+    <div class="cell"><div class="k mono">Iconography</div><p>Almost none. State is carried by <b>form</b> — filled dot, hollow ring, dashed ring — not by icons. Where an icon is unavoidable it is a 1px stroke geometric glyph at 16px, ink/600.</p></div>
+    <div class="cell"><div class="k mono">Imagery</div><p>Photography is the only saturated colour on screen. Always warm interiors. Cropped generously, never full-bleed behind text, corner radius 8–12, no overlay scrims except a 26px paper band for legibility.</p></div>
+    <div class="cell"><div class="k mono">Motion (implied)</div><p>200–320ms, cubic-bezier(.22,1,.36,1). Things <b>settle</b>, never bounce. Panels cross-fade with 8px rise. Graph edges draw in 400ms. Nothing spins.</p></div>
+  </div>
+</section>
+
+<!-- 01 -->
+<section id="c1">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">01</span><h2>Decision Graph</h2><span class="cstate b mono">Built</span></div>
+  <p class="thesis">Work is a living graph of decisions. Every drawing, option and approval is evidence attached to a node — and the graph, not a list, is the project.</p>
+
+  <div class="grid two">
+    <div class="cell">
+      <div class="k mono">Layout logic</div>
+      <p>A 72px icon rail, an unbounded graph canvas from x72–1000, and a 440px inspector docked right on bone. The graph is deliberately <b>not</b> auto-arranged into tidy columns — organic placement signals that this is a map of thought, not a pipeline.</p>
+      <p>The inspector is the only dense region on screen. Everything else is air.</p>
+    </div>
+    <div class="cell">
+      <div class="k mono">Navigation philosophy</div>
+      <p>There is no back button and no folder tree. You navigate by <b>zooming and following edges</b>. The rail switches lens (Graph / Rooms / Objects / Ledger / Wall) over the same underlying data — never a different place, only a different reading.</p>
+    </div>
+    <div class="cell">
+      <div class="k mono">Why it fits the model</div>
+      <p>Designers work by making a move and watching consequences propagate. A graph is the only structure that shows consequence. Reopening a node visibly threatens its descendants — the interface makes the cost of changing your mind legible for the first time.</p>
+    </div>
+    <div class="cell">
+      <div class="k mono">Understood in five seconds</div>
+      <p>“These circles are things we decided. The red ones are in trouble. The red line is why.” No legend needed to feel it; the legend at the bottom only names what the eye already grouped.</p>
+    </div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900, fill ivory #F5F1EA, clip content</dd>
+      <dt>Header</dt><dd>h64, hairline at y63. Project serif Newsreader Regular 21 at (96,21). Mono 10/14% meta at x232 and x372, divider 1×12 at x352. Avatars 20Ø at x1196/1218/1240, 2px ivory stroke, overlapping −2. ⌘K pill 56×24 r999 stroke line. “Present” Inter Medium 13 at x1362</dd>
+      <dt>Rail</dt><dd>72 wide, hairline at x71. Five 24×24 r6 stroked squares at x24, y110 step 64; active has a 10×10 r2 ink fill inset. Labels mono 8/10% centred in a 64px box beneath</dd>
+      <dt>Graph</dt><dd>12 nodes, absolute. Edges are a single SVG node of quadratic curves, stroke #C4BAA9 1px; risk chain stroke #B4573A 1.75px at 85% opacity. Control point = midpoint offset 13% along the normal</dd>
+      <dt>Node states</dt><dd><b>committed</b> 12Ø solid #26241F · <b>presented</b> 13Ø ivory fill + 1.75px ink stroke · <b>exploring</b> 12Ø no fill + 1.25px sage stroke, dash [2,2] · <b>hardened</b> 12Ø brass + 26Ø brass ring 1px · <b>contested</b> 16Ø terracotta + 44Ø terracotta halo at 12%</dd>
+      <dt>Selection</dt><dd>64×64 r2 dashed [3,3] 1px ink bracket centred on the node</dd>
+      <dt>Labels</dt><dd>Name Inter Regular 12 (Medium if contested) at node+16,−14. State mono 8/12% at node+16,+2</dd>
+      <dt>Inspector</dt><dd>x1000 w440 fill bone, hairline left. Mono 10/14% eyebrow y104. Title Newsreader Light 30/112%/−2% y130 w360. State pill 92×24 r999 terracotta-soft with 6Ø dot. Option swatches 112×84 r8, 124 pitch, selected gets 2px ink outside stroke. Rationale Inter 13/165% w360. Trail rows 44 pitch, 18Ø avatar. AI note 360×64 r10 sage-soft, Inter 12/150%</dd>
+      <dt>Responsive</dt><dd>&lt;1200: inspector becomes a right sheet over the canvas at 400px. &lt;900: rail collapses to a bottom bar; graph gains pinch-zoom</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Reopen consequence</h4><p>Modal-less overlay. The graph dims to 30% except the affected subtree, which lifts. A serif line states the blast radius; brass sub-labels mark the $28,400 of hardened orders. Two actions: <b>Reopen anyway</b> / Keep committed.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Client ratification</h4><p>The same node rendered for the client: no graph, just the three options at 320×240, the rationale in serif, and one warm action — “Love it, let's move on.” Approval writes straight back into the trail.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Command palette</h4><p>⌘K opens a 640×420 bone sheet, r18, shadow 0 24 60 rgba(28,26,23,.18). Natural language: “what did we decide about the island?” Results are decisions, not files.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover a node</b> — its edges thicken to 1.5px and all unrelated edges drop to 20%; a 3-line tooltip rises 8px</li>
+      <li><b>Click</b> — inspector cross-fades; the graph pans so the node sits at 38% width (golden-ratio rest position), 320ms</li>
+      <li><b>Drag</b> — repositioning is saved; the graph is a place you can arrange like a desk</li>
+      <li><b>Double-click empty canvas</b> — new decision, inline title field, no dialog</li>
+      <li><b>Scroll</b> = pan, <b>⌘scroll</b> = zoom. Below 40% zoom labels drop and the graph becomes a constellation</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Draws the <b>risk chain</b> — no button, it is simply painted into the graph</li>
+      <li>Proposes nodes from email/meetings; they appear as dashed ghosts awaiting one tap</li>
+      <li>Computes blast radius on hover of any committed node</li>
+      <li>Writes the rationale draft from the thread that produced the decision</li>
+      <li>Never speaks in a chat bubble — its only voice is the small mono <span class="mono" style="color:var(--terr)">AI · RISK CHAIN</span> label and a serif sentence</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 02 -->
+<section id="c2">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">02</span><h2>Living Rooms</h2><span class="cstate b mono">Built</span></div>
+  <p class="thesis">The project isn't progressing — each room is. Rooms are organisms with vitals, maturity and health; they grow, stall, and sometimes regress.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A 280px plan-key column pinned left, then a 3×2 grid of 340×356 room cards on a 372/388 pitch. The plan is small and the rooms are large — a deliberate inversion of every architecture tool, which makes the drawing dominant. Here the drawing is only the <b>key</b>; the living thing is the room.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>Spatial, not hierarchical. You click a room in the plan or a card in the grid — same destination. There is no “projects → phases → tasks” ladder. Depth is achieved by entering a room, never by descending a tree.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>FF&amp;E schedules are already room-tabbed; payments are already room-scoped; presentations are already room-by-room. This concept simply stops fighting the industry's native container and makes it the primitive.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“Every room has a pulse.” The arc reads as a life sign, the three vitals read as a chart at the foot of a bed. Nobody needs to be told what 62 in an amber ring means.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 ivory. Header h72 with hairline; view switch “Plan / Rooms / Objects” right-aligned, active gets a 1px underline 8px below</dd>
+      <dt>Plan column</dt><dd>x0 w280 fill bone, hairline right. Plan SVG 200×330 at (40,140): rectilinear rooms, 1px #7A7166 stroke, fill = maturity colour. Maturity key at y520, 12×12 r2 chips, 30px pitch. Closing serif italic 16/145% at y756</dd>
+      <dt>Room card</dt><dd>340×356, paper fill, r12, shadow 0 3 14 rgba(28,26,23,.07). Image band 340×176 r12 with a 340×26 paper strip at y150 to square the base. Name Newsreader Regular 23/−1% at (20,192). State mono 9/12% at (20,226) in the maturity colour</dd>
+      <dt>Maturity arc</dt><dd>44×44 SVG at card+(276,16). Track: 18r circle, 3px white at 50%. Value: arc path from 12 o'clock, 3px round cap, maturity colour, sweep = pct/100×360. Numeral mono 11 white centred</dd>
+      <dt>Vitals</dt><dd>Three 30px rows from card+258. Hairline #EFEAE1 above each. Label Inter 12 ink/600 left; value mono 12 right-aligned in a 76px box, ink/400 when zero</dd>
+      <dt>Maturity colours</dt><dd>resolved sage · in question terracotta · early brass · untouched hairline</dd>
+      <dt>Responsive</dt><dd>&lt;1200: 2 columns. &lt;820: 1 column, plan collapses to a horizontal strip above</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Room interior</h4><p>Entering a room: full-bleed hero 1440×420, then the room's selections as a masonry of specs, its open questions as serif lines, and its budget as a single quiet number. The plan key persists, now showing only this room lit.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Regression state</h4><p>A room whose maturity <em>fell</em>. The arc animates backwards on load and a terracotta serif line explains why: “Two selections withdrawn after the stone reopened.” Regression is treated as information, not failure.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Mobile companion</h4><p>390×844. One room per screen, swipe between rooms. The arc becomes the header. Built for the site visit: capture a photo, and it lands in the room you're standing in.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover a card</b> — image scales 1.02 over 320ms, shadow deepens 4px; the matching room in the plan lights simultaneously</li>
+      <li><b>Hover a plan room</b> — the reverse: its card lifts. The two views are permanently bound</li>
+      <li><b>Click</b> — the card expands into the room interior with a shared-element transition; the image is the anchor</li>
+      <li><b>Drag a spec onto a card</b> — assigns it to that room; the arc recalculates visibly</li>
+      <li>No context menus. Actions live inside the room, never on the card</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Computes <b>maturity</b> from artefact analysis — not a manual percentage</li>
+      <li>Flags <b>aesthetic drift</b>: “The study has moved away from the palette agreed in June”</li>
+      <li>Detects a room stalling before the designer notices and quietly reorders the grid</li>
+      <li>Suggests which room to work on next based on install-day pressure, never on due dates</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 03 -->
+<section id="c3">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">03</span><h2>Object Journey</h2><span class="cstate b mono">Built</span></div>
+  <p class="thesis">Every piece has a life. Objects travel nine stages — inspiration to maintenance — and the entire project converges on one install day.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>Nine stage columns at 118px pitch from x392. Each object is a 62px row: a hairline trail behind it, ghost ticks ahead, and a 32×32 photographic chip at its current position. <b>The chip is the object</b> — you read the room by scanning a vertical of thumbnails.</p><p>This is emphatically not a Gantt: nothing encodes duration, only <em>position in a lifecycle</em>.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>Left-to-right is the only axis of meaning. There is no calendar to scroll. The single vertical ink line — install day — is the horizon everything moves toward, and it never moves.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>Procurement is the phase where studios lose money and client trust. The industry already tracks a selection state machine in room-tabbed spreadsheets; this makes that machine visible at a glance and gives the expediting ritual a home.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“Everything is moving right, and one thing is red and behind.” Convergence anxiety is the correct emotional read — it's what install day actually feels like.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 bone #FBF8F3 (a half-step lighter than 01 to feel like a logistics surface)</dd>
+      <dt>Stage rail</dt><dd>Nine columns, X0=392, pitch 118. Index mono 9/10% at y104; name Inter 11 centred in an 88px box at y122, ink/900 for Installation only. Column rules 1px #E8E2D8 from y146 h656; the Installation rule is #C4BAA9</dd>
+      <dt>Install marker</dt><dd>2px ink vertical at the Installation column, 90% opacity. Badge 140×26 r999 ink at y808, mono 9/10% bone centred</dd>
+      <dt>Object row</dt><dd>62px pitch from y196. Name Inter 13 ink/900 at x40 (Medium if at risk); room mono 8/12% ink/400 beneath. Trail 1.5px from X0−6 to current x. Past ticks 5Ø solid; future ticks 5Ø hollow 1px #D8D1C4</dd>
+      <dt>Object chip</dt><dd>32×32 r8 gradient, 2px paper stroke, shadow 0 2 6 rgba(28,26,23,.12). At-risk chips take a 2px terracotta stroke. Status mono 9/6% 24px to the right</dd>
+      <dt>Risk row</dt><dd>Full-width 1376×48 r6 terracotta at <b>7% opacity</b>, inserted behind all content</dd>
+      <dt>Forecast strip</dt><dd>Hairline at y844. Mono 9/14% terracotta “AI · FORECAST” at x40; serif italic 15 sentence at x168</dd>
+      <dt>Responsive</dt><dd>&lt;1200: stage rail scrolls horizontally with the object column pinned. Mobile: one object per card, journey shown vertically</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Object dossier</h4><p>Click a chip: a 520px right sheet with the object at 520×360, its full journey as a vertical timeline with dated evidence — the quote PDF, the approval email, the receiving photo, the damage claim.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Convergence view</h4><p>Zoom out to install day: objects arranged as a landing pattern around a single date. Late arrivals orbit outside the ring in terracotta. The most emotionally direct screen in the set.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Vendor chase</h4><p>AI has drafted three expediting emails. Each shows the vendor's <b>real vs quoted</b> lead-time history as a two-tone bar. Send all, or edit one.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover a chip</b> — it scales to 40px and reveals price, vendor and days-in-stage; its row hairline darkens</li>
+      <li><b>Drag a chip forward</b> — advances the stage; if it crosses a money gate, a quiet confirmation appears inline, never a modal</li>
+      <li><b>Click a stage header</b> — filters to that stage; other rows fade to 15% rather than disappearing, so the whole remains visible</li>
+      <li><b>Scrub the install marker</b> — the AI forecast re-runs live and rows turn terracotta as they fall behind</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Parses vendor emails and <b>moves chips itself</b>; the designer only sees the result</li>
+      <li>Learns real lead times per vendor across every studio on the platform — the network moat</li>
+      <li>Predicts which objects miss install day weeks early</li>
+      <li>Reads receiving photos for damage and opens the claim inside the carrier's window</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 04 -->
+<section id="c4">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">04</span><h2>Confidence Engine</h2><span class="cstate b mono">Built</span></div>
+  <p class="thesis">Nothing tracks tasks. Everything tracks confidence — client, designer, budget, construction — and AI predicts where it will collapse.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>The only dark screen in the set: charcoal #22201C. Four confidence bands flow left to right on 148px baselines, thickness = confidence. Huge Newsreader Light numerals sit in the left margin like instrument readouts. A 260px right rail lists what moved the needle.</p><p>Darkness is doing work here: this is the screen you open when you're worried.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>Time is the only navigation. Past is solid, future is a dashed ghost, and a single bone NOW line separates them. There is nothing to click into — this is a <b>read-only instrument</b>, and that restraint is the point.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>Design problems have no stopping rule, so “% complete” is a lie. Confidence is the only honest measure of progress in work that has no done — and it is what every principal is actually tracking in their head.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“Three ribbons are healthy, one is dying.” No numeracy required. The collapsing band is legible from across the studio.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 fill #22201C. Header hairline #38352F at y71. Serif title in bone #F0EAE0; mono meta in #8C8478</dd>
+      <dt>Bands</dt><dd>X0=250, X1=1130, 12 samples, baselines y208/356/504/652. Half-thickness = value × 52. Single SVG node: solid segment 0→NOW at 80% opacity; projected segment NOW→end at 20% with a 1px dashed [3,3] outline in the band colour</dd>
+      <dt>Band colour</dt><dd>Healthy #8CA07E; failing #C4634A. Colour is a property of the metric's trajectory, not its identity</dd>
+      <dt>NOW</dt><dd>1px bone vertical at 55% from y140 h608; 44×20 r999 bone badge above with mono 9/12% charcoal “NOW”</dd>
+      <dt>Readouts</dt><dd>Label mono 10/14% at x40, baseline−30. Value <b>Newsreader Light 52/−2%</b> at baseline−16 (terracotta when failing). Trend word Inter 12 at x120</dd>
+      <dt>Time axis</dt><dd>Six month rules 1px, #332F29 past / #2C2A25 future; labels mono 9/14% at y756</dd>
+      <dt>Right rail</dt><dd>x1180 hairline. Five driver rows at 62px pitch: Inter 13 bone name w150, mono 15 signed delta right, 180×1 rule #312E28. Forecast block from y520: mono 9/14% terracotta label, Newsreader Italic 17/145% sentence w180</dd>
+      <dt>Responsive</dt><dd>&lt;1100: readouts move above their bands. Mobile: one band per screen, swipe vertically</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Collapse autopsy</h4><p>Click the failing band: it fills the frame and every inflection point gains a dated marker with the event that caused it. The story of a budget's death, told as a line.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Room heat</h4><p>Confidence mapped onto the floor plan instead of time — the kitchen glows cold. Same data, spatial reading. Toggled with a single mono link, never a tab bar.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Client confidence detail</h4><p>What the client's sentiment is built from: approval latency, revision counts, the tone of their last four messages. Shown as evidence, with an explicit “this is inference, not fact” disclosure.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover the field</b> — a vertical scrub line follows the cursor; all four readouts update to that date, 120ms</li>
+      <li><b>Drag the NOW badge</b> into the future — the projection re-renders and the forecast sentence rewrites itself</li>
+      <li><b>Hover a driver</b> — the moment it occurred pulses on the band it affected</li>
+      <li>No click targets in the field itself. Deliberately contemplative</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Derives all four scores from communication, approvals, budget deltas and vendor telemetry</li>
+      <li>Projects forward and names <b>the single driver</b> — one sentence, never a dashboard of factors</li>
+      <li>Always shows its working: every score opens into the evidence that produced it</li>
+      <li>Refuses false precision — scores move in units of one, never decimals</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 05 -->
+<section id="c5">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">05</span><h2>Ambient Memory</h2><span class="cstate b mono">Built</span></div>
+  <p class="thesis">The record writes itself. Nothing is filed, nothing is searched — knowledge surfaces exactly when it is needed, and the human only confirms.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A single 656px column at x392 and <b>almost nothing else</b>. No sidebar, no tabs, no toolbar. A faint archive ribbon at x1200 hints that everything is remembered; a strip of fragments in the left margin proves it. The emptiness is the feature.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>There is no navigation. The system decides what you see, and tells you <em>why</em> in an italic line — “because you opened the kitchen”. The only input is at the bottom and it is not a search box: “Ask anything — or just keep working.”</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>The deepest pain in studios is not speed, it is memory — proving what was decided, by whom, and why. Every prior tool solved this by asking humans to file things, which they never do. This one asks nothing.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“It already knows.” The reaction target is relief, not comprehension. Users should feel they have been quietly assisted rather than presented with software.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 ivory. Column X=392, W=656. No header bar, no rules across the frame</dd>
+      <dt>Masthead</dt><dd>Mono 10/16% date at (392,64) and project right-aligned at x952. Headline <b>Newsreader Light 42/112%/−2%</b> at y100 — two lines maximum, always a plain sentence</dd>
+      <dt>Memory card</dt><dd>Rules at y248 / 452 / 656 (204 pitch). 1px #E2DCD1 hairline top. 7Ø source dot at x396. Source mono 9/14% ink/600 at x412. Reason <b>Newsreader Italic 13</b> ink/400, right-aligned. Content Newsreader Light 25/132%/−1% at x412. Action Inter Medium 13 with a 1px ink underline 19px below; “Not now” Inter 13 ink/400 beside it</dd>
+      <dt>Source colour</dt><dd>voice sage · email brass · promise terracotta. The dot is the only colour in the column</dd>
+      <dt>Archive ribbon</dt><dd>x1200, 30 bars at 24px pitch, height 3, r2, width = density×3.2, colour #C4BAA9, opacity 0.35 + density/60. Month labels mono 8/12% at y820</dd>
+      <dt>Fragments</dt><dd>Six 68×48 r4 gradient thumbs at (64,668), 78/58 pitch, 80% opacity. Caption Newsreader Italic 14/150%: “1,284 fragments. Nothing filed by hand.”</dd>
+      <dt>Input</dt><dd>1px #C4BAA9 rule at y832; placeholder Newsreader Italic 17 ink/400 at y846; 8Ø sage dot at the right end — the only sign of a live system</dd>
+      <dt>Pending fix</dt><dd>Third card's action row currently collides with the input rule — set card baselines to 248/452/656 and cap card content at two lines</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Recall</h4><p>Ask “what did we say about the island?” The column re-composes into a chronological argument — six fragments across four months, each with its source — and ends with the answer in serif. Search results as a written answer, not a list.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Capture confirm</h4><p>The one moment the system asks for something: “Client approved the terrazzo — log it?” One tap files it into the decision graph. The whole product's data entry is this card.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Ambient companion</h4><p>Mobile lock-screen scale. After a site visit: “I heard three decisions. Confirm?” Three lines, three taps. Designed to be used while walking to the car.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Cards arrive</b> with an 8px rise and fade over 320ms, staggered 60ms — never more than three at once</li>
+      <li><b>Confirming</b> collapses the card upward and the column reflows; no toast, no confetti</li>
+      <li><b>“Not now”</b> is not dismissal — the fragment returns when relevance rises again</li>
+      <li><b>Typing</b> in the bottom line expands it to a serif field; the archive ribbon lights the months being drawn on</li>
+      <li>There is no undo because there is no destructive action</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>This concept <b>is</b> the AI — remove the model and there is no product</li>
+      <li>Ingests email, chat, meetings, voice notes, photos; extracts decisions, promises, approvals, prices</li>
+      <li>Ranks by relevance to what you're currently doing, not by recency</li>
+      <li>Never claims certainty — the italic “because…” line is a stated reason the user can disagree with</li>
+      <li>Privacy posture: forwarding address first, inbox connection only after trust is earned</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 06 -->
+<section id="c6">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">06</span><h2>Versioned World</h2><span class="cstate s mono">Spec — ready to build</span></div>
+  <p class="thesis">The whole project behaves like a repository, without a single technical word. Options are branches, decisions are merges, the issued set is a tag — and alternative realities can be walked side by side.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A horizontal <b>trunk</b> runs across the vertical centre at y470 — a 2px ink line, the current reality. Branches leave and rejoin as elegant curves above and below, each carrying a small rendered thumbnail at its head. The right 380px is a “compare” panel showing two realities stacked as images with a diff of what changes between them.</p><p>Time flows left to right; divergence is vertical. That is the entire grammar.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>You navigate by <b>walking the timeline</b>, not by opening files. A scrubber under the trunk moves the whole project through time; branch heads slide into view as they are created. Clicking a branch doesn't “open” it — the canvas <em>becomes</em> that reality, and the trunk greys to show you've stepped off it.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>Designers explore and abandon constantly, and current tools frame abandonment as failure. Branches make exploration free and shame-free. It also structurally kills the industry's most expensive error class — building from a superseded revision — because there is only ever one HEAD.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“This is the version we're building, and these are the ones we didn't.” The thumbnails carry it: you can see the alternative kitchen without reading a word.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 ivory #F5F1EA. Header h64 identical to 01 for family resemblance, meta reads “TIMELINE · 214 CHANGES · HEAD @ REV D”</dd>
+      <dt>Trunk</dt><dd>2px #26241F horizontal at y470, from x96 to x1020. Commit nodes: 10Ø solid ink at 68px pitch. Every 6th is a <b>tag</b>: 20Ø hollow ring 1.5px brass with a mono 9/12% label above (“ISSUED · DD SET”, “PLANNING”, “REV D”)</dd>
+      <dt>Branches</dt><dd>Single SVG. Cubic curves leaving the trunk at a commit, rising to y300 (above) or falling to y640 (below), running level for 120–280px, then either rejoining (merge) or ending in a 6Ø open circle (abandoned). Live branch stroke 1.5px #79876F; abandoned 1px #C4BAA9 dashed [4,4] at 60%</dd>
+      <dt>Branch head</dt><dd>96×72 r8 gradient thumbnail with 2px paper stroke and shadow 0 2 8 rgba(28,26,23,.12), centred on the branch end. Name Inter Medium 12 beneath; mono 9/12% age below that</dd>
+      <dt>Scrubber</dt><dd>x96–1020 at y820. 1px #C4BAA9 track; handle 28×28 r999 paper with 1px ink stroke and shadow; date mono 10/12% floating above the handle. Ticks every commit, 1×6px, ink/400</dd>
+      <dt>Compare panel</dt><dd>x1060 w380, fill bone, hairline left. Two 340×200 r10 images stacked at y104 and y328 labelled mono 9/14% “HEAD · REV D” and “BRANCH · WARM KITCHEN”. Between them at y288 a 340px hairline with a centred 64×20 r999 ink pill reading “DIFF”</dd>
+      <dt>Diff list</dt><dd>From y560: rows at 44px pitch, each a mono 9/12% change type (<span class="mono">ADDED</span> sage / <span class="mono">REPLACED</span> brass / <span class="mono">REMOVED</span> terracotta) plus Inter 13 description. Max six rows, then “+ 9 more” in ink/400</dd>
+      <dt>Merge action</dt><dd>Bottom of panel y828: a single Inter Medium 13 “Adopt this reality” with 1px ink underline. Never a filled button — adopting is calm, not celebratory</dd>
+      <dt>Vocabulary</dt><dd><b>Never display:</b> commit, branch, merge, HEAD, diff, conflict. Display instead: change, direction, adopt, current, difference, disagreement</dd>
+      <dt>Responsive</dt><dd>&lt;1200: compare panel becomes a bottom drawer at 320px, trunk gains full width. Mobile: vertical trunk, branches to the right only</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Two realities</h4><p>Full-frame split: the same room rendered under both directions, 700×620 each, separated by a 1px rule with a draggable handle. Below each, its cost and its lead-time consequence. The decision is made by looking, not by reading a table.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Disagreement</h4><p>What a merge conflict becomes: two people changed the same thing. Both versions shown as images at 400×300 with the authors' names in serif, and one question — “which one is true?” No three-way merge, no gutters, no arrows.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Time travel</h4><p>Scrubber dragged back to June: the whole canvas returns to that day, with a bone banner reading “You are looking at 14 June”. A single action returns to now. The archive is walkable, not searchable.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Drag the scrubber</b> — thumbnails across the whole canvas cross-fade to their state on that date, 200ms, no loading state</li>
+      <li><b>Hover a branch</b> — it lifts to 100% opacity while the trunk drops to 40%; the compare panel previews it without committing</li>
+      <li><b>Option-drag a commit</b> — starts a new direction from that point in history. Exploring the past is a first-class act</li>
+      <li><b>Pinch</b> — zooms from decade-scale (tags only) to hour-scale (every change). One continuous gesture, no view modes</li>
+      <li><b>Adopting</b> plays a 400ms settle: the branch straightens into the trunk and the old trunk becomes a branch. Nothing is deleted, ever</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li><b>Names branches</b> from their content — “warm kitchen”, “tighter joinery” — so nobody has to</li>
+      <li>Writes the diff in human language: “the island grew 200mm and lost the seating overhang”</li>
+      <li>Detects when two people are unknowingly diverging on the same room and surfaces it <em>before</em> the conflict</li>
+      <li>Proposes which abandoned branches are worth reviving when constraints change</li>
+      <li>Auto-tags issued sets by reading the drawing package, so the record is never manual</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 07 -->
+<section id="c7">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">07</span><h2>Intent Network</h2><span class="cstate s mono">Spec — ready to build</span></div>
+  <p class="thesis">Track intentions, not deliverables. “Warm hospitality”, “maximise daylight”, “reduce visual clutter” are first-class objects, and every decision measurably strengthens or weakens them.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A <b>radial constellation</b>, centred at (620,470). Five or six intents sit as large Newsreader Light words on concentric orbits; decisions are small dots positioned by <em>which intents they serve</em> — a decision serving two intents literally sits between them. Gravity is the layout algorithm and also the metaphor.</p><p>Left margin 280px holds the intents as a ranked list with strength meters. Nothing else competes.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>You navigate by <b>intent, not by artefact</b>. Selecting “maximise daylight” pulls every contributing decision toward it and pushes everything else to the rim. There are no folders because the organising principle is a value, not a location.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>The primary generator — the organising idea a designer latches onto early — is the most valuable object in a project and the one no software stores. It is what gets defended in value engineering and lost at staff turnover. Making it a tracked object is the most emotionally resonant idea in the whole set.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“These are the things we promised the building would feel like, and this one is being eroded.” The weakening intent is visibly dimmer and its orbit is thinner.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900, fill bone #FBF8F3. No header rule — this screen floats. Project name Newsreader Regular 21 at (40,32); mono meta “SIX INTENTS · 214 DECISIONS”</dd>
+      <dt>Field</dt><dd>Centre (620,470). Three orbit rings at r180 / r280 / r380, 1px #E2DCD1, no fill. Rings are guides, not containers</dd>
+      <dt>Intent</dt><dd>Word set in <b>Newsreader Light 34/−2%</b>, ink/900 when strong, ink/400 when weak. Beneath it a 120×3 r2 strength bar: sage fill for the strong portion, remainder #EAE4DA. Strength value mono 10/12% right of the bar</dd>
+      <dt>Intent placement</dt><dd>Angular positions at 30°, 95°, 150°, 210°, 265°, 320°; radius = 380 − strength×140, so strong intents sit closer to the centre. This is the whole information design</dd>
+      <dt>Decision dot</dt><dd>7Ø solid. Colour by effect: <b>strengthens</b> sage, <b>weakens</b> terracotta, <b>neutral</b> #C4BAA9. Position = weighted centroid of the intents it touches, jittered 12px to avoid stacking</dd>
+      <dt>Tension line</dt><dd>Where a decision serves one intent and harms another, a 1px terracotta line connects the two intents through the dot, at 50% opacity. These lines are the screen's most important content</dd>
+      <dt>Left rail</dt><dd>x40 w240. Intent list from y120 at 96px pitch: name Inter Medium 14, strength bar 200×4 r2, delta mono 10/12% (“−12 this month” in terracotta). Selected intent gets a 2px ink left rule at x24</dd>
+      <dt>Erosion callout</dt><dd>Bottom left from y700: mono 9/14% terracotta “AI · EROSION”, then Newsreader Italic 17/145% w240 — “Reduce visual clutter has weakened four times since June, always through joinery decisions.”</dd>
+      <dt>Colour discipline</dt><dd>Terracotta appears <b>only</b> on weakening. A screen with no terracotta means the design intent is intact — the most valuable glance in the product</dd>
+      <dt>Responsive</dt><dd>&lt;1100: constellation scales to 0.8 and the rail overlays at 30% width. Mobile: intents become a vertical list with sparkline strength; the constellation is a separate full-screen view</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Intent dossier</h4><p>“Maximise daylight” opened: its origin quote from the first client meeting in serif, the twelve decisions serving it as thumbnails, and the three that hurt it — with the dates they did. An intent's biography.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Value-engineering shield</h4><p>A contractor's substitution arrives pre-scored against intent: “This glazing saves $14k and weakens <em>maximise daylight</em> by 18.” The architect's argument, prepared before the meeting.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Intent setting</h4><p>Kickoff. Six intents written in a serif field, each co-signed by client and designer with a date. The most important screen in the product and the emptiest — a page of sentences.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover an intent</b> — contributing dots migrate toward it over 400ms with spring settle; unrelated dots fade to 12%. The layout is alive</li>
+      <li><b>Hover a dot</b> — its tension lines light and a two-line tooltip names the trade it made</li>
+      <li><b>Drag an intent</b> up the rail — reprioritises it; the whole field re-settles and strengths recompute</li>
+      <li><b>Type anywhere</b> — adds an intent. The field makes room. No “+ new” button exists</li>
+      <li>Nothing can be deleted, only <b>retired</b> — retired intents stay on the rim, greyed, as a record of what the project stopped caring about</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Extracts candidate intents from the brief and first meeting transcripts — the designer edits rather than authors</li>
+      <li>Scores every new decision against every intent using vision models on the imagery plus text on the rationale</li>
+      <li>Flags <b>erosion patterns</b>: not single violations but repeated drift in one direction</li>
+      <li>Cannot claim taste. Every score is shown as “our reading”, editable in one click, and the edit trains the project's own model</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 08 -->
+<section id="c8">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">08</span><h2>Promise Ledger</h2><span class="cstate s mono">Spec — ready to build</span></div>
+  <p class="thesis">Every commitment made by anyone — client, vendor, contractor, the studio itself — is visible, dated and kept. Designed as a book of trust, not a book of accounts.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A <b>ledger page</b>: a single ruled column 880px wide, centred, on paper #FFFFFF with a 40px warm margin band on the left carrying dates in mono. Ruled hairlines every 56px — actual ruling, like a bound book. Two thin columns at the right edge hold “promised” and “kept” marks.</p><p>The typographic register is the highest in the set: Newsreader Regular for every promise, because a promise is a sentence.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>You read down. Time is vertical, as in a real ledger. Filtering happens by <b>party</b> — six small avatars in the top margin — and selecting one greys every other line rather than hiding it, preserving the sense of a continuous record.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>“The owner told me on site to go ahead” is unenforceable and expensive. Verbal approvals, quoted lead times, and internal “by Friday” all evaporate. Writing them down is the highest-value, least-glamorous work in a studio — this makes it automatic and, crucially, <em>mutual</em>.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“This is what everyone said they'd do.” It reads like a document, not an app — which is exactly the authority it needs to carry into a dispute.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900, fill #F5F1EA. Page: 880×820 paper #FFFFFF centred at x280, y56, r2 (almost square — paper, not a card), shadow 0 1 3 rgba(28,26,23,.06) and 0 18 48 rgba(28,26,23,.06)</dd>
+      <dt>Ruling</dt><dd>1px #EFEAE1 hairlines across the page every 56px from y152. A single 1px #DDD5C8 vertical at x=page+96 — the date gutter, exactly like a bound ledger</dd>
+      <dt>Page head</dt><dd>Newsreader Light 34 “Promises” at (page+40, 88). Mono 10/16% “VILLA KASTEL · 47 OPEN · 3 AT RISK” right-aligned at the same baseline. Hairline beneath at y140</dd>
+      <dt>Party filter</dt><dd>Six 24Ø avatars at (page+40, 108), −4px overlap, 1.5px paper stroke; unselected drop to 40% saturation. No labels — hover reveals</dd>
+      <dt>Promise row</dt><dd>56px. Date mono 10/12% ink/400 in the gutter. Promise <b>Newsreader Regular 17</b> ink/900 at x=page+112. Party name Inter 12 ink/600 appended after an em dash. Row height doubles to 112 when the promise carries evidence (a quoted line beneath in Newsreader Italic 14 ink/600)</dd>
+      <dt>State marks</dt><dd>Right margin, two columns at page+740 and page+800. <b>Kept</b> — a 12px hand-drawn-feel check in sage, 1.5px stroke. <b>Open</b> — a 10Ø hollow ring ink/400. <b>Broken</b> — a 12px terracotta slash. <b>Renegotiated</b> — a small brass arrow. Marks are drawn, never boxed</dd>
+      <dt>At-risk row</dt><dd>No fill. Instead the ruling beneath it thickens to 1.5px terracotta and the date turns terracotta. Restraint here is what keeps it feeling like a document</dd>
+      <dt>Trust summary</dt><dd>Left margin outside the page, x40 w200, from y200: each party's name Inter Medium 13, then a 160×4 r2 bar — sage kept portion, terracotta broken portion — and mono 10 “31 / 34 kept”. This is the only quantified element and it is deliberately outside the page</dd>
+      <dt>Footer</dt><dd>Page bottom y820: mono 9/14% ink/400 “EVERY LINE HERE WAS SAID OUT LOUD FIRST.”</dd>
+      <dt>Responsive</dt><dd>&lt;1100: trust summary moves below the page. Mobile: the page fills the frame, the date gutter collapses to an inline mono prefix</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Promise detected</h4><p>A card sliding in from the transcript of a site visit: “I heard a promise — <em>‘we'll have the elevations to you Friday’</em>. Record it?” Shows the audio waveform excerpt, 12px tall, and two words: Record / Ignore.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Vendor reliability</h4><p>One supplier's history across every studio on the platform: quoted vs actual lead times as paired bars over two years. The network effect made visible — and the reason a studio can't leave.</p></div>
+    <div><div class="sn mono">Support C</div><h4>The gentle chase</h4><p>An unkept promise, three days late. AI has drafted a short, warm message. The screen shows the draft in serif at reading size and the relationship history beneath it — because the tone should depend on the relationship.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover a row</b> — the ruling above and below darkens slightly, isolating the line like a finger on a page. No highlight fill, ever</li>
+      <li><b>Click the state mark</b> — cycles open → kept → renegotiated with a 180ms ink draw animation. Marking something kept should feel like signing</li>
+      <li><b>Click a promise</b> — the row expands in place to show its evidence: the message, the transcript excerpt, the email. The page grows; nothing navigates away</li>
+      <li><b>Select a party</b> — others fade to 25% and the trust bars re-scale. The record stays whole</li>
+      <li>Promises cannot be deleted. A wrong promise is <b>withdrawn</b>, which leaves a struck line — the ledger's integrity is the product</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li>Extracts commitments from every channel — the core capability, and the one LLMs do best</li>
+      <li>Distinguishes a promise from a musing (“we could probably…” is not a promise) and errs toward not recording</li>
+      <li>Warns <b>before</b> a promise breaks, using the party's own history, not a generic reminder</li>
+      <li>Accumulates cross-studio vendor telemetry — real lead times, real reliability — which no incumbent can replicate</li>
+      <li>Tone guard: drafts chases that match the relationship's warmth. Never sends autonomously</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 09 -->
+<section id="c9">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">09</span><h2>Studio Wall</h2><span class="cstate s mono">Spec — ready to build</span></div>
+  <p class="thesis">Replace project management with one enormous evolving wall. Moodboards, drawings, voice notes, samples, pinned conversations — everything exists spatially. No folders, no pages, no navigation.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>The screen is <b>edge-to-edge canvas</b> — no panels at all. Content clusters by room, loosely, with generous voids between clusters. Items sit at deliberate angles (−6° to +7°) as if pinned by hand. The only chrome is a 44px translucent bar floating bottom-centre and a zoom indicator bottom-right.</p><p>Density is the aesthetic: this is the one screen in the set that is allowed to look full.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p><b>There is no navigation.</b> Only pan and zoom — the same two gestures a person uses standing in front of a real wall. Zoom level <em>is</em> hierarchy: at 25% you see rooms as coloured clusters, at 60% you see boards, at 100% you read notes, at 200% you inspect a material's weave.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>Studios already run on walls: pin, cluster, step back, discuss. Pinned references are the substrate of design thinking, not attachments to a task. This is the concept with the highest adoption ceiling and the lowest learning curve — and, on its own, no accountability, which is why it is the surface layer of the recommended composition rather than the whole product.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“That's my wall.” Recognition, not comprehension. A designer should feel their studio has been photographed.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900 with a subtle paper texture: fill #F2EEE7 plus a 6% opacity noise-feel overlay built from 2px dots at 22px pitch in #E4DED3. No header, no rules</dd>
+      <dt>Cluster</dt><dd>Four visible clusters — Kitchen (x120–560), Living (x600–1020), Bath (x1060–1360), plus a partial cluster cropped at the bottom edge to prove the canvas continues. Cluster label <b>Newsreader Light 28</b> ink/400 floating above each, no box</dd>
+      <dt>Pinned image</dt><dd>Sizes vary 120×90 to 260×200, r3 only, 8px paper border (a physical print), shadow 0 3 10 rgba(28,26,23,.14). Rotation −6° to +7°. Never aligned to each other</dd>
+      <dt>Material swatch</dt><dd>88×88 r6 gradient, no border, heavier shadow 0 4 12 rgba(28,26,23,.18) — swatches sit <em>on</em> the wall, images are pinned <em>to</em> it</dd>
+      <dt>Note</dt><dd>176×112 fill #FBF6E7, r2, 1px #EFE4C2, rotation ±4°. Text Newsreader Italic 14/145% ink/800 — handwriting register, never sans</dd>
+      <dt>Voice note</dt><dd>200×44 r999 paper with 1px hairline; inside, a 120×16 waveform of 28 rounded 2px bars in sage at varying heights, and mono 9 duration “0:42”</dd>
+      <dt>Pinned conversation</dt><dd>240×auto paper card r8, containing two Inter 12 message lines with 16Ø avatars — a chat fragment torn out and stuck to the wall</dd>
+      <dt>AI cluster halo</dt><dd>Around one cluster: a 1px dashed [6,6] #C4BAA9 rounded outline at 40% opacity, with a mono 9/14% label “AI · GROUPED BY ROOM”. Proof the wall organises itself</dd>
+      <dt>Floating bar</dt><dd>360×44 r999 centred at (540,824), fill paper at 88% with backdrop blur, shadow 0 8 24 rgba(28,26,23,.12). Contains four mono 10 lenses — WALL · GRAPH · ROOMS · LEDGER — active in ink/900, rest ink/400. This is the only UI on screen</dd>
+      <dt>Zoom</dt><dd>Bottom right (1360,832): mono 10 “62%” with a 1px 60px scale rule beneath</dd>
+      <dt>Responsive</dt><dd>The wall does not reflow — it is a coordinate space. Smaller viewports simply see less of it. Mobile is a viewport onto the same wall, with capture as the primary action</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Zoomed out to 22%</h4><p>The whole project as coloured clusters and no legible text — the “step back from the wall” view. Room names in Newsreader Light 40 float over each mass. Genuinely beautiful, and the fastest way to feel a project's shape.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Harden to presentation</h4><p>A cluster selected with a 1px ink marquee; a single serif line offers “Make this a presentation”. The right half of the screen previews the composed client page assembling itself from the chaos — the product's signature moment.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Multiplayer crit</h4><p>Three cursors with names in small serif labels, one dragging a swatch. A voice-note bubble is mid-recording. This replaces the pin-up meeting rather than scheduling one.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Drop anything, anywhere</b> — image, PDF, voice memo, URL. It lands where the cursor is, at a random small angle. No dialog, no folder choice, no naming</li>
+      <li><b>Zoom is hierarchy</b>: 25% clusters → 60% boards → 100% notes → 200% material detail. Labels fade in and out by zoom band, never by toggle</li>
+      <li><b>Lasso</b> a group and it becomes a cluster with an inline name field</li>
+      <li><b>Hold space</b> to pan anywhere; double-tap space to fit the whole wall. Two gestures run the entire product</li>
+      <li><b>Nothing snaps.</b> Deliberate — alignment would make it a grid, and a grid would make it a spreadsheet</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li><b>Clusters automatically</b> by room and by style, drawing the dashed halo — the designer can always dissolve it</li>
+      <li>Recognises products and materials in dropped images and quietly attaches vendor, price and lead time</li>
+      <li>Transcribes voice notes and indexes them so the wall is fully searchable without ever showing a search box</li>
+      <li>Proposes the presentation composition when a cluster matures</li>
+      <li>Notices duplicates and near-duplicates and offers to stack them, the way a person tidies a wall</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- 10 -->
+<section id="c10">
+<div class="concept">
+  <div class="chead"><span class="cnum mono">10</span><h2>Uncertainty Map</h2><span class="cstate s mono">Spec — ready to build</span></div>
+  <p class="thesis">The project seen as weather. The brighter an area, the more unknowns remain — budget, technical, supplier, client, construction — and AI forecasts where the storm arrives weeks before it does.</p>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Layout logic</div><p>A single <b>full-bleed topographic field</b> occupying x0–1080, with the floor plan drawn as thin ink linework <em>underneath</em> a field of soft concentric isobars. Areas of high uncertainty glow warm and their contours crowd together; resolved areas are flat and cool. A 360px right column holds the forecast as a written bulletin.</p><p>The visual reference is a barometric chart, not a heat map — contour lines, not blocky gradients.</p></div>
+    <div class="cell"><div class="k mono">Navigation philosophy</div><p>Navigate by <b>where the weather is</b>. There is no list of issues; you click into a pressure system. A five-step time slider at the bottom moves between “now” and “+6 weeks”, and the map animates its forecast — the only screen in the set where the primary interaction is watching.</p></div>
+    <div class="cell"><div class="k mono">Why it fits the model</div><p>Prioritisation in design is not “what's next” but “what's riskiest and least known”. RFIs, sample requests, unconfirmed dimensions and unreliable lead times are all the same object: an unknown with a blast radius. Sizing them spatially is honest about wickedness in a way a backlog never is.</p></div>
+    <div class="cell"><div class="k mono">Understood in five seconds</div><p>“There's a storm over the kitchen.” Universally legible — everyone has read a weather map — and it produces the right instinct: go to the weather, don't work down a list.</p></div>
+  </div>
+
+  <div class="specbox">
+    <div class="k mono">Figma build spec — primary workspace</div>
+    <dl>
+      <dt>Canvas</dt><dd>1440×900. Field fill is a very pale cool base #EEF0EE (the only cool ground in the set — weather instruments read cold), right column bone #FBF8F3</dd>
+      <dt>Plan underlay</dt><dd>Architectural linework as a single SVG: 0.75px #B9BDB8 walls, no fill, room names in mono 9/14% #9DA29C. Sits beneath everything at 60% opacity — present but never dominant</dd>
+      <dt>Pressure system</dt><dd>Per uncertainty cluster, 5–7 concentric closed contours drawn as smooth blob paths, 1px stroke. Colour ramps by severity: outermost #C9CFC7 → innermost #B4573A. Spacing is the information: 28px apart at low severity, 9px at high. Innermost contour carries a 14% fill of its stroke colour</dd>
+      <dt>Systems shown</dt><dd>Four: <b>Kitchen</b> (severe — supplier + budget, contours crowded, centred 430,380), <b>Guest bath</b> (moderate — technical, 700,560), <b>Entry</b> (mild — client indecision, 250,650), <b>Roof terrace</b> (forming — a dashed single contour at 820,240, meaning “predicted, not yet real”)</dd>
+      <dt>System label</dt><dd>Newsreader Light 22 name at the system's centre, ink/900, plus mono 9/12% beneath giving the dominant type — SUPPLIER / TECHNICAL / CLIENT / BUDGET / CONSTRUCTION</dd>
+      <dt>Blast radius</dt><dd>Hovering a system draws 1px terracotta leader lines to every object, drawing and decision it would damage, with counts in mono. Maximum eight leaders, then “+ n more”</dd>
+      <dt>Time slider</dt><dd>Bottom centre, 520×44: a 1px track with five ticks labelled mono 9 — NOW · +1w · +2w · +4w · +6w. Handle 24Ø paper with 1px ink stroke. Dragging morphs the contours with a 400ms ease</dd>
+      <dt>Bulletin</dt><dd>x1080 w360, hairline left. Head Newsreader Light 30 “Forecast” at y96. Then dated entries at 132px pitch: mono 10/14% date + type, Newsreader Regular 17/145% sentence, and a 1px rule. Written as weather: “A supplier system over the kitchen deepens through next week; expect it to reach the joinery package by 14 August.”</dd>
+      <dt>Legend</dt><dd>Bottom left (40,800): five 1px contour samples at increasing crowding with mono 9 labels “settled → unknown”. Explains the entire visual language in one 220px row</dd>
+      <dt>Colour discipline</dt><dd>Terracotta only in the innermost contours and in leader lines. A calm project is a screen of wide, pale, evenly spaced rings — the aesthetic reward for resolving things</dd>
+      <dt>Responsive</dt><dd>&lt;1200: bulletin becomes a bottom sheet; the field takes the full width. Mobile: the map is pinch-zoomable and the bulletin is the default view</dd>
+    </dl>
+  </div>
+
+  <div class="screens">
+    <div><div class="sn mono">Support A</div><h4>Inside a system</h4><p>The kitchen storm opened: its unknowns listed as serif sentences — “Is the slab wide enough for a single-piece island?” — each with its blast radius and the one action that would collapse it. Questions, not tasks.</p></div>
+    <div><div class="sn mono">Support B</div><h4>Six weeks out</h4><p>The slider at maximum: two systems have dissipated, one has merged with another and grown severe. A single serif line names the merge. Forecasting as a design act.</p></div>
+    <div><div class="sn mono">Support C</div><h4>Historical accuracy</h4><p>A quiet trust screen: past forecasts against what actually happened, as paired contour thumbnails. If the product predicts, it must be auditable — this is what earns the right to be believed.</p></div>
+  </div>
+
+  <div class="grid two">
+    <div class="cell"><div class="k mono">Interaction</div><ul>
+      <li><b>Hover a system</b> — contours pulse outward once (600ms) and leader lines draw to what it threatens</li>
+      <li><b>Drag the time slider</b> — contours morph continuously; systems visibly form, deepen, merge and dissipate. This is the product's memorable moment</li>
+      <li><b>Click a contour ring</b> — filters to unknowns at that severity, as sentences, in place</li>
+      <li><b>Resolving an unknown</b> — the innermost contour dissolves and the rings relax outward over 800ms. Progress you can watch, which no backlog burn-down ever achieves</li>
+      <li>No create button. Unknowns are detected, not entered — if you had to type it, you already knew it</li>
+    </ul></div>
+    <div class="cell"><div class="k mono">AI, embedded</div><ul>
+      <li><b>Finds the unknowns</b> — unanswered questions in threads, unconfirmed dimensions, quotes past validity, vendors with slipping history</li>
+      <li>Sizes blast radius by walking the decision graph, which is why this concept needs concept 01 underneath it</li>
+      <li>Forecasts formation: systems appear on the map <em>before</em> anyone has articulated the problem</li>
+      <li>Writes the bulletin in plain sentences and is scored publicly on its accuracy</li>
+      <li>Never assigns work. It reports weather; the studio decides where to sail</li>
+    </ul></div>
+  </div>
+</div>
+</section>
+
+<!-- MATRIX -->
+<section>
+  <div class="kicker mono">Side by side</div>
+  <h2>Ten universes, one table</h2>
+  <div class="tblwrap">
+    <table>
+      <tr><th>Concept</th><th>Primitive</th><th>Interface grammar</th><th>Ground</th><th>Emotional register</th></tr>
+      <tr><td class="n">01 Decision Graph</td><td>Decision</td><td>Node-link canvas + inspector</td><td>Ivory</td><td>Consequence</td></tr>
+      <tr><td class="n">02 Living Rooms</td><td>Room</td><td>Photographic card grid + plan key</td><td>Ivory</td><td>Care</td></tr>
+      <tr><td class="n">03 Object Journey</td><td>Object</td><td>Lifecycle track, left→right</td><td>Bone</td><td>Convergence</td></tr>
+      <tr><td class="n">04 Confidence Engine</td><td>Confidence</td><td>Flowing bands over time</td><td>Charcoal</td><td>Worry</td></tr>
+      <tr><td class="n">05 Ambient Memory</td><td>Fragment</td><td>Single chromeless column</td><td>Ivory</td><td>Relief</td></tr>
+      <tr><td class="n">06 Versioned World</td><td>Change</td><td>Trunk + branches on a scrubber</td><td>Ivory</td><td>Freedom</td></tr>
+      <tr><td class="n">07 Intent Network</td><td>Intent</td><td>Radial constellation with gravity</td><td>Bone</td><td>Conviction</td></tr>
+      <tr><td class="n">08 Promise Ledger</td><td>Promise</td><td>Ruled ledger page</td><td>Paper</td><td>Trust</td></tr>
+      <tr><td class="n">09 Studio Wall</td><td>Pin</td><td>Infinite spatial canvas</td><td>Textured paper</td><td>Recognition</td></tr>
+      <tr><td class="n">10 Uncertainty Map</td><td>Unknown</td><td>Contour weather field</td><td>Cool pale</td><td>Anticipation</td></tr>
+    </table>
+  </div>
+  <div class="callout">
+    <p><b>The composition worth building</b> — from the research phase, not a new claim: <b>09 Studio Wall</b> as the surface a designer lives on, <b>01 Decision Graph</b> as the data model beneath it, <b>05 Ambient Memory</b> as the engine that writes the graph without asking anyone to file anything. <b>03</b> hardens it into commerce; <b>10</b> reads the resulting graph as weather. The other four are lenses on the same substrate.</p>
+    <div class="who mono">Where this set points</div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="f">
+    <p>Ten Futures · build specifications v1.0 · companion to the Figma file “Ten Futures — Operating Systems for Design Studios”. Foundations, concepts 01–05 built; 06–10 and all supporting screens specified here at build fidelity. Every measurement is a decision, not a placeholder.</p>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    var b=document.getElementById('tg');
+    function cur(){var a=document.documentElement.getAttribute('data-theme');
+      return a?a:(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
+    b.addEventListener('click',function(){document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
+  })();
+</script>
