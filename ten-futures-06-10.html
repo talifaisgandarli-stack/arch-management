@@ -1,0 +1,612 @@
+<title>Ten Futures — Concepts 06–10</title>
+<style>
+  :root{
+    --bg:#F5F1EA;--card:#FFF;--bone:#FBF8F3;--paper:#FFFFFF;--stone:#EAE4DA;
+    --ink:#1C1A17;--i8:#3C3833;--i6:#7A7166;--i4:#A79E92;
+    --hair:#DDD5C8;--hair2:#EFEAE1;--line:#C4BAA9;
+    --terr:#B4573A;--terrS:#F2E2DA;--sage:#79876F;--sageS:#E4E9DF;--brass:#A4823C;
+    --pageBg:#EDE9E1;
+  }
+  @media (prefers-color-scheme:dark){ :root{ --pageBg:#171614; } }
+  :root[data-theme="light"]{--pageBg:#EDE9E1}
+  :root[data-theme="dark"]{--pageBg:#171614}
+
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--pageBg);color:#1C1A17;
+    font-family:"Avenir Next",Avenir,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .serif{font-family:"Iowan Old Style","Palatino Linotype",Palatino,"Hoefler Text",Georgia,serif}
+  .mono{font-family:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace}
+
+  /* page chrome */
+  .page{max-width:1180px;margin:0 auto;padding:3rem 1.5rem 5rem}
+  .masthead{margin-bottom:2.6rem}
+  .masthead .k{font-family:"SF Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:#9A9186}
+  .masthead h1{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-weight:400;font-size:clamp(2.2rem,5.5vw,3.6rem);letter-spacing:-.03em;line-height:1.02;margin:.5rem 0 0;color:#1C1A17}
+  .masthead p{max-width:640px;color:#6A6459;font-size:1.06rem;line-height:1.55;margin:.9rem 0 0}
+  @media (prefers-color-scheme:dark){.masthead h1{color:#EDE8DE}.masthead p{color:#A9A296}.masthead .k{color:#6F685D}}
+  :root[data-theme="dark"] .masthead h1{color:#EDE8DE}
+  :root[data-theme="dark"] .masthead p{color:#A9A296}
+  :root[data-theme="light"] .masthead h1{color:#1C1A17}
+  :root[data-theme="light"] .masthead p{color:#6A6459}
+
+  .tg{position:fixed;top:16px;right:16px;z-index:99;font-family:"SF Mono",ui-monospace,monospace;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;background:rgba(255,255,255,.8);backdrop-filter:blur(8px);border:1px solid rgba(28,26,23,.18);color:#5F594F;padding:.4rem .65rem;border-radius:999px;cursor:pointer}
+  @media (prefers-color-scheme:dark){.tg{background:rgba(35,34,32,.8);border-color:rgba(237,232,222,.2);color:#A9A296}}
+  .tg:focus-visible{outline:2px solid var(--terr);outline-offset:3px}
+
+  .shot{margin:0 0 4.2rem}
+  .shot .cap{display:flex;align-items:baseline;gap:.9rem;flex-wrap:wrap;margin-bottom:.9rem}
+  .shot .cn{font-family:"SF Mono",ui-monospace,monospace;font-size:.74rem;color:var(--terr);font-weight:600}
+  .shot .ct{font-family:"Iowan Old Style",Palatino,Georgia,serif;font-size:1.5rem;letter-spacing:-.01em;color:#1C1A17}
+  .shot .cd{font-size:.92rem;color:#6A6459;flex:1 1 320px;line-height:1.5}
+  @media (prefers-color-scheme:dark){.shot .ct{color:#EDE8DE}.shot .cd{color:#A9A296}}
+  :root[data-theme="dark"] .shot .ct{color:#EDE8DE}
+  :root[data-theme="dark"] .shot .cd{color:#A9A296}
+  :root[data-theme="light"] .shot .ct{color:#1C1A17}
+  :root[data-theme="light"] .shot .cd{color:#6A6459}
+
+  .wrap{position:relative;width:100%;aspect-ratio:1440/900;overflow:hidden;border-radius:10px;
+    box-shadow:0 1px 2px rgba(28,26,23,.08),0 18px 50px rgba(28,26,23,.14)}
+  .frame{position:absolute;top:0;left:0;width:1440px;height:900px;transform-origin:0 0;overflow:hidden}
+  .frame *{position:absolute;margin:0}
+  .frame .fl{position:static}
+
+  /* shared atoms */
+  .hair{background:var(--hair)}
+  .t{white-space:pre}
+  .ell{border-radius:50%}
+</style>
+
+<button class="tg mono" id="tg" aria-label="Toggle theme">◐ Theme</button>
+
+<div class="page">
+  <div class="masthead">
+    <div class="k mono">Ten Futures · concepts 06–10 · 1440 × 900</div>
+    <h1>Five more universes.</h1>
+    <p>The remaining half of the set, rendered at full fidelity. Same palette, same type ramp, same 8pt grid as concepts 01–05 in Figma — and five completely different ideas about what work <em>is</em>.</p>
+  </div>
+
+  <!-- ══════════════ 06 VERSIONED WORLD ══════════════ -->
+  <div class="shot">
+    <div class="cap"><span class="cn mono">06</span><span class="ct">Versioned World</span>
+      <span class="cd">Options are branches, decisions are merges, the issued set is a tag — and not one technical word appears on screen.</span></div>
+    <div class="wrap"><div class="frame" style="background:#F5F1EA">
+
+      <div style="left:0;top:63px;width:1440px;height:1px;background:#DDD5C8"></div>
+      <div class="serif" style="left:96px;top:20px;font-size:21px;color:#1C1A17">Villa Kastel</div>
+      <div class="mono" style="left:232px;top:27px;font-size:10px;letter-spacing:.14em;color:#A79E92">TIMELINE</div>
+      <div style="left:312px;top:26px;width:1px;height:12px;background:#C4BAA9"></div>
+      <div class="mono" style="left:332px;top:27px;font-size:10px;letter-spacing:.14em;color:#A79E92">214 CHANGES · HEAD @ REV D</div>
+      <div class="ell" style="left:1196px;top:22px;width:20px;height:20px;background:#79876F;border:2px solid #F5F1EA"></div>
+      <div class="ell" style="left:1218px;top:22px;width:20px;height:20px;background:#A4823C;border:2px solid #F5F1EA"></div>
+      <div style="left:1288px;top:20px;width:56px;height:24px;border:1px solid #C4BAA9;border-radius:999px"></div>
+      <div class="mono" style="left:1303px;top:26px;font-size:10px;letter-spacing:.06em;color:#7A7166">⌘K</div>
+      <div style="left:1362px;top:25px;font-size:13px;font-weight:600;color:#1C1A17">Present</div>
+
+      <!-- branches svg -->
+      <svg style="left:0;top:0" width="1440" height="900">
+        <!-- live branch above: warm kitchen -->
+        <path d="M 300 470 C 340 470 348 330 400 330 L 520 330" fill="none" stroke="#79876F" stroke-width="1.5"/>
+        <!-- abandoned above -->
+        <path d="M 436 470 C 470 470 476 250 528 250 L 610 250" fill="none" stroke="#C4BAA9" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>
+        <!-- merged below -->
+        <path d="M 232 470 C 268 470 274 640 322 640 L 470 640 C 520 640 526 470 566 470" fill="none" stroke="#C4BAA9" stroke-width="1"/>
+        <!-- live branch below: tighter joinery -->
+        <path d="M 640 470 C 682 470 690 660 742 660 L 880 660" fill="none" stroke="#79876F" stroke-width="1.5"/>
+        <!-- abandoned below -->
+        <path d="M 776 470 C 806 470 812 592 858 592 L 918 592" fill="none" stroke="#C4BAA9" stroke-width="1" stroke-dasharray="4 4" opacity=".6"/>
+        <!-- forming branch above right -->
+        <path d="M 844 470 C 884 470 892 372 940 372 L 1000 372" fill="none" stroke="#79876F" stroke-width="1.5"/>
+      </svg>
+
+      <!-- trunk -->
+      <div style="left:96px;top:469px;width:924px;height:2px;background:#26241F"></div>
+
+      <!-- commits -->
+      <div class="ell" style="left:91px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:159px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:227px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:295px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:363px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:431px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:561px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:635px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:703px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:771px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:839px;top:464px;width:10px;height:10px;background:#26241F"></div>
+      <div class="ell" style="left:907px;top:464px;width:10px;height:10px;background:#26241F"></div>
+
+      <!-- tags -->
+      <div class="ell" style="left:118px;top:460px;width:20px;height:20px;border:1.5px solid #A4823C"></div>
+      <div class="mono" style="left:92px;top:432px;font-size:9px;letter-spacing:.12em;color:#A4823C">CONCEPT</div>
+      <div class="ell" style="left:492px;top:460px;width:20px;height:20px;border:1.5px solid #A4823C"></div>
+      <div class="mono" style="left:456px;top:432px;font-size:9px;letter-spacing:.12em;color:#A4823C">ISSUED · DD SET</div>
+      <div class="ell" style="left:968px;top:460px;width:20px;height:20px;border:1.5px solid #A4823C;background:#F5F1EA"></div>
+      <div class="mono" style="left:944px;top:432px;font-size:9px;letter-spacing:.12em;color:#A4823C">REV D · NOW</div>
+
+      <!-- branch heads -->
+      <div style="left:520px;top:294px;width:96px;height:72px;border-radius:8px;border:2px solid #fff;background:linear-gradient(145deg,#DCCFB6,#A88A5E);box-shadow:0 2px 8px rgba(28,26,23,.12)"></div>
+      <div style="left:520px;top:374px;font-size:12px;font-weight:600;color:#1C1A17">Warm kitchen</div>
+      <div class="mono" style="left:520px;top:392px;font-size:9px;letter-spacing:.12em;color:#A79E92">6 DAYS · LIVE</div>
+
+      <div style="left:610px;top:214px;width:96px;height:72px;border-radius:8px;border:2px solid #fff;background:linear-gradient(145deg,#D3D8D0,#8E9689);box-shadow:0 2px 8px rgba(28,26,23,.08);opacity:.55"></div>
+      <div style="left:610px;top:294px;font-size:12px;color:#A79E92">Open plan</div>
+      <div class="mono" style="left:610px;top:312px;font-size:9px;letter-spacing:.12em;color:#A79E92">SET ASIDE</div>
+
+      <div style="left:880px;top:624px;width:96px;height:72px;border-radius:8px;border:2px solid #fff;background:linear-gradient(145deg,#C9BCA8,#7E7060);box-shadow:0 2px 8px rgba(28,26,23,.12)"></div>
+      <div style="left:880px;top:704px;font-size:12px;font-weight:600;color:#1C1A17">Tighter joinery</div>
+      <div class="mono" style="left:880px;top:722px;font-size:9px;letter-spacing:.12em;color:#A79E92">2 DAYS · LIVE</div>
+
+      <div style="left:918px;top:556px;width:76px;height:58px;border-radius:8px;border:2px solid #fff;background:linear-gradient(145deg,#E0DACE,#ADA492);opacity:.5"></div>
+      <div style="left:918px;top:620px;font-size:11px;color:#A79E92">Stone island</div>
+
+      <div style="left:1000px;top:336px;width:76px;height:58px;border-radius:8px;border:2px dashed #C4BAA9;background:rgba(226,231,223,.4)"></div>
+      <div class="mono" style="left:1000px;top:400px;font-size:9px;letter-spacing:.12em;color:#79876F">AI · SUGGESTED</div>
+
+      <div class="ell" style="left:604px;top:246px;width:8px;height:8px;border:1px solid #C4BAA9;background:#F5F1EA"></div>
+      <div class="ell" style="left:912px;top:588px;width:8px;height:8px;border:1px solid #C4BAA9;background:#F5F1EA"></div>
+
+      <!-- scrubber -->
+      <div style="left:96px;top:820px;width:924px;height:1px;background:#C4BAA9"></div>
+      <div style="left:159px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div style="left:295px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div style="left:431px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div style="left:561px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div style="left:703px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div style="left:839px;top:817px;width:1px;height:6px;background:#A79E92"></div>
+      <div class="ell" style="left:954px;top:807px;width:28px;height:28px;background:#fff;border:1px solid #26241F;box-shadow:0 2px 8px rgba(28,26,23,.14)"></div>
+      <div class="mono" style="left:938px;top:786px;font-size:10px;letter-spacing:.1em;color:#7A7166">26 JUL</div>
+      <div class="mono" style="left:96px;top:840px;font-size:9px;letter-spacing:.12em;color:#A79E92">MARCH</div>
+      <div class="mono" style="left:962px;top:840px;font-size:9px;letter-spacing:.12em;color:#A79E92">NOW</div>
+
+      <!-- compare panel -->
+      <div style="left:1060px;top:64px;width:380px;height:836px;background:#FBF8F3"></div>
+      <div style="left:1060px;top:64px;width:1px;height:836px;background:#DDD5C8"></div>
+      <div class="mono" style="left:1100px;top:100px;font-size:9px;letter-spacing:.14em;color:#A79E92">HEAD · REV D</div>
+      <div style="left:1100px;top:120px;width:300px;height:180px;border-radius:10px;background:linear-gradient(150deg,#CFC4B2,#8F8272)"></div>
+      <div style="left:1100px;top:320px;width:300px;height:1px;background:#DDD5C8"></div>
+      <div style="left:1218px;top:310px;width:64px;height:20px;border-radius:999px;background:#26241F"></div>
+      <div class="mono" style="left:1218px;top:315px;width:64px;text-align:center;font-size:9px;letter-spacing:.1em;color:#FBF8F3">DIFF</div>
+      <div class="mono" style="left:1100px;top:348px;font-size:9px;letter-spacing:.14em;color:#79876F">BRANCH · WARM KITCHEN</div>
+      <div style="left:1100px;top:368px;width:300px;height:180px;border-radius:10px;background:linear-gradient(150deg,#DCCFB6,#A88A5E)"></div>
+
+      <div class="mono" style="left:1100px;top:580px;font-size:9px;letter-spacing:.14em;color:#A79E92">WHAT CHANGES</div>
+      <div class="mono" style="left:1100px;top:610px;font-size:9px;letter-spacing:.1em;color:#79876F">ADDED</div>
+      <div style="left:1176px;top:606px;font-size:13px;color:#3C3833">Timber ceiling battens</div>
+      <div style="left:1100px;top:640px;width:300px;height:1px;background:#EFEAE1"></div>
+      <div class="mono" style="left:1100px;top:654px;font-size:9px;letter-spacing:.1em;color:#A4823C">REPLACED</div>
+      <div style="left:1176px;top:650px;font-size:13px;color:#3C3833">Terrazzo → travertine</div>
+      <div style="left:1100px;top:684px;width:300px;height:1px;background:#EFEAE1"></div>
+      <div class="mono" style="left:1100px;top:698px;font-size:9px;letter-spacing:.1em;color:#B4573A">REMOVED</div>
+      <div style="left:1176px;top:694px;font-size:13px;color:#3C3833">Seating overhang</div>
+      <div style="left:1100px;top:728px;width:300px;height:1px;background:#EFEAE1"></div>
+      <div class="serif" style="left:1100px;top:744px;font-size:15px;font-style:italic;color:#7A7166;width:300px">The island grew 200 mm and lost<br>the seating overhang.</div>
+      <div style="left:1100px;top:822px;font-size:13px;font-weight:600;color:#1C1A17">Adopt this reality</div>
+      <div style="left:1100px;top:842px;width:128px;height:1px;background:#1C1A17"></div>
+
+    </div></div>
+  </div>
+
+  <!-- ══════════════ 07 INTENT NETWORK ══════════════ -->
+  <div class="shot">
+    <div class="cap"><span class="cn mono">07</span><span class="ct">Intent Network</span>
+      <span class="cd">Intentions are first-class objects. Strong intents pull toward the centre; every decision strengthens or erodes them.</span></div>
+    <div class="wrap"><div class="frame" style="background:#FBF8F3">
+
+      <div class="serif" style="left:40px;top:30px;font-size:21px;color:#1C1A17">Villa Kastel</div>
+      <div class="mono" style="left:176px;top:37px;font-size:10px;letter-spacing:.14em;color:#A79E92">SIX INTENTS · 214 DECISIONS</div>
+      <div class="serif" style="left:1188px;top:32px;font-size:15px;font-style:italic;color:#A79E92">Nothing here is a deliverable.</div>
+
+      <!-- orbits + field -->
+      <svg style="left:0;top:0" width="1440" height="900">
+        <circle cx="700" cy="470" r="180" fill="none" stroke="#E2DCD1" stroke-width="1"/>
+        <circle cx="700" cy="470" r="280" fill="none" stroke="#E2DCD1" stroke-width="1"/>
+        <circle cx="700" cy="470" r="380" fill="none" stroke="#E2DCD1" stroke-width="1"/>
+        <!-- tension lines -->
+        <line x1="912" y1="330" x2="560" y2="672" stroke="#B4573A" stroke-width="1" opacity=".5"/>
+        <line x1="470" y1="392" x2="912" y2="330" stroke="#B4573A" stroke-width="1" opacity=".35"/>
+        <line x1="838" y1="672" x2="470" y2="392" stroke="#B4573A" stroke-width="1" opacity=".3"/>
+      </svg>
+
+      <!-- decision dots -->
+      <div class="ell" style="left:648px;top:352px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:722px;top:388px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:600px;top:430px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:790px;top:436px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:676px;top:494px;width:7px;height:7px;background:#C4BAA9"></div>
+      <div class="ell" style="left:754px;top:520px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:582px;top:534px;width:7px;height:7px;background:#B4573A"></div>
+      <div class="ell" style="left:836px;top:372px;width:7px;height:7px;background:#B4573A"></div>
+      <div class="ell" style="left:544px;top:340px;width:7px;height:7px;background:#C4BAA9"></div>
+      <div class="ell" style="left:868px;top:520px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:626px;top:596px;width:7px;height:7px;background:#B4573A"></div>
+      <div class="ell" style="left:498px;top:462px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:920px;top:462px;width:7px;height:7px;background:#C4BAA9"></div>
+      <div class="ell" style="left:742px;top:290px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:806px;top:604px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:466px;top:588px;width:7px;height:7px;background:#C4BAA9"></div>
+      <div class="ell" style="left:960px;top:376px;width:7px;height:7px;background:#79876F"></div>
+      <div class="ell" style="left:700px;top:660px;width:7px;height:7px;background:#79876F"></div>
+
+      <!-- intents -->
+      <div class="serif" style="left:806px;top:300px;font-size:34px;letter-spacing:-.02em;color:#1C1A17">Warm hospitality</div>
+      <div style="left:806px;top:346px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:806px;top:346px;width:98px;height:3px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:936px;top:340px;font-size:10px;letter-spacing:.1em;color:#7A7166">82</div>
+
+      <div class="serif" style="left:404px;top:362px;font-size:34px;letter-spacing:-.02em;color:#1C1A17">Maximise daylight</div>
+      <div style="left:404px;top:408px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:404px;top:408px;width:110px;height:3px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:534px;top:402px;font-size:10px;letter-spacing:.1em;color:#7A7166">91</div>
+
+      <div class="serif" style="left:462px;top:642px;font-size:34px;letter-spacing:-.02em;color:#A79E92">Reduce visual clutter</div>
+      <div style="left:462px;top:688px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:462px;top:688px;width:46px;height:3px;border-radius:2px;background:#B4573A"></div>
+      <div class="mono" style="left:592px;top:682px;font-size:10px;letter-spacing:.1em;color:#B4573A">38</div>
+
+      <div class="serif" style="left:838px;top:642px;font-size:34px;letter-spacing:-.02em;color:#1C1A17">Family-friendly</div>
+      <div style="left:838px;top:688px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:838px;top:688px;width:86px;height:3px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:968px;top:682px;font-size:10px;letter-spacing:.1em;color:#7A7166">72</div>
+
+      <div class="serif" style="left:1012px;top:462px;font-size:28px;letter-spacing:-.02em;color:#A79E92">Biophilic</div>
+      <div style="left:1012px;top:502px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:1012px;top:502px;width:58px;height:3px;border-radius:2px;background:#A4823C"></div>
+      <div class="mono" style="left:1142px;top:496px;font-size:10px;letter-spacing:.1em;color:#7A7166">48</div>
+
+      <div class="serif" style="left:330px;top:496px;font-size:28px;letter-spacing:-.02em;color:#1C1A17">One stone gesture</div>
+      <div style="left:330px;top:536px;width:120px;height:3px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:330px;top:536px;width:76px;height:3px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:460px;top:530px;font-size:10px;letter-spacing:.1em;color:#7A7166">64</div>
+
+      <!-- left rail -->
+      <div style="left:288px;top:64px;width:1px;height:836px;background:#EFEAE1"></div>
+      <div class="mono" style="left:40px;top:104px;font-size:9px;letter-spacing:.14em;color:#A79E92">INTENTS · BY STRENGTH</div>
+      <div style="left:24px;top:136px;width:2px;height:52px;background:#1C1A17"></div>
+      <div style="left:40px;top:136px;font-size:14px;font-weight:600;color:#1C1A17">Maximise daylight</div>
+      <div style="left:40px;top:162px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:162px;width:182px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:174px;font-size:10px;letter-spacing:.1em;color:#79876F">+4 this month</div>
+
+      <div style="left:40px;top:232px;font-size:14px;font-weight:600;color:#1C1A17">Warm hospitality</div>
+      <div style="left:40px;top:258px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:258px;width:164px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:270px;font-size:10px;letter-spacing:.1em;color:#A79E92">unchanged</div>
+
+      <div style="left:40px;top:328px;font-size:14px;font-weight:600;color:#1C1A17">Family-friendly</div>
+      <div style="left:40px;top:354px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:354px;width:144px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:366px;font-size:10px;letter-spacing:.1em;color:#79876F">+2 this month</div>
+
+      <div style="left:40px;top:424px;font-size:14px;font-weight:600;color:#1C1A17">One stone gesture</div>
+      <div style="left:40px;top:450px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:450px;width:128px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:462px;font-size:10px;letter-spacing:.1em;color:#B4573A">−6 this month</div>
+
+      <div style="left:40px;top:520px;font-size:14px;font-weight:600;color:#1C1A17">Biophilic</div>
+      <div style="left:40px;top:546px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:546px;width:96px;height:4px;border-radius:2px;background:#A4823C"></div>
+      <div class="mono" style="left:40px;top:558px;font-size:10px;letter-spacing:.1em;color:#A79E92">unchanged</div>
+
+      <div style="left:40px;top:616px;font-size:14px;font-weight:600;color:#B4573A">Reduce visual clutter</div>
+      <div style="left:40px;top:642px;width:200px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:642px;width:76px;height:4px;border-radius:2px;background:#B4573A"></div>
+      <div class="mono" style="left:40px;top:654px;font-size:10px;letter-spacing:.1em;color:#B4573A">−12 this month</div>
+
+      <div class="mono" style="left:40px;top:730px;font-size:9px;letter-spacing:.14em;color:#B4573A">AI · EROSION</div>
+      <div class="serif" style="left:40px;top:752px;width:216px;font-size:17px;font-style:italic;line-height:1.45;color:#3C3833">Reduce visual clutter has weakened four times since June — always through joinery decisions.</div>
+
+    </div></div>
+  </div>
+
+  <!-- ══════════════ 08 PROMISE LEDGER ══════════════ -->
+  <div class="shot">
+    <div class="cap"><span class="cn mono">08</span><span class="ct">Promise Ledger</span>
+      <span class="cd">Every commitment anyone made, dated and mutual. Designed as a book of trust — ruled paper, drawn marks, no accounting.</span></div>
+    <div class="wrap"><div class="frame" style="background:#F5F1EA">
+
+      <!-- trust summary, outside the page -->
+      <div class="mono" style="left:40px;top:150px;font-size:9px;letter-spacing:.14em;color:#A79E92">TRUST</div>
+      <div style="left:40px;top:182px;font-size:13px;font-weight:600;color:#1C1A17">Leyla · client</div>
+      <div style="left:40px;top:204px;width:160px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:204px;width:132px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:216px;font-size:10px;color:#7A7166">14 / 17 kept</div>
+
+      <div style="left:40px;top:266px;font-size:13px;font-weight:600;color:#1C1A17">Studio</div>
+      <div style="left:40px;top:288px;width:160px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:288px;width:150px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:300px;font-size:10px;color:#7A7166">31 / 34 kept</div>
+
+      <div style="left:40px;top:350px;font-size:13px;font-weight:600;color:#1C1A17">Ferro Stone</div>
+      <div style="left:40px;top:372px;width:160px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:372px;width:64px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div style="left:104px;top:372px;width:40px;height:4px;border-radius:2px;background:#B4573A"></div>
+      <div class="mono" style="left:40px;top:384px;font-size:10px;color:#B4573A">6 / 11 kept</div>
+
+      <div style="left:40px;top:434px;font-size:13px;font-weight:600;color:#1C1A17">Kabak Joinery</div>
+      <div style="left:40px;top:456px;width:160px;height:4px;border-radius:2px;background:#EAE4DA"></div>
+      <div style="left:40px;top:456px;width:142px;height:4px;border-radius:2px;background:#79876F"></div>
+      <div class="mono" style="left:40px;top:468px;font-size:10px;color:#7A7166">9 / 10 kept</div>
+
+      <div class="serif" style="left:40px;top:760px;width:200px;font-size:16px;font-style:italic;line-height:1.45;color:#A79E92">Nothing here was typed on purpose. It was all said out loud first.</div>
+
+      <!-- the page -->
+      <div style="left:280px;top:56px;width:880px;height:820px;background:#FFFFFF;border-radius:2px;box-shadow:0 1px 3px rgba(28,26,23,.06),0 18px 48px rgba(28,26,23,.07)"></div>
+
+      <div class="serif" style="left:320px;top:80px;font-size:34px;color:#1C1A17">Promises</div>
+      <div class="mono" style="left:860px;top:94px;width:260px;text-align:right;font-size:10px;letter-spacing:.16em;color:#A79E92">47 OPEN · 3 AT RISK</div>
+      <!-- party avatars -->
+      <div class="ell" style="left:320px;top:130px;width:24px;height:24px;background:#79876F;border:1.5px solid #fff"></div>
+      <div class="ell" style="left:340px;top:130px;width:24px;height:24px;background:#A4823C;border:1.5px solid #fff"></div>
+      <div class="ell" style="left:360px;top:130px;width:24px;height:24px;background:#B4573A;border:1.5px solid #fff"></div>
+      <div class="ell" style="left:380px;top:130px;width:24px;height:24px;background:#8A8378;border:1.5px solid #fff;opacity:.45"></div>
+      <div class="ell" style="left:400px;top:130px;width:24px;height:24px;background:#6F7A68;border:1.5px solid #fff;opacity:.45"></div>
+      <div style="left:320px;top:170px;width:800px;height:1px;background:#DDD5C8"></div>
+
+      <!-- date gutter -->
+      <div style="left:416px;top:170px;width:1px;height:660px;background:#DDD5C8"></div>
+
+      <!-- rulings -->
+      <div style="left:320px;top:226px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:282px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:394px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:450px;width:800px;height:1.5px;background:#B4573A"></div>
+      <div style="left:320px;top:506px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:618px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:674px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:730px;width:800px;height:1px;background:#EFEAE1"></div>
+      <div style="left:320px;top:786px;width:800px;height:1px;background:#EFEAE1"></div>
+
+      <!-- rows -->
+      <div class="mono" style="left:332px;top:192px;font-size:10px;color:#A79E92">12 JUN</div>
+      <div class="serif" style="left:432px;top:186px;font-size:17px;color:#1C1A17">Revised elevations to the client by Friday <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Studio</span></div>
+      <svg style="left:1020px;top:188px" width="16" height="16"><path d="M2 8 L6 12 L14 3" fill="none" stroke="#79876F" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <div class="mono" style="left:332px;top:248px;font-size:10px;color:#A79E92">14 JUN</div>
+      <div class="serif" style="left:432px;top:242px;font-size:17px;color:#1C1A17">Approve the travertine before ordering <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Leyla</span></div>
+      <svg style="left:1020px;top:244px" width="16" height="16"><path d="M2 8 L6 12 L14 3" fill="none" stroke="#79876F" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <div class="mono" style="left:332px;top:304px;font-size:10px;color:#A79E92">21 JUN</div>
+      <div class="serif" style="left:432px;top:298px;font-size:17px;color:#1C1A17">Slab held in the yard for four weeks <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Ferro Stone</span></div>
+      <div class="serif" style="left:432px;top:328px;font-size:14px;font-style:italic;color:#7A7166">“We'll keep it aside for you, no problem.” · site visit, 21 Jun</div>
+      <svg style="left:1020px;top:300px" width="16" height="16"><path d="M2 8 L6 12 L14 3" fill="none" stroke="#79876F" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <div class="mono" style="left:332px;top:416px;font-size:10px;color:#A79E92">28 JUN</div>
+      <div class="serif" style="left:432px;top:410px;font-size:17px;color:#1C1A17">Joinery shop drawings within ten days <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Kabak Joinery</span></div>
+      <svg style="left:1020px;top:412px" width="16" height="16"><path d="M2 8 L6 12 L14 3" fill="none" stroke="#79876F" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <div class="mono" style="left:332px;top:472px;font-size:10px;color:#B4573A">05 JUL</div>
+      <div class="serif" style="left:432px;top:466px;font-size:17px;color:#1C1A17">Island top delivered by 8 August <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Ferro Stone</span></div>
+      <svg style="left:1020px;top:468px" width="16" height="16"><path d="M3 3 L13 13" fill="none" stroke="#B4573A" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <div class="mono" style="left:1046px;top:472px;font-size:9px;letter-spacing:.1em;color:#B4573A">18 DAYS LATE</div>
+
+      <div class="mono" style="left:332px;top:528px;font-size:10px;color:#A79E92">11 JUL</div>
+      <div class="serif" style="left:432px;top:522px;font-size:17px;color:#1C1A17">Second bathroom scheme by month end <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Studio</span></div>
+      <div class="serif" style="left:432px;top:552px;font-size:14px;font-style:italic;color:#7A7166">Renegotiated to 7 Aug with Leyla's agreement · 24 Jul</div>
+      <svg style="left:1020px;top:524px" width="16" height="16"><path d="M2 8 L13 8 M9 4 L13 8 L9 12" fill="none" stroke="#A4823C" stroke-width="1.5" stroke-linecap="round"/></svg>
+
+      <div class="mono" style="left:332px;top:640px;font-size:10px;color:#A79E92">18 JUL</div>
+      <div class="serif" style="left:432px;top:634px;font-size:17px;color:#1C1A17">Decide on the pantry by next Tuesday <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Leyla</span></div>
+      <div class="ell" style="left:1022px;top:642px;width:10px;height:10px;border:1px solid #A79E92"></div>
+
+      <div class="mono" style="left:332px;top:696px;font-size:10px;color:#A79E92">24 JUL</div>
+      <div class="serif" style="left:432px;top:690px;font-size:17px;color:#1C1A17">Send the revised stone quote tomorrow <span style="color:#7A7166;font-size:12px;font-family:'Avenir Next',sans-serif">— Ferro Stone</span></div>
+      <div class="ell" style="left:1022px;top:698px;width:10px;height:10px;border:1px solid #A79E92"></div>
+
+      <div class="mono" style="left:332px;top:752px;font-size:10px;color:#A79E92">26 JUL</div>
+      <div class="serif" style="left:432px;top:746px;font-size:17px;color:#A79E92;text-decoration:line-through">Two extra render angles at no charge <span style="font-size:12px;font-family:'Avenir Next',sans-serif">— Studio</span></div>
+      <div class="mono" style="left:1000px;top:752px;font-size:9px;letter-spacing:.1em;color:#A79E92">WITHDRAWN</div>
+
+      <div class="mono" style="left:320px;top:842px;font-size:9px;letter-spacing:.14em;color:#A79E92">EVERY LINE HERE WAS SAID OUT LOUD FIRST.</div>
+
+    </div></div>
+  </div>
+
+  <!-- ══════════════ 09 STUDIO WALL ══════════════ -->
+  <div class="shot">
+    <div class="cap"><span class="cn mono">09</span><span class="ct">Studio Wall</span>
+      <span class="cd">No folders, no pages, no navigation. One enormous wall where zoom level <em>is</em> hierarchy — and nothing snaps to a grid.</span></div>
+    <div class="wrap"><div class="frame" style="background:#F2EEE7;background-image:radial-gradient(#E4DED3 1px,transparent 1px);background-size:22px 22px">
+
+      <!-- KITCHEN CLUSTER -->
+      <div class="serif" style="left:150px;top:96px;font-size:28px;color:#A79E92">Kitchen</div>
+      <div style="left:120px;top:150px;width:230px;height:176px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#DCCFB6,#A88A5E);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(-3deg)"></div>
+      <div style="left:368px;top:186px;width:150px;height:118px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#CFC4B2,#8F8272);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(4deg)"></div>
+      <div style="left:172px;top:352px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#E0D3C0,#B39A79);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(-6deg)"></div>
+      <div style="left:270px;top:364px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#CFC7BA,#9E9384);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(3deg)"></div>
+      <div style="left:368px;top:346px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#4A4844,#22201D);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(-2deg)"></div>
+      <div class="serif" style="left:126px;top:474px;width:160px;font-size:14px;font-style:italic;line-height:1.45;color:#3C3833;background:#FBF6E7;border:1px solid #EFE4C2;border-radius:2px;padding:14px;transform:rotate(-2deg);box-shadow:0 2px 8px rgba(28,26,23,.1)">warm tones — she'd rather lose the pantry than shrink the island</div>
+      <div style="left:322px;top:492px;width:200px;height:44px;border-radius:999px;background:#fff;border:1px solid #DDD5C8;transform:rotate(2deg);box-shadow:0 2px 8px rgba(28,26,23,.08)"></div>
+      <svg style="left:344px;top:506px;transform:rotate(2deg)" width="120" height="16">
+        <g fill="#79876F"><rect x="0" y="6" width="2" height="4" rx="1"/><rect x="5" y="3" width="2" height="10" rx="1"/><rect x="10" y="1" width="2" height="14" rx="1"/><rect x="15" y="5" width="2" height="6" rx="1"/><rect x="20" y="2" width="2" height="12" rx="1"/><rect x="25" y="6" width="2" height="4" rx="1"/><rect x="30" y="0" width="2" height="16" rx="1"/><rect x="35" y="4" width="2" height="8" rx="1"/><rect x="40" y="7" width="2" height="3" rx="1"/><rect x="45" y="2" width="2" height="12" rx="1"/><rect x="50" y="5" width="2" height="6" rx="1"/><rect x="55" y="1" width="2" height="14" rx="1"/><rect x="60" y="6" width="2" height="4" rx="1"/><rect x="65" y="3" width="2" height="10" rx="1"/><rect x="70" y="7" width="2" height="3" rx="1"/><rect x="75" y="4" width="2" height="8" rx="1"/><rect x="80" y="2" width="2" height="12" rx="1"/><rect x="85" y="6" width="2" height="4" rx="1"/><rect x="90" y="5" width="2" height="6" rx="1"/><rect x="95" y="7" width="2" height="3" rx="1"/></g>
+      </svg>
+      <div class="mono" style="left:478px;top:512px;font-size:9px;color:#7A7166;transform:rotate(2deg)">0:42</div>
+      <!-- AI halo -->
+      <div style="left:100px;top:132px;width:444px;height:420px;border:1px dashed #C4BAA9;border-radius:18px;opacity:.5"></div>
+      <div class="mono" style="left:112px;top:558px;font-size:9px;letter-spacing:.14em;color:#79876F">AI · GROUPED BY ROOM</div>
+
+      <!-- LIVING CLUSTER -->
+      <div class="serif" style="left:640px;top:120px;font-size:28px;color:#A79E92">Living</div>
+      <div style="left:600px;top:174px;width:260px;height:196px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#C9BCA8,#7E7060);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(2deg)"></div>
+      <div style="left:880px;top:200px;width:140px;height:110px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#B9C0B2,#6F7A68);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(-5deg)"></div>
+      <div style="left:626px;top:400px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#D8CEBE,#9E9080);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(5deg)"></div>
+      <div style="left:724px;top:390px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#8A9A8E,#566258);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(-3deg)"></div>
+      <!-- pinned conversation -->
+      <div style="left:846px;top:352px;width:240px;height:104px;border-radius:8px;background:#fff;box-shadow:0 3px 10px rgba(28,26,23,.12);transform:rotate(3deg)"></div>
+      <div class="ell" style="left:862px;top:370px;width:16px;height:16px;background:#A4823C;transform:rotate(3deg)"></div>
+      <div style="left:886px;top:370px;width:180px;font-size:12px;color:#3C3833;transform:rotate(3deg)">“the bouclé, definitely the bouclé”</div>
+      <div class="ell" style="left:862px;top:412px;width:16px;height:16px;background:#79876F;transform:rotate(3deg)"></div>
+      <div style="left:886px;top:412px;width:180px;font-size:12px;color:#3C3833;transform:rotate(3deg)">ordering it today then</div>
+
+      <div class="serif" style="left:614px;top:520px;width:170px;font-size:14px;font-style:italic;line-height:1.45;color:#3C3833;background:#FBF6E7;border:1px solid #EFE4C2;border-radius:2px;padding:14px;transform:rotate(3deg);box-shadow:0 2px 8px rgba(28,26,23,.1)">rug arrives 4 Sep — check it against the sofa in daylight</div>
+
+      <!-- BATH CLUSTER -->
+      <div class="serif" style="left:1140px;top:150px;font-size:28px;color:#A79E92">Guest bath</div>
+      <div style="left:1120px;top:206px;width:180px;height:140px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#E0DACE,#ADA492);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(-4deg)"></div>
+      <div style="left:1146px;top:376px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#DAD4C7,#A69C8B);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(6deg)"></div>
+      <div style="left:1250px;top:392px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#CFCFCC,#8A8A86);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(-3deg)"></div>
+      <div style="left:1128px;top:512px;width:150px;height:118px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#D3D8D0,#8E9689);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(2deg)"></div>
+
+      <!-- cropped cluster bottom -->
+      <div class="serif" style="left:250px;top:660px;font-size:28px;color:#A79E92">Entry</div>
+      <div style="left:210px;top:714px;width:200px;height:160px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#E2DACB,#B0A390);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(-2deg)"></div>
+      <div style="left:440px;top:740px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#E0C489,#A4823C);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(4deg)"></div>
+      <div style="left:560px;top:726px;width:150px;height:118px;border-radius:3px;border:8px solid #fff;background:linear-gradient(150deg,#CFC4B2,#8F8272);box-shadow:0 3px 10px rgba(28,26,23,.14);transform:rotate(3deg)"></div>
+      <div style="left:760px;top:752px;width:88px;height:88px;border-radius:6px;background:linear-gradient(140deg,#C9BCA8,#8C7A62);box-shadow:0 4px 12px rgba(28,26,23,.18);transform:rotate(-5deg)"></div>
+
+      <!-- floating lens bar -->
+      <div style="left:540px;top:824px;width:360px;height:44px;border-radius:999px;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);box-shadow:0 8px 24px rgba(28,26,23,.12)"></div>
+      <div class="mono" style="left:582px;top:840px;font-size:10px;letter-spacing:.14em;color:#1C1A17">WALL</div>
+      <div class="mono" style="left:658px;top:840px;font-size:10px;letter-spacing:.14em;color:#A79E92">GRAPH</div>
+      <div class="mono" style="left:740px;top:840px;font-size:10px;letter-spacing:.14em;color:#A79E92">ROOMS</div>
+      <div class="mono" style="left:824px;top:840px;font-size:10px;letter-spacing:.14em;color:#A79E92">LEDGER</div>
+
+      <div class="mono" style="left:1340px;top:826px;font-size:10px;color:#7A7166">62%</div>
+      <div style="left:1310px;top:848px;width:60px;height:1px;background:#C4BAA9"></div>
+
+    </div></div>
+  </div>
+
+  <!-- ══════════════ 10 UNCERTAINTY MAP ══════════════ -->
+  <div class="shot">
+    <div class="cap"><span class="cn mono">10</span><span class="ct">Uncertainty Map</span>
+      <span class="cd">The project as weather. Crowded contours mean unknowns; the forecast is written as a bulletin, weeks before the storm lands.</span></div>
+    <div class="wrap"><div class="frame" style="background:#EEF0EE">
+
+      <svg style="left:0;top:0" width="1440" height="900">
+        <!-- plan underlay -->
+        <g opacity=".6" fill="none" stroke="#B9BDB8" stroke-width="0.75">
+          <rect x="180" y="180" width="380" height="280"/>
+          <rect x="560" y="180" width="240" height="280"/>
+          <rect x="180" y="460" width="260" height="220"/>
+          <rect x="440" y="460" width="360" height="220"/>
+          <rect x="800" y="180" width="200" height="500"/>
+          <path d="M560 300 L560 340 M440 560 L440 600 M800 380 L800 420"/>
+        </g>
+
+        <!-- kitchen system : severe, crowded -->
+        <g fill="none">
+          <ellipse cx="430" cy="380" rx="212" ry="168" stroke="#C9CFC7" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="176" ry="138" stroke="#C6BFB0" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="142" ry="110" stroke="#C4A88C" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="112" ry="86" stroke="#C08A67" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="86" ry="66" stroke="#BC7050" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="64" ry="48" stroke="#B86046" transform="rotate(-12 430 380)"/>
+          <ellipse cx="430" cy="380" rx="44" ry="32" stroke="#B4573A" fill="#B4573A" fill-opacity=".14" transform="rotate(-12 430 380)"/>
+        </g>
+
+        <!-- guest bath : moderate -->
+        <g fill="none">
+          <ellipse cx="700" cy="566" rx="150" ry="112" stroke="#C9CFC7" transform="rotate(8 700 566)"/>
+          <ellipse cx="700" cy="566" rx="118" ry="86" stroke="#C7C3B4" transform="rotate(8 700 566)"/>
+          <ellipse cx="700" cy="566" rx="88" ry="62" stroke="#C3B294" transform="rotate(8 700 566)"/>
+          <ellipse cx="700" cy="566" rx="60" ry="42" stroke="#BE9A72" fill="#A4823C" fill-opacity=".12" transform="rotate(8 700 566)"/>
+        </g>
+
+        <!-- entry : mild -->
+        <g fill="none">
+          <ellipse cx="252" cy="652" rx="128" ry="96" stroke="#CCD1CA" transform="rotate(-6 252 652)"/>
+          <ellipse cx="252" cy="652" rx="90" ry="66" stroke="#C9CBC0" transform="rotate(-6 252 652)"/>
+          <ellipse cx="252" cy="652" rx="54" ry="38" stroke="#C4C0AE" fill="#C4BAA9" fill-opacity=".12" transform="rotate(-6 252 652)"/>
+        </g>
+
+        <!-- roof terrace : forming -->
+        <g fill="none">
+          <ellipse cx="880" cy="252" rx="108" ry="76" stroke="#C4BAA9" stroke-dasharray="5 5" transform="rotate(10 880 252)"/>
+        </g>
+      </svg>
+
+      <div class="serif" style="left:346px;top:356px;font-size:22px;color:#1C1A17">Kitchen</div>
+      <div class="mono" style="left:346px;top:388px;font-size:9px;letter-spacing:.12em;color:#B4573A">SUPPLIER · BUDGET</div>
+
+      <div class="serif" style="left:634px;top:548px;font-size:22px;color:#1C1A17">Guest bath</div>
+      <div class="mono" style="left:634px;top:580px;font-size:9px;letter-spacing:.12em;color:#A4823C">TECHNICAL</div>
+
+      <div class="serif" style="left:206px;top:636px;font-size:22px;color:#1C1A17">Entry</div>
+      <div class="mono" style="left:206px;top:668px;font-size:9px;letter-spacing:.12em;color:#7A7166">CLIENT</div>
+
+      <div class="serif" style="left:812px;top:238px;font-size:20px;color:#A79E92">Roof terrace</div>
+      <div class="mono" style="left:812px;top:268px;font-size:9px;letter-spacing:.12em;color:#A79E92">FORMING · PREDICTED</div>
+
+      <!-- room names on plan -->
+      <div class="mono" style="left:196px;top:196px;font-size:9px;letter-spacing:.12em;color:#9DA29C">LIVING</div>
+      <div class="mono" style="left:576px;top:196px;font-size:9px;letter-spacing:.12em;color:#9DA29C">KITCHEN</div>
+      <div class="mono" style="left:196px;top:476px;font-size:9px;letter-spacing:.12em;color:#9DA29C">ENTRY</div>
+      <div class="mono" style="left:456px;top:476px;font-size:9px;letter-spacing:.12em;color:#9DA29C">BEDROOM</div>
+      <div class="mono" style="left:816px;top:196px;font-size:9px;letter-spacing:.12em;color:#9DA29C">TERRACE</div>
+
+      <!-- legend -->
+      <div class="mono" style="left:40px;top:790px;font-size:9px;letter-spacing:.14em;color:#7A8078">SETTLED → UNKNOWN</div>
+      <svg style="left:40px;top:812px" width="220" height="26">
+        <g fill="none" stroke="#8E948C">
+          <path d="M0 13 h30" stroke="#CCD1CA"/><path d="M42 13 h30" stroke="#C7C3B4"/>
+          <path d="M84 6 h30 M84 13 h30 M84 20 h30" stroke="#C3B294"/>
+          <path d="M126 4 h30 M126 10 h30 M126 16 h30 M126 22 h30" stroke="#BE8A66"/>
+          <path d="M168 2 h30 M168 7 h30 M168 12 h30 M168 17 h30 M168 22 h30" stroke="#B4573A"/>
+        </g>
+      </svg>
+
+      <!-- time slider -->
+      <div style="left:280px;top:836px;width:520px;height:1px;background:#C4BAA9"></div>
+      <div style="left:280px;top:833px;width:1px;height:7px;background:#9DA29C"></div>
+      <div style="left:410px;top:833px;width:1px;height:7px;background:#9DA29C"></div>
+      <div style="left:540px;top:833px;width:1px;height:7px;background:#9DA29C"></div>
+      <div style="left:670px;top:833px;width:1px;height:7px;background:#9DA29C"></div>
+      <div style="left:800px;top:833px;width:1px;height:7px;background:#9DA29C"></div>
+      <div class="ell" style="left:268px;top:825px;width:24px;height:24px;background:#fff;border:1px solid #1C1A17;box-shadow:0 2px 6px rgba(28,26,23,.14)"></div>
+      <div class="mono" style="left:266px;top:858px;font-size:9px;color:#3C3833">NOW</div>
+      <div class="mono" style="left:398px;top:858px;font-size:9px;color:#9DA29C">+1w</div>
+      <div class="mono" style="left:528px;top:858px;font-size:9px;color:#9DA29C">+2w</div>
+      <div class="mono" style="left:658px;top:858px;font-size:9px;color:#9DA29C">+4w</div>
+      <div class="mono" style="left:788px;top:858px;font-size:9px;color:#9DA29C">+6w</div>
+
+      <!-- bulletin -->
+      <div style="left:1080px;top:0;width:360px;height:900px;background:#FBF8F3"></div>
+      <div style="left:1080px;top:0;width:1px;height:900px;background:#DDD5C8"></div>
+      <div class="serif" style="left:1120px;top:84px;font-size:30px;color:#1C1A17">Forecast</div>
+      <div class="mono" style="left:1120px;top:130px;font-size:10px;letter-spacing:.14em;color:#A79E92">TUESDAY 26 JULY</div>
+      <div style="left:1120px;top:166px;width:280px;height:1px;background:#DDD5C8"></div>
+
+      <div class="mono" style="left:1120px;top:190px;font-size:10px;letter-spacing:.14em;color:#B4573A">DEEPENING · SUPPLIER</div>
+      <div class="serif" style="left:1120px;top:212px;width:280px;font-size:17px;line-height:1.45;color:#1C1A17">A supplier system over the kitchen deepens through next week. Expect it to reach the joinery package by 14 August.</div>
+      <div style="left:1120px;top:322px;width:280px;height:1px;background:#EFEAE1"></div>
+
+      <div class="mono" style="left:1120px;top:346px;font-size:10px;letter-spacing:.14em;color:#A4823C">STEADY · TECHNICAL</div>
+      <div class="serif" style="left:1120px;top:368px;width:280px;font-size:17px;line-height:1.45;color:#1C1A17">The guest bath holds. Two dimensions remain unconfirmed but nothing downstream depends on them yet.</div>
+      <div style="left:1120px;top:454px;width:280px;height:1px;background:#EFEAE1"></div>
+
+      <div class="mono" style="left:1120px;top:478px;font-size:10px;letter-spacing:.14em;color:#79876F">CLEARING · CLIENT</div>
+      <div class="serif" style="left:1120px;top:500px;width:280px;font-size:17px;line-height:1.45;color:#1C1A17">The entry is clearing after Sunday's approval. Two unknowns collapsed at once.</div>
+      <div style="left:1120px;top:586px;width:280px;height:1px;background:#EFEAE1"></div>
+
+      <div class="mono" style="left:1120px;top:610px;font-size:10px;letter-spacing:.14em;color:#A79E92">FORMING · UNNAMED</div>
+      <div class="serif" style="left:1120px;top:632px;width:280px;font-size:17px;line-height:1.45;color:#7A7166">Something is forming over the roof terrace — three quotes have now expired without replacement.</div>
+
+      <div style="left:1120px;top:770px;width:280px;height:1px;background:#DDD5C8"></div>
+      <div class="serif" style="left:1120px;top:792px;width:280px;font-size:15px;font-style:italic;line-height:1.45;color:#A79E92">Forecast accuracy over the last quarter: 71%.</div>
+
+    </div></div>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    var b=document.getElementById('tg');
+    function cur(){var a=document.documentElement.getAttribute('data-theme');
+      return a?a:(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');}
+    b.addEventListener('click',function(){document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');});
+
+    function fit(){
+      document.querySelectorAll('.wrap').forEach(function(w){
+        var f=w.querySelector('.frame');
+        if(f) f.style.transform='scale('+(w.clientWidth/1440)+')';
+      });
+    }
+    fit();
+    if(window.ResizeObserver){
+      var ro=new ResizeObserver(fit);
+      document.querySelectorAll('.wrap').forEach(function(w){ro.observe(w);});
+    }
+    window.addEventListener('resize',fit);
+  })();
+</script>
