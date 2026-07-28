@@ -1,0 +1,460 @@
+<title>Dörd kəsik — Atelier sadələşdirmə qeydi</title>
+
+<style>
+  :root{
+    --bg:#F2F3F5; --card:#FFFFFF; --ink:#131417; --soft:#5B5E63; --faint:#9DA0A6;
+    --line:#E6E7EA; --line-strong:#D4D6DA;
+    --cobalt:#2B3FE0; --cobalt-soft:#E9EBFC;
+    --red:#D6402B; --red-soft:#FAEBE8; --ok:#3E5B48;
+    --serif:"Iowan Old Style",Palatino,"Hoefler Text",Georgia,serif;
+    --sans:"Helvetica Neue",Helvetica,"Segoe UI",system-ui,Arial,sans-serif;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#0E0F12; --card:#17181C; --ink:#EDEEF0; --soft:#A0A3A9; --faint:#6B6E75;
+      --line:#25272C; --line-strong:#34373D;
+      --cobalt:#8492FF; --cobalt-soft:#1A1E3A;
+      --red:#F0705C; --red-soft:#2C1714; --ok:#8FB79C;
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#F2F3F5; --card:#FFFFFF; --ink:#131417; --soft:#5B5E63; --faint:#9DA0A6;
+    --line:#E6E7EA; --line-strong:#D4D6DA;
+    --cobalt:#2B3FE0; --cobalt-soft:#E9EBFC;
+    --red:#D6402B; --red-soft:#FAEBE8; --ok:#3E5B48;
+  }
+  :root[data-theme="dark"]{
+    --bg:#0E0F12; --card:#17181C; --ink:#EDEEF0; --soft:#A0A3A9; --faint:#6B6E75;
+    --line:#25272C; --line-strong:#34373D;
+    --cobalt:#8492FF; --cobalt-soft:#1A1E3A;
+    --red:#F0705C; --red-soft:#2C1714; --ok:#8FB79C;
+  }
+
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);
+       font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;}
+  .page{max-width:1060px;margin:0 auto;padding:clamp(2rem,5vw,4.5rem) clamp(1.1rem,4vw,2.5rem) 6rem;}
+
+  /* ── gutter grid: mono marker in the margin, prose in the column ── */
+  .row{display:grid;grid-template-columns:118px minmax(0,660px);gap:0 2.4rem;align-items:start;}
+  @media (max-width:820px){ .row{grid-template-columns:minmax(0,1fr);gap:.6rem;} }
+  .marker{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+          color:var(--faint);padding-top:.55rem;}
+  .col{display:flex;flex-direction:column;gap:1.05rem;min-width:0;}
+
+  main{display:flex;flex-direction:column;gap:clamp(3rem,6vw,4.6rem);}
+
+  h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,7vw,4.1rem);
+     line-height:1.02;letter-spacing:-.02em;text-wrap:balance;margin:0;}
+  h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.5rem,3.2vw,1.95rem);
+     line-height:1.18;letter-spacing:-.01em;text-wrap:balance;margin:0;}
+  h3{font-family:var(--sans);font-weight:600;font-size:.94rem;letter-spacing:.01em;margin:0;}
+  p{margin:0;}
+  .lede{font-family:var(--serif);font-size:clamp(1.15rem,2.4vw,1.42rem);line-height:1.48;color:var(--soft);}
+  .dim{color:var(--soft);}
+  .fine{font-size:.88rem;line-height:1.55;color:var(--soft);}
+  em{font-style:italic;}
+  strong{font-weight:600;}
+
+  /* ── masthead ── */
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--red);}
+  .masthead{display:flex;flex-direction:column;gap:1.3rem;padding-bottom:2.4rem;
+            border-bottom:1px solid var(--line-strong);}
+  .toolbar{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;}
+  button.theme{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--soft);background:none;border:1px solid var(--line-strong);border-radius:2px;
+    padding:.34rem .62rem;cursor:pointer;}
+  button.theme:hover{color:var(--ink);border-color:var(--ink);}
+  button.theme:focus-visible{outline:2px solid var(--cobalt);outline-offset:2px;}
+
+  /* ── the redline device ── */
+  .was{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--red);
+       text-decoration-thickness:1.5px;}
+  .ratio{font-family:var(--serif);font-size:clamp(2rem,5vw,2.9rem);line-height:1;letter-spacing:-.02em;
+         display:flex;align-items:baseline;gap:.5rem;}
+  .ratio .from{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--red);
+               text-decoration-thickness:2px;}
+  .ratio .arrow{font-family:var(--sans);font-size:.5em;color:var(--faint);}
+
+  /* ── tables ── */
+  .scroll{overflow-x:auto;border-top:1px solid var(--line-strong);border-bottom:1px solid var(--line-strong);}
+  table{width:100%;border-collapse:collapse;font-size:.92rem;}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+     color:var(--faint);font-weight:400;text-align:left;padding:.7rem .9rem .7rem 0;
+     border-bottom:1px solid var(--line);}
+  td{padding:.72rem .9rem .72rem 0;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.45;}
+  tr:last-child td{border-bottom:none;}
+  td.old{color:var(--faint);white-space:nowrap;font-family:var(--mono);font-size:.8rem;letter-spacing:.04em;
+         text-transform:uppercase;}
+  td.old span{text-decoration:line-through;text-decoration-color:var(--red);text-decoration-thickness:1.5px;}
+  .count{font-variant-numeric:tabular-nums;font-family:var(--mono);}
+
+  /* ── count ledger ── */
+  .ledger{display:flex;flex-direction:column;gap:0;background:var(--card);
+          border:1px solid var(--line);border-radius:3px;padding:.4rem 1.1rem;}
+  .ledger .l{display:flex;justify-content:space-between;gap:1rem;align-items:baseline;
+             padding:.62rem 0;border-bottom:1px solid var(--line);font-size:.92rem;}
+  .ledger .l:last-child{border-bottom:none;}
+  .ledger .l.sum{font-weight:600;}
+  .n{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.9rem;
+     display:flex;gap:.55rem;align-items:baseline;}
+  .n .a{color:var(--faint);text-decoration:line-through;text-decoration-color:var(--red);}
+  .n .b{color:var(--ink);}
+
+  /* ── state chips mockup ── */
+  .chips{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.85rem;}
+  .chip{background:var(--card);border-radius:3px;padding:.9rem 1rem;display:flex;flex-direction:column;gap:.4rem;
+        min-height:112px;}
+  .chip .t{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;}
+  .chip .body{font-size:.9rem;line-height:1.4;}
+  .chip .meta{font-size:.78rem;color:var(--faint);margin-top:auto;}
+  .chip.open{border:1px dashed var(--line-strong);}
+  .chip.open .t{color:var(--faint);}
+  .chip.decided{border:1px solid var(--line-strong);border-left:3px solid var(--cobalt);}
+  .chip.decided .t{color:var(--cobalt);}
+  .chip.locked{border:1px solid var(--ink);box-shadow:0 1px 2px rgba(19,20,23,.05),0 8px 22px rgba(19,20,23,.07);}
+  .chip.locked .t{color:var(--ink);}
+  .chip.ai{border:1px dashed var(--line-strong);position:relative;overflow:hidden;background:none;}
+  .chip.ai::before{content:"";position:absolute;inset:0 0 auto 0;height:2px;
+    background:linear-gradient(90deg,var(--cobalt),var(--red));opacity:.75;}
+  .chip.ai .t{color:var(--soft);}
+
+  /* ── callout ── */
+  .note{border-left:2px solid var(--red);padding:.15rem 0 .15rem 1.05rem;
+        display:flex;flex-direction:column;gap:.45rem;}
+  .note .h{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--red);}
+  .keep{border-left:2px solid var(--cobalt);padding:.15rem 0 .15rem 1.05rem;
+        display:flex;flex-direction:column;gap:.45rem;}
+  .keep .h{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--cobalt);}
+
+  ul{margin:0;padding-left:1.15rem;display:flex;flex-direction:column;gap:.5rem;}
+  li{padding-left:.15rem;}
+  li::marker{color:var(--faint);}
+
+  .three{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1.4rem;}
+  .three .k{display:flex;flex-direction:column;gap:.35rem;}
+  .three .kl{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);}
+  .three .kv{font-family:var(--serif);font-size:1.18rem;line-height:1.3;}
+
+  hr.rule{border:none;border-top:1px solid var(--line-strong);margin:0;}
+  footer{margin-top:4rem;padding-top:1.4rem;border-top:1px solid var(--line-strong);
+         font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--faint);
+         display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+</style>
+
+<div class="page">
+
+  <div class="masthead">
+    <div class="toolbar">
+      <span class="eyebrow">Atelier · sadələşdirmə qeydi · iyul 2026</span>
+      <button class="theme" id="tg" type="button">Tema</button>
+    </div>
+    <h1>Dörd kəsik</h1>
+    <p class="lede" style="max-width:660px">
+      Hazırkı spesifikasiyada istifadəçinin öyrənməli olduğu 24 anlayış var.
+      Məhsul bunların yeddisi ilə daha güclüdür. Yol silmək deyil — birləşdirməkdir.
+    </p>
+  </div>
+
+  <main>
+
+    <!-- DİAQNOZ -->
+    <section class="row">
+      <div class="marker">Diaqnoz</div>
+      <div class="col">
+        <h2>Hər anlayışın iki qiyməti var</h2>
+        <p>
+          Bir anlayış həm istifadəçinin başında yer tutur, həm də kodda ayrıca cədvəl, ayrıca ekran,
+          ayrıca menyu bəndi deməkdir. İyirmi dörd anlayış — bu, altı aylıq mühəndislik və on dəqiqəlik
+          onboarding deməkdir. İkisi də çoxdur.
+        </p>
+        <div class="ledger">
+          <div class="l"><span>Primitivlər</span><span class="n"><span class="a">6</span>→<span class="b">1</span></span></div>
+          <div class="l"><span>Qərar vəziyyətləri</span><span class="n"><span class="a">6</span>→<span class="b">3</span></span></div>
+          <div class="l"><span>Səthlər</span><span class="n"><span class="a">4</span>→<span class="b">1</span></span></div>
+          <div class="l"><span>AI rolları</span><span class="n"><span class="a">5</span>→<span class="b">1</span></span></div>
+          <div class="l"><span>Qatlar (səth / struktur / mühərrik)</span><span class="n"><span class="a">3</span>→<span class="b">1</span></span></div>
+          <div class="l sum"><span>Öyrənilməli anlayış</span><span class="n"><span class="a">24</span>→<span class="b">7</span></span></div>
+        </div>
+        <p>
+          Diqqət: bu, xüsusiyyət silmək deyil. Aşağıdakı dörd kəsikdən sonra məhsul <em>bütün</em> əvvəlki
+          işi görür — sadəcə daha az hissədən ibarətdir. Silmək məhsulu zəiflədir; birləşdirmə eyni anda
+          həm sadələşdirir, həm gücləndirir. Fərq budur.
+        </p>
+        <div class="keep">
+          <div class="h">Ölçü meyarı</div>
+          <p class="fine">
+            Yeni istifadəçi 60 saniyəyə bunu öyrənməlidir: «Hər şeyi at. Hər seçim karta çevrilir.
+            Kart üç haldan birindədir.» Bundan artıq izah tələb edən hər şey kəsik namizədidir.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- KƏSİK 1 -->
+    <section class="row">
+      <div class="marker">Kəsik bir</div>
+      <div class="col">
+        <div class="ratio"><span class="from">6</span><span class="arrow">→</span><span>1</span></div>
+        <h2>Altı primitiv əvəzinə bir kart</h2>
+        <p>
+          Qərar, Məkan, Obyekt, Sübut, Vəd, Qapı — bunlar altı fərqli şey kimi yazılıb, amma altı fərqli
+          şey deyil. Beşi qərarın <em>üzləridir</em>: ya onun sahəsi, ya vəziyyətinin nəticəsi, ya da ona
+          yapışdırılan şeydir. Bir cədvəl, fakultativ sahələrlə.
+        </p>
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr><th style="width:132px">Əvvəl</th><th>İndi nədir</th></tr>
+            </thead>
+            <tbody>
+              <tr><td class="old"><span>Qərar</span></td><td>Kartın özü. Yeganə obyekt.</td></tr>
+              <tr><td class="old"><span>Məkan</span></td><td>Kartın etiketi — «mətbəx», «qonaq otağı». Sahə, cədvəl deyil.</td></tr>
+              <tr><td class="old"><span>Obyekt</span></td><td>Kilidlənmiş kartın fiziki üzü: artikul, təchizatçı, qiymət, çatma vaxtı. Tip deyil — vəziyyətin nəticəsi.</td></tr>
+              <tr><td class="old"><span>Sübut</span></td><td>Karta yapışdırılmış hər şey: şəkil, mesaj, səs, cizgi.</td></tr>
+              <tr><td class="old"><span>Vəd</span></td><td>Tarixi və qarşı tərəfi olan kart. İki sahə, ayrıca varlıq deyil.</td></tr>
+              <tr><td class="old"><span>Qapı</span></td><td>Kartın kilidlənmə anı. Hadisə, obyekt deyil.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Niyə bu daha güclüdür</h3>
+        <ul>
+          <li><strong>Tək axtarış.</strong> Bir sorğu qutusu hər şeyi tapır — şəkli də, vədi də, sifarişi də. Altı cədvəldə altı axtarış yoxdur.</li>
+          <li><strong>Tək tarixçə.</strong> «Terrazzonu nə vaxt və niyə seçdik?» sualının cavabı bir yerdədir, altı jurnalı birləşdirməklə deyil.</li>
+          <li><strong>Təsir radiusu hər şeydə işləyir.</strong> Hər şey eyni qrafın düyünü olduğu üçün «bunu dəyişsək nə sınır?» hesablaması vəd üçün də, sifariş üçün də, materialın özü üçün də eyni koddur. Altı tip olsaydı — altı fərqli hesablayıcı.</li>
+          <li><strong>Tək icazə modeli.</strong> Klientin nəyi görəcəyi bir yerdə qərara alınır. Altı tipdə bu, altı dəfə səhv etmək imkanıdır.</li>
+        </ul>
+        <div class="note">
+          <div class="h">Etiraz — və cavabı</div>
+          <p class="fine">
+            «Satınalma sahələri (artikul, çatma vaxtı, qaimə) bir kartın içinə sığmaz.» Sığır: kart
+            kilidlənəndə fiziki üzü açılır. İstifadəçi yeni obyekt yaratmır — <em>eyni kart</em> qərardan
+            məhsula çevrilir. Bu, həm modeli sadələşdirir, həm də real həyatı dəqiq təsvir edir:
+            sifariş verilən şey elə təsdiqlənən şeydir.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- KƏSİK 2 -->
+    <section class="row">
+      <div class="marker">Kəsik iki</div>
+      <div class="col">
+        <div class="ratio"><span class="from">6</span><span class="arrow">→</span><span>3</span></div>
+        <h2>Altı vəziyyət əvəzinə bir sərt xətt</h2>
+        <p>
+          Açıq, Axtarışda, Təqdim edilib, Qəbul edilib, Bərkiyib, Mübahisəli — altı vəziyyət heç kimin
+          başında dayanmır. Üçü isə dayanır, çünki üçünün arasında real fərq var: hələ qərar yoxdur,
+          qərar var, pul hərəkət edib.
+        </p>
+        <div class="chips">
+          <div class="chip open">
+            <div class="t">Açıq</div>
+            <div class="body">Mətbəx işıqlandırması</div>
+            <div class="meta">4 variant · qərar yoxdur</div>
+          </div>
+          <div class="chip decided">
+            <div class="t">Qərar verilib</div>
+            <div class="body">Mətbəx işıqlandırması</div>
+            <div class="meta">Leyla təsdiqlədi · 12 iyul</div>
+          </div>
+          <div class="chip locked">
+            <div class="t">Kilidli ₼</div>
+            <div class="body">Mətbəx işıqlandırması</div>
+            <div class="meta">Depozit ödənilib · sifariş #4471</div>
+          </div>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th style="width:132px">Silindi</th><th>Hara getdi</th></tr></thead>
+            <tbody>
+              <tr><td class="old"><span>Axtarışda</span></td><td>Kartda variant var — vəziyyət deyil, məzmun. Variantsız kart da açıqdır, dörd variantlı da.</td></tr>
+              <tr><td class="old"><span>Təqdim edilib</span></td><td>Zaman damğası. «12 iyulda göndərildi» kartın tarixçəsində yazılır, rəngini dəyişmir.</td></tr>
+              <tr><td class="old"><span>Mübahisəli</span></td><td>Hadisə. Kilidli kart yenidən açılanda baş verir — və məhz o an təsir radiusu göstərilir.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Niyə bu daha güclüdür</h3>
+        <p>
+          Altı bulanıq vəziyyətin heç bir yerində sərt sərhəd yoxdur. Üçdə var: <strong>kilid xətti</strong>.
+          Bir tərəfində pul yoxdur və hər şeyi dəyişmək pulsuzdur; o biri tərəfində pul var və dəyişiklik
+          bir şey qırır. Məhsulun bütün hüquqi dəyəri bu xəttin üstündə dayanır — «kilidli kartı açmaq üçün
+          nəyin sındığını görmək və adı yazılmış adamın razılığı lazımdır». Altı vəziyyətdə bu qaydanı
+          hara yazacağın belə bəlli deyil.
+        </p>
+        <div class="note">
+          <div class="h">Bunun sınacağı yer</div>
+          <p class="fine">
+            Satınalma mərhələləri — sifariş verildi / yoldadır / çatdı / quraşdırıldı — kilidli kartın
+            <em>tarixçəsindədir</em>, vəziyyətində yox. Əgər tədarük linzası bu tarixçəni oxuya bilməsə,
+            dördüncü vəziyyət geri qayıdacaq. Bu, ilk sınaqda ölçüləsi risqdir, fərziyyə deyil.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- KƏSİK 3 -->
+    <section class="row">
+      <div class="marker">Kəsik üç</div>
+      <div class="col">
+        <div class="ratio"><span class="from">4</span><span class="arrow">→</span><span>1</span></div>
+        <h2>Dörd səth əvəzinə bir divar, üç linza</h2>
+        <p>
+          Divar, Salnamə, Uçuş lövhəsi, Klient pəncərəsi — dörd ekran kimi yazılıb, amma dördü də
+          eyni kart yığınıdır. Fərq yalnız süzgəcdə və sıralamadadır.
+        </p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th style="width:132px">Əvvəl ekran</th><th>İndi linza</th></tr></thead>
+            <tbody>
+              <tr><td class="old"><span>Salnamə</span></td><td>Eyni kartlar, zamana görə sıralanmış. Sorğu, ekran deyil.</td></tr>
+              <tr><td class="old"><span>Uçuş lövhəsi</span></td><td>Süzgəc: <span class="count">vəziyyət = kilidli</span> və hələ quraşdırılmayıb.</td></tr>
+              <tr><td class="old"><span>Klient pəncərəsi</span></td><td>İcazə linzası: yalnız təqdim edilmiş kartlar, yalnız seçilmiş sahələr.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Niyə bu daha güclüdür</h3>
+        <p>
+          Linza sorğudur — deməli studiya özününkünü yarada bilər. «Yalnız Leylanın layihələri»,
+          «bu ay kilidlənənlər», «təchizatçısı gecikənlər». Biz üç hazır linza göndəririk, studiya
+          qalanını özü qurur. Dörd sabit ekranda hər yeni görünüş yeni mühəndislik işidir; linzada
+          isə sıfırdır.
+        </p>
+        <div class="note">
+          <div class="h">Bir istisna, dürüst deyilir</div>
+          <p class="fine">
+            Klient linzası məlumat baxımından süzgəcdir, amma <em>görünüş baxımından</em> tam ayrı
+            məhsuldur — klient heç vaxt divarı görməməlidir. Bu linza ən çox iş tələb edən linzadır və
+            onu «sadəcə filtr» kimi planlaşdırmaq səhv olar.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- KƏSİK 4 -->
+    <section class="row">
+      <div class="marker">Kəsik dörd</div>
+      <div class="col">
+        <div class="ratio"><span class="from">5</span><span class="arrow">→</span><span>1</span></div>
+        <h2>Beş AI rolu əvəzinə bir qapı</h2>
+        <p>
+          Katib, Kitabxanaçı, Yayıcı, Təqibçi, Yığıcı — beş rol, beş menyu bəndi, beş öyrənilməli jest.
+          Bunları silmirik; hamısını <em>eyni qapıdan</em> keçiririk. AI heç vaxt menyuda görünmür.
+          AI yalnız bir şey edir: divara boz kart qoyur və gözləyir.
+        </p>
+        <div class="chips">
+          <div class="chip ai">
+            <div class="t">AI təklif edir</div>
+            <div class="body">«Mərmər əvəzinə terrazzo» — Aygünün cümə axşamı məktubundan</div>
+            <div class="meta">Təsdiqlə · Sil · 7 gündən sonra özü yox olur</div>
+          </div>
+        </div>
+        <div class="scroll">
+          <table>
+            <thead><tr><th style="width:132px">Giriş</th><th>Çıxış — hər dəfə eyni</th></tr></thead>
+            <tbody>
+              <tr><td class="old"><span>Katib</span></td><td>Məktub gəldi → boz kart: «bu qərar verildi?»</td></tr>
+              <tr><td class="old"><span>Kitabxanaçı</span></td><td>Axtarış → boz kart: «yəqin bunu nəzərdə tutursan»</td></tr>
+              <tr><td class="old"><span>Yayıcı</span></td><td>Nəsə dəyişdi → boz kart: «bu üçü köhnəldi»</td></tr>
+              <tr><td class="old"><span>Təqibçi</span></td><td>Vaxt keçdi → boz kart: «təchizatçıya bu məktubu göndərim?»</td></tr>
+              <tr><td class="old"><span>Yığıcı</span></td><td>Yığın hazırdır → boz kart: «təqdimat düzəltdim, baxırsan?»</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <h3>Niyə bu daha güclüdür</h3>
+        <ul>
+          <li><strong>Bir jest öyrənilir, beş yox.</strong> Boz kart gəlir, toxunursan — ağarır. Toxunmursan — yox olur. Bütün AI bacarıqları bu qapıdan keçir.</li>
+          <li><strong>Yeni bacarıq interfeys xərci olmadan gəlir.</strong> Altıncı, yeddinci, onuncu qabiliyyəti əlavə etmək üçün yeni ekran, yeni düymə, yeni izah lazım deyil — sadəcə yeni boz kart növü. Məhsul ağırlaşmadan güclənir.</li>
+          <li><strong>Hər toxunuş təlim datasıdır.</strong> Təsdiq və rədd — hər ikisi siqnaldır. Studiya məhsulu işlətdikcə təkliflər dəqiqləşir. Rəqibin kopyalaya bilmədiyi şey funksiya deyil, bu yığılmış siqnaldır.</li>
+        </ul>
+        <div class="note">
+          <div class="h">Bunun ən böyük riski</div>
+          <p class="fine">
+            Bir qapı = bir uğursuzluq nöqtəsi. Boz kartların dəqiqliyi aşağı olsa, istifadəçi qapını
+            bağlayır və məhsul adi kətana çevrilir — yəni Milanote. Təklif qəbul faizi ilk gündən
+            ölçülməlidir; 60%-dən aşağı düşərsə, məhsulun özəyi işləmir.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule">
+
+    <!-- NƏTİCƏ -->
+    <section class="row">
+      <div class="marker">Nəticə</div>
+      <div class="col">
+        <h2>Yeddi anlayış, bir döngə</h2>
+        <p>
+          Qalan hər şey: <strong>Kart</strong> · <strong>Açıq</strong> · <strong>Qərar verilib</strong> ·
+          <strong>Kilidli</strong> · <strong>Divar</strong> · <strong>Linza</strong> ·
+          <strong>Boz kart</strong>. Yeddi söz — bir səhifəlik onboarding, bir cədvəlli məlumat modeli.
+        </p>
+        <div class="three">
+          <div class="k">
+            <div class="kl">Bir cümlə</div>
+            <div class="kv">Hər şeyi at — hər seçim sübuta çevrilir.</div>
+          </div>
+          <div class="k">
+            <div class="kl">Bir rəqəm</div>
+            <div class="kv">Həftədə kilidlənən kart sayı.</div>
+          </div>
+          <div class="k">
+            <div class="kl">Bir döngə</div>
+            <div class="kv">At → kart → təqdim et → «bəli» → kilid.</div>
+          </div>
+        </div>
+        <h3>MVP-nin yeni sərhədi</h3>
+        <p class="fine">
+          Sadələşmə birbaşa cədvələ dəyir. Birinci versiyada qalan: divar və hər şeyi ora atmaq;
+          boz kart — <em>yalnız</em> yönləndirmə ünvanı və şəkil tanıma; kartın üç halı; 2–3 variantlı
+          təqdimat; klient linzası; təsdiq və depozit (Stripe) = kilid. Bu, altı-səkkiz həftəlik işdir,
+          altı aylıq deyil.
+        </p>
+        <p class="fine">
+          Birinci versiyadan çıxanlar — və nə vaxt qayıdacaqları: tədarük linzası (ilk studiya sifariş
+          verəndə), vəd izləmə (ambient qapı 60% dəqiqliyə çatanda), təsir radiusu hesablayıcısı
+          (ilk kilid açılışında; ondan əvvəl sadəcə xəbərdarlıq mətni), çoxmodal axtarış (ikinci rüb).
+          Heç biri silinmir — hamısı eyni kartın üstünə gəlir. Buna görə heç biri yenidən qurma tələb etmir.
+        </p>
+        <div class="keep">
+          <div class="h">Yoxlama sualı</div>
+          <p class="fine">
+            Növbəti hər xüsusiyyət üçün bir sual: <em>bu, yeddi anlayışdan səkkizinci yaradır, yoxsa
+            mövcud yeddisinin içinə sığır?</em> Səkkizinci yaradırsa — ya kəsilməlidir, ya da mövcud
+            birinin üzü kimi yenidən yazılmalıdır. Məhsulun sadə qalmasının yeganə yolu budur;
+            sadəlik bir dəfə edilən iş deyil, hər dəfə verilən qərardır.
+          </p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>Atelier · sadələşdirmə qeydi</span>
+    <span>discovery-report · product-vision · on-model-izah ilə işləyir</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('tg');
+  function cur(){
+    var a=document.documentElement.getAttribute('data-theme');
+    if(a) return a;
+    return window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';
+  }
+  btn.addEventListener('click',function(){
+    document.documentElement.setAttribute('data-theme',cur()==='dark'?'light':'dark');
+  });
+})();
+</script>
